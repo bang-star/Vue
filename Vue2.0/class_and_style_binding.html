@@ -25,13 +25,19 @@
 
 <body>
     <div id="app">
+        <h2>클래스 바인딩</h2>
         <div :class="{ red : isRed, 'font-bold': isBold}">Hello</div>
         <button @click="update">Click</button>
+
+        <h2>스타일 바인딩</h2>
+        <div :style="{ color : blue, fontSize: size}">Hello</div>
     </div>
     <script>
         new Vue({
             el: '#app',
             data: {
+                blue: 'blue',
+                size: '30px',
                 isRed: false,
                 isBold: false
             },
