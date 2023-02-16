@@ -10,11 +10,6 @@
         .red {
             color: red;
         }
-
-        /* .bold {
-            font-weight: bold;
-        } */
-
         .font-bold {
             font-weight: bold;
         }
@@ -24,27 +19,32 @@
 </head>
 
 <body>
-    <div id="app">
-        <h2>클래스 바인딩</h2>
-        <div :class="{ red : isRed, 'font-bold': isBold}">Hello</div>
-        <button @click="update">Click</button>
+    <div id="app"> 
+        <template v-if="number === 1">
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+        </template>
+        <div v-else-if="number === 2">Hi</div>
+        <div v-else>No</div>
+        <button @click="increase">Increase</button> {{ number }}
 
-        <h2>스타일 바인딩</h2>
-        <div :style="{ color : blue, fontSize: size}">Hello</div>
+        <div v-show="show">Yes</div>    <br>
+        <button @click="toggle">Toggle</button> 
     </div>
     <script>
         new Vue({
             el: '#app',
             data: {
-                blue: 'blue',
-                size: '30px',
-                isRed: false,
-                isBold: false
+                number: 1,
+                show: false
             },
             methods: {
-                update() {
-                    this.isRed = !this.isRed;
-                    this.isBold = !this.isBold;
+                increase() {
+                    this.show++;
+                },
+                toggle() {
+                    this.show = !this.show;
                 }
             }
         })
