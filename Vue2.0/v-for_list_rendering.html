@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>뷰 기초 익히기</title>
+    <style>
+        .red {
+            color: red;
+        }
+        .font-bold {
+            font-weight: bold;
+        }
+    </style>
+    <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- Not for -->
+        <div>
+            {{ people[0].name }} {{ people[0].age }}
+        </div>
+        <div>
+            {{ people[1].name }} {{ people[1].age }}
+        </div>
+        <div>
+            {{ people[2].name }} {{ people[2].age }}
+        </div>
+        <div>
+            {{ people[3].name }} {{ people[3].age }}
+        </div>
+
+        <hr>
+
+        <!-- Use for(in을 대신하여 of를 사용할 수 있음) -->
+        <div v-for="person in people">
+            {{ person.name }} {{ person.age }}
+        </div>
+        <!-- Use for + Index -->
+        <div v-for="(person, index) in people">
+            {{ person.name }} {{ person.age }} {{ index }}
+        </div>
+        <!-- Use for + Index + Key(if name is unique) -->
+        <div v-for="(person, index) in people" key="person.name">
+            {{ person.name }} {{ person.age }} {{ index }}
+        </div>
+
+        <!-- Use for + Index + Key(if have not unique field) -->
+        <div v-for="(person, index) in people" key="person.name + '-' + person.age">
+            {{ person.name }} {{ person.age }} {{ index }}
+        </div>
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                people: [
+                    { name: 'a', age: 10}, 
+                    { name: 'b', age: 11}, 
+                    { name: 'c', age: 12}, 
+                    { name: 'd', age: 22}, 
+                ]
+            },
+            methods: {
+
+            }
+        })
+    </script>
+</body>
+
+</html>
