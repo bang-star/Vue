@@ -4,6 +4,8 @@
         <!-- 선언적 렌더링 -->
         <h3 v-bind:title="message">내 위에 잠시 마우스를 올리면 동적으로 바인딩된 title을 볼 수 있습니다.</h3>
         <h4>{{ message }}</h4>
+        <h4 v-if="seen">You Can See me</h4>
+        <button @click="seen = !seen">토글</button>
     </div>
 </template>
 
@@ -12,7 +14,8 @@ export default {
     name: 'HelloWorld',
     data() {
         return {
-            message: '이 페이지는 ' + new Date() + '에 로드되었습니다.'
+            message: '이 페이지는 ' + new Date() + '에 로드되었습니다.',
+            seen: true
         }
     },
     watch: {
