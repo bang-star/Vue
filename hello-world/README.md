@@ -72,3 +72,33 @@ Vue.component('todo-item', {
 ```
 
 대규모 애플리케이션에서는 개발을 보다 쉽게 관리할 수 있도록 전체 앱을 컴포넌트로 나누는 것이 필수적입니다.
+
+
+<br />
+
+## Vue 개념 돌아보기
+
+### Vue 인스턴스 생성
+
+모든 Vue 앱은 Vue 함수로 새 Vue 인스턴스를 만드는 것부터 시작한다.
+
+엄격히 MVVM 패턴과 관련이 없지만 Vue의 디자인은 부분적으로 그것에 영감을 받았습니다.
+
+모델-뷰-뷰 모델(Model-View-ViewModel, MVVM)은 하나의 소프트웨어 아키텍처 패턴으로 GUI 코드로 구현하는 그래픽 사용자 인터페이스(뷰)의 개발을 비즈니스 로직 또는 백엔드 로직(모델)로부터 분리시켜서 뷰가 어느 특정한 모델 플랫폼에 종속되지 않도록 해준다.
+
+- 참고: [MVVM](https://ko.wikipedia.org/wiki/%EB%AA%A8%EB%8D%B8-%EB%B7%B0-%EB%B7%B0%EB%AA%A8%EB%8D%B8)
+
+<br />
+
+Vue 인스턴스를 참조하기 위해 종종 변수 vm(ViewModel의 약자)을 사용합니다.
+
+Vue 인스턴스를 생성할 때는 options 객체를 전달해야 한다. 전체 옵션 목록은 API reference에서 확인할 수 있다.
+
+1. data : Object | Function, Vue  인스턴스의 데이터 객체
+2. props : Array<String> | Object, 부모 컴포넌트 데이터 메타
+3. propsData: {[key: String]: any}, 인스턴스 생성하는 동안 속성 전달
+4. computed: { [key: String]: Function}, Vue 인스턴스의 계산된 속성
+5. methods: {[key: String]: Function}, Vue 인스턴스의 method
+6. watch: {[key: String] String | Function | Object | Array }, 키가 표시되는 표현식이고 값이 콜백
+
+- 참고: [Vue API Reference](https://vuejs.org/api/)
