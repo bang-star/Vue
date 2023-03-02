@@ -1,24 +1,38 @@
-# hello-world
+# Vue 기본문법
 
-## Project setup
-```
-npm install
-```
+현재 회사에서 개발을 위한 기술스택으로 Vue가 필요하게 되어 공부를 시작하게 되었다.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Computed와 Watch
 
-### Compiles and minifies for production
-```
-npm run build
-```
+### Computed 속성
 
-### Lints and fixes files
-```
-npm run lint
-```
+Computed는 계산된 속성 대신 동일한 함수를 메서드로 정의할 수 있습니다.
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+메서드와 Computed는 최종 결과에 대한 접근 방식은 실제로 정확히 동일합니다.
+
+차이점은 계산된 속성이 반응 종속성에 따라 캐시된다는 것이다.
+
+Computed는 캐싱을 하고, method는 캐싱을 하지 않는다.
+
+### watch 속성
+
+대부분의 경우 computed 속성이 더 적합하지만 사용자 지정 감시자가 필요한 경우가 있습니다. 이것이 Vue가 옵션을 통해 데이터 변경에 반응하는 보다 일반적인 방법을 제공하는 이유입니다 watch 는 데이터 변경에 대한 응답으로 비동기식 또는 비용이 많이 드는 작업을 수행하려는 경우에 가장 유용합니다.
+
+## v-if와 v-show
+
+v-if is “real” conditional rendering because it ensures that event listeners and child components inside the conditional block are properly destroyed and re-created during toggles.
+
+v-if is also lazy: if the condition is false on initial render, it will not do anything - the conditional block won’t be rendered until the condition becomes true for the first time.
+
+In comparison, v-show is much simpler - the element is always rendered regardless of initial condition, with CSS-based toggling.
+
+Generally speaking, v-if has higher toggle costs while v-show has higher initial render costs. So prefer v-show if you need to toggle something very often, and prefer v-if if the condition is unlikely to change at runtime.₩
+
+
+ - [Vue 공식 문서])(https://vuejs.org/)
+
+## 선언적 렌더링
+
+Vue.js의 핵심에는 간단한 템플릿 구문을 사용하여 DOM에서 데이터를 선언적으로 렌더링할 수 있는 시스템이 있다.
+
+v-bind 속성은 디렉티브이라고 합니다. 디렉티브는 Vue에서 제공하는 특수 속성임을 나타내는 v-접두어가 붙어있으며 사용자가 짐작할 수 있듯 렌더링 된 DOM에 특수한 반응형 동작을 합니다. 기본적으로 "이 요소의 title 속성을 Vue 인스턴스의 message 속성으로 최신 상태를 유지 합니다."
