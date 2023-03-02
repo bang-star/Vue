@@ -102,3 +102,82 @@ Vue 인스턴스를 생성할 때는 options 객체를 전달해야 한다. 전�
 6. watch: {[key: String] String | Function | Object | Array }, 키가 표시되는 표현식이고 값이 콜백
 
 - 참고: [Vue API Reference](https://vuejs.org/api/)
+
+<br />
+
+## 데이터와 메소드
+
+Vue 인스턴스가 생성될 때 data 객체에 있는 모든 속성이 Vue의 반응형 시스템에 추가된다. 각 속성값이 변경될 때 뷰가 "반응"하여 새로운 값과 일치하도록 업데이트된다.
+
+데이터가 변경되면 화면은 다시 렌더링된다. 유념할 점은 data 에 있는 속성들은 인스턴스가 생성될 때 존재한 것들만 반응형이다.
+
+```JS
+// 데이터 객체
+var data = { a: 1 }
+
+// Vue 인스턴스에 데이터 객체를 추가
+var vm = new Vue({
+    data : data
+})
+
+// 인스턴스에 있는 속성은 원본 데이터에 있는 값을 반환
+vm.a === data.a     // => ture
+
+// 인스턴스에 있는 속성값을 변경하면 원본 데이터에도 영향을 미칩니다.
+vm.a = 2
+data.a = 2
+
+data.a = 3
+vm.a = 3
+```
+
+보통 Vue Component 파일 내에서 아래와 같이 data를 선언하고 초기화 합니다.
+
+```JS
+data: {
+    newTodoText: '',
+    visitCount: 0,
+    hideCompletedTodos: false,
+    todos: [],
+    error: null
+}
+```
+
+기존 속성이 변경되는 것을 막아 반응형 시스템이 추적할 수 없도록 Object.freeze()를 사용할 수 있습니다. 값이 변경되지 않음을 의미합니다.
+
+```JS
+var obj = {
+    foo: 'bar'
+}
+
+Object.freeze(obj)
+
+new Vue({
+    el: '#app',
+    data: obj
+})
+
+<div id="app">
+    <p>{{foo}}</p>
+    <!-- obj.foo는 더이상 변하지 않습니다! -->
+    <button v-on:click="foo= 'baz'">Change it</button>
+</div>
+```
+
+Vue 인스턴스는 데이터 속성 이외에도 유용한 인스턴스 속성 및 메서드를 제공한다. 다른 사용자 정의 속성과 구분하기 위해 $ 접두어를 붙인다.
+
+```JS
+var data = { a: 1 }
+var vm = new Vue({
+    el: '#example',
+    data: data
+})
+
+vm.$data === data
+vm.$el === document.getElementById('example')
+
+// $watch는 인스턴스 메서드입니다.
+vm.$watch('a', function(newVal, oldVal) {
+    // `vm.a`가 변경되면 호출된다.
+})
+```

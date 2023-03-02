@@ -1,11 +1,7 @@
 <template>
     <div id="app">
         <img alt="Vue logo" src="./assets/logo.png">
-        <HelloWorld 
-            v-for="todoItem in todos"
-            v-bind:key="todoItem.id"
-            v-bind:todo="todoItem"
-        />
+        <HelloWorld />
     </div>
 </template>
 
@@ -19,11 +15,7 @@ export default {
     },
     data() {
         return {
-            todos: [
-                { id: 0, name: 'Apple' },
-                { id: 1, name: 'Samsung' },
-                { id: 2, name: 'LG' },
-            ]
+
         }
     }
 }
