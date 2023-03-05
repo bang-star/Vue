@@ -181,3 +181,25 @@ vm.$watch('a', function(newVal, oldVal) {
     // `vm.a`가 변경되면 호출된다.
 })
 ```
+
+<br />
+
+## 인스턴스 라이프사이클 훅
+
+각 Vue 인스턴스는 생성될 때 일련의 초기화 단계를 거칩니다. 예를 들어, 데이터 관찰 설정이 필요한 경우, 템플릿을 컴파일하는 경우, 인스턴스를 DOM에 마운트하는 경우, 그리고 데이터가 변경되어 DOM을 업데이트하는 경우가 있습니다. 그 과정에서 사용자 정의 로직을 실행할 수 있는 `라이프사이클 훅`도 호출됩니다.
+
+인스턴스 라이프사이클의 여러 단계에서 호출될 다른 훅도 있습니다. 그 예로 mounted, updated 및 destoryed가 있습니다. 모든 라이프사이클 훅은 this 컨텍스트가 호출하는 Vue 인스턴스를 가리키며 호출됩니다.
+
+Vue 세계에서 `컨트롤러`의 컨셉이 어디에 있는지 궁금할 수 있습니다. 정답은 Vue에는 컨틀롤러가 없습니다. 컴포넌트의 사용자 지정 로직은 이러한 라이프사이클 훅으로 분할됩니다.
+
+
+### 주의 
+
+> options 속성이나 콜백에 created: () => console.log(this.a) 이나 vm.$watch('a', newVal => this.mymethod()) 와 같은 화살표 함수 사용을 지양하기 바랍니다. 화살표 함수는 this 를 가지지 않기 떄문에 화살표 함수에서의 this는 다른 변수로 취급되거나 렉시컬하게 호출한 변수를 발견할 때까지 부모 스코프에서 해당 변수를 찾습니다. 이 때문에 `Uncaucht TypeError: Cannot read property of undefined` 또는 `Uncaught TypeError: this.myMethod is not a function` 와 같은 오류가 발생하게 됩니다.
+
+
+### 인스턴스 라이프사이클 훅
+
+인스턴스 라이프사이클에 대한 다이어그램입니다.
+
+![image](https://user-images.githubusercontent.com/63120360/222989979-33b24059-a4c3-4701-86f4-df05f1412d58.png)
