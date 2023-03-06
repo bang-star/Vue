@@ -1,31 +1,22 @@
 <template>
     <div>
-        <h1>{{ message }}</h1>
-        <div>{{ rawHtml }}</div>
-        <div v-html="rawHtml"></div>
-        <button>버튼</button>
-        <button v-bind:disabled="isDisabled">버튼</button>
-
-        <p>{{ isDisabled ? 'disabled 상태': 'disabled 상태가 아님.' }}</p>
-        <p>{{ 2 + 1 }}</p>
-
-
-        <a v-bind:[attributeName]="'https://www.naver.com'" target="blank">test</a>
+        <h2>{{ message }}</h2>
+        <h2>{{ reversedmessage }}</h2>
+        
+        <button @click="message = 'Hello Vue World'"></button>
     </div>
 </template>
 
 <script>
 export default {
     name: 'HelloWorld',
-    data() {
-        return {
-            message: 'Hello, Vue World',
-            rawHtml: '<button>버튼</button>',
-            isDisabled: true,
-            attributeName: 'href'
-        }
+    data: {
+        message: '안녕하세요'
     },
-    methods: {
+    computed: {
+        reversedmessage: function() {
+            return this.message.split('').reverse().join('')
+        }
     }
 }
 </script>
