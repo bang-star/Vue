@@ -203,3 +203,121 @@ Vue 세계에서 `컨트롤러`의 컨셉이 어디에 있는지 궁금할 수 �
 인스턴스 라이프사이클에 대한 다이어그램입니다.
 
 ![image](https://user-images.githubusercontent.com/63120360/222989979-33b24059-a4c3-4701-86f4-df05f1412d58.png)
+
+
+<br />
+
+## 템플릿 문법
+
+<hr>
+
+Vue.js는 렌더링 된 DOM을 기본 Vue 인스턴스의 데이터에  선언적으로 바인딩 할 수 있는 HTML 기반 템플릿 구문을 사용합니다. 모든 Vue.js 템플릿은 스펙을 호환하는 브라우저 및 HTML 파서로 구문 분석할 수 있는 유효한 HTML 입니다.
+
+내부적으로 Vue는 템플릿을 가상 DOM 렌더링 함수로 컴파일 합니다. 반응형 시스템과 결합된 Vue는 앱 상태가 변경될 때 최소한으로 DOM을 조작하고 다시 적용할 수 있는 최소한의 컴포넌트를 지능적으로 파악할 수 있습니다.
+
+가상 DOM 개념에 익숙하고 JavaScript의 기본 기능을 선호하는 경우 템플릿 대신 렌더링 함수를 직접 작성할 수 있으며 선택사항으로 JSX를 지원합니다.
+
+### 보간법(Interpolation) : 값 대입
+
+1. 문자열(Text)
+
+데이터 바인딩의 가장 기본 형태는 `Mustache` 구문(이중 중괄호)을 사용한 텍스트 보간입니다.
+
+ - Mustache 태그는 해당 데이터 객체의 속성의 값으로 대체됩니다. 또한 데이터 객체의 속성이 변경될 때마다 갱신됩니다.
+
+ - `v-once 디렉티브`를 사용하여 데이터 변경 시 업데이트 되지 않는 일회성 보간을 수행할 수 있지만, 같은 노드의 바인딩에도 영향을 미친다는 점을 유의해야 합니다.
+
+ 
+        <h1>{{ message }}</h1>
+        <h2 v-once>{{ message }}</h2>
+        <button @click="message = 'Hello Vue World'">Update Button</button>
+
+
+2. 원시 HTML(Raw HTML)
+
+Mustach 태그는 HTML이 아닌 일반 텍스트로 데이터를 해석합니다. 실제 HTML을 출력하려면 v-html 디렉티브를 사용해야 합니다.
+
+```JS
+<p>Using mustaches: {{ rawHtml }}</p>
+<p>Using v-html directive: <span v-html="rawHtml"></span></p>
+<span style="color:red">This should be red.\</span>
+```
+
+span 내용을 rawHTML로 대체됩니다. 이때 데이터 바인딩은 무시됩니다. Vue는 문자열 기반 템플릿 엔진이 아니기 때문에  v-html을 이용해 템플릿을 사용할 수 없습니다. 이와 달리 컴포넌트는 UI 재사용 및 구성을 위한 기본 단위로 사용하는 것을 추천합니다.
+
+> 웹사이트에서 임의의 HTML을 동적으로 렌더링하려면 XSS 취약점으로 쉽게 이어질 수 있으므로 매우 위험할 가능성이 있습니다. 신뢰할 수 있는 콘텐츠에서만 HTML 보간을 사용하고 사용자가 제공한 콘텐츠에서는 절대 사용하면 안됩니다.
+
+
+3. 속성(Attribute)
+
+Mustaches는 HTML 속성에서 사용할 수 없습니다. 대신 v-bind 디렉티를 사용하세요.
+
+```JavaScript
+<div v-bind:id="dynamicId"></div>
+```
+
+boolean 속성을 사용할 떄 단순히 true인 경우 v-bind는 조금 다르게 동작합니다.
+
+```JavaScript
+<button v-bind:disable="isButtonDisabled">Button</button>
+```
+
+isButtonDisabled가 null, undefined 또는 false의 값을 가지면 disabled 속성은 렌더링 된 `<button>` 엘리먼트에 포함되지 않습니다.
+
+
+4. Javascript 표현식 사용
+
+실제로 Vue.js는 모든 데이터 바인딩 내에서 JavaScript 표현식의 모든 기능을 지원합니다.
+
+> 템플릿 표현식은 샌드박스 처리되며 Math와 Date 같은 전역으로 사용 가능한 것에만 접근할 수 있습니다. 템플릿 표현식에서 사용자 정의 전역에 액세스 하면 안된다.
+
+
+- 디렉티브 
+
+    디렉티브는 v-접두사가 있는 특수 속성입니다. 디렉티브 속성 값은 단일 JavaScript 표현식이 된다. 디렉티브의 역할은 표현식의 값이 변경될 때 사이드이펙트를 반응적으로 DOM에 적용하는 것입니다.
+
+
+    1. 전달인자
+
+        일부 디렉티브는 콜론으로 표시되는 `전달인자`를 사용할 수 있습니다. 예를 들어, v-bind 디렉티브는 반응적으로 HTML 속성을 갱신하는데 사용됩니다.
+
+    2. 동적 argument
+
+        2.6.0버전부터 JavaScript 표현식을 대괄호로 묶어 디렉티브의 argument로 사용하는 것도 가능해졌습니다.
+
+        ```JavaScript
+        <!-- 동적 전달인자는 "동적 전달인자의 형식 제약"의 부분에서 후술되는바와 같이, 조금의 제약이 있는 점에 주의해야한다. -->
+        <a v-bind:[attributeName]="url"></a>
+        ```
+
+        여기서 `attributeName`은 JavaScript형식으로 동적 변환되어, 그 변환 결과가 argument의 최종적인 값으로 사용됩니다. 예를 들어 VUe 인스턴스에 `href`라는 값을 가진 attributeName 데이터 속성을 가진 경우, 이 바인딩은 `v-bind:href`와 동등합니다.
+
+        <br />
+
+        2-1. 동적 argument 값의 제약
+
+        동적 argument는 null을 제외하고는 String으로 변환될 것으로 예상합니다. `특수 값인 null`은 명시적으로 바인딩을 제거하는데 사용됩니다. 그외의 경우, String이 아닌 값은 경고를 출력합니다.
+
+        2-2. 동적 argument 형식의 제약
+
+        동적 argument의 형식에는 문자상의 제약이 있습니다. 스페이스와 따옴표 같은 몇몇 문자는 HTML의 속성명으로서 적합하지 않은 문자이기 때문입니다. 이를 피하는 방법으로 스페이스나 따옴표를 포함하지 않는 형식을 사용하거나, 복잡한 표현식을 ` 계산된 속성(Computed)`으로 대체하는 것입니다. 
+
+        `in-DOM 템플릿`을 사용할 때에는(템플릿이 HTML 파일에 직접 쓰여진 경우), 브라우저가 모든 속성명을 소문자로 만드는 관계로 대문자의 사용을 피하는 것이 좋다.
+
+    <br />
+
+    3. 수식어
+
+        수식어는 점으로 표시되는 특수 접미사로, 디렉티브를 특별한 방법으로 바인딩 해야 함을 나타냅니다. 예를 들어, `.prevent` 수식어는 트리거된 이벤트에서 `event.preventDefault()`를 호출하도록 `v-on 디렉티브`에게 알려준다.
+
+
+    <br />
+
+    4. 약어(Shorthands)
+
+        일반적인 HTML과 조금 다르게 보일 수 있는데, 하지만 `:`와 `@`는 속성 이름에 유효한 문자이며 Vue.js를 지원하는 모든 브라우저는 올바르게 구문 분석을 할 수 있습니다. 또한 최종 렌더링 된 마크업에는 나타나지 않습니다.
+
+
+
+
+
