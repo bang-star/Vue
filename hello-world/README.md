@@ -322,9 +322,11 @@ isButtonDisabled가 null, undefined 또는 false의 값을 가지면 disabled �
 
 ## Computed
 
-<hr>
+<br >
 
 ### 계산된 속성(Computed)
+
+<hr />
 
 템플릿 내에 표현식을 넣으면 편리하다. 하지만 간단한 연산일 때만 이용하는 것이 좋습니다. 너무 많은 연산은 템플릿안에서 하면 코드가 비대해지고 유지보수가 어렵습니다.
 
@@ -350,3 +352,139 @@ var vm = new Vue({
 ```
 
 computed 속성으로도 템플릿에서 데이터 바인딩 할 수 있습니다. Vue vm.reversedMessage가 vm.message에 의존하는 것을 알고 있습니다. 따라서 vm.message가 바뀔 때 vm.reversedMessage에 의존하는 바인딩을 모두 업데이트 할 것입니다.
+
+
+<br />
+
+### Computed 속성의 캐싱 vs 메서드
+
+<hr />
+
+1. 계산된 속성(computed)
+
+```JS
+<div id="example">
+    <p>원본 메시지: "{{ message }}"</p>
+    <p>메시지 역순: "{{ reversedMessageC }}"</p>
+    <p>메시지 역순: "{{ reversedMessageM() }}"</p>
+</div>
+
+var vm = new Vue({
+    el: '#example',
+    data: {
+        message: '안녕하세요.'
+    },
+    computed: {
+        reversedMessageC: function() {
+            return this.message.split('').reverse().join('')
+        }
+    },
+    methods: {
+        reversedMessageM: function() {
+            return this.message.split('').reverse().join('')
+        }
+    }
+})
+```
+
+ - computed 속성은 종속 대상에 따라서 저장(caching)이 됨
+ - computed 속성은 해당 속성이 종속된 대상이 변경될 때만 함수를 실행
+ - 즉, message가 변경되지 않는 한, computed 속성인 reversedMessage를 여러 번 요청해도 계산을 다시하지 않고 계산되어 있던 결과를 즉시 반환한다.
+
+<br />
+
+2. 메소드
+
+ - 메소드를 호출하면 렌더링을 다시 할 때마다 항상 함수를 실행한다.
+
+
+<br />
+
+### 계산된 속성(Computed) - Getter and Setter
+
+Computed 속성은 기본적으로 getter 함수만 가지고 있지만, 필요한 경우 setter 함수를 만들어 사용할 수 있다.
+
+vm.fullName = 'John Doe'를 실행하면 설정자가 호출되고 vm.firstName과 vm.lastName이 그에 따라 업데이트 된다.
+
+```JS
+computed: {
+    fullname: {
+        get: function() {
+            return this.firstName + ' ' + this.lastName
+        },
+        set: function(newVal) {
+            var names = newValue.split(' ')
+            this.firstName = names[0]
+            this.lastName = names[names.length-1]
+        }
+    }
+}
+```
+
+ - [Vue API Docs](https://v2.vuejs.org/v2/guide/computed.html#Computed-Setter)
+
+<br />
+
+## Watch
+
+<hr />
+
+### 감시자(Watch)
+
+대부분의 경우 computed 속성이 더 적합하지만 사용자가 만든 감시자(watch)가 필요한 경우가 있다. 그래서 Vue는 watch 옵션을 통해 데이터 변경에 반응하는 보다 일반적인 방법을 제공한다. 이는 데이터 변경에 대한 응답으로 비동기식 또는 시간이 많이 소요되는 조작을 수행하려는 경우에 가장 유용하다.
+
+```JS
+<!-- Since there is already a rich ecosystem of ajax libraries    -->
+<!-- and collections of general-purpose utility methods, Vue core -->
+<!-- is able to remain small by not reinventing them. This also   -->
+<!-- gives you the freedom to use what you're familiar with.      -->
+<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+<script>
+var watchExampleVM = new Vue({
+  el: '#watch-example',
+  data: {
+    question: '',
+    answer: 'I cannot give you an answer until you ask a question!'
+  },
+  watch: {
+    // whenever question changes, this function will run
+    question: function (newQuestion, oldQuestion) {
+      this.answer = 'Waiting for you to stop typing...'
+      this.debouncedGetAnswer()
+    }
+  },
+  created: function () {
+    // _.debounce is a function provided by lodash to limit how
+    // often a particularly expensive operation can be run.
+    // In this case, we want to limit how often we access
+    // yesno.wtf/api, waiting until the user has completely
+    // finished typing before making the ajax request. To learn
+    // more about the _.debounce function (and its cousin
+    // _.throttle), visit: https://lodash.com/docs#debounce
+    this.debouncedGetAnswer = _.debounce(this.getAnswer, 500)
+  },
+  methods: {
+    getAnswer: function () {
+      if (this.question.indexOf('?') === -1) {
+        this.answer = 'Questions usually contain a question mark. ;-)'
+        return
+      }
+      this.answer = 'Thinking...'
+      var vm = this
+      axios.get('https://yesno.wtf/api')
+        .then(function (response) {
+          vm.answer = _.capitalize(response.data.answer)
+        })
+        .catch(function (error) {
+          vm.answer = 'Error! Could not reach the API. ' + error
+        })
+    }
+  }
+})
+</script>
+```
+
+watch 옵션을 사용하면 비동기 연산 (API 엑세스)를 수행하고, 우리가 그 연산을 얼마나 자주 수행하는지 제한하고, 최종 읍답을 얻을 때까지 중간 상태를 설정할 수 있다.
+
+- [Vue Watcher](https://v2.vuejs.org/v2/guide/computed.html)
