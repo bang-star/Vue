@@ -1,7 +1,8 @@
 <template>
     <div>
         <h2>{{ message }}</h2>
-        <h2>{{ reversedmessage }}</h2>
+        <h2>{{ reversedmessage1 }}</h2>
+        <h2>{{ reversedmessage2() }}</h2>
         
         <button @click="message = 'Hello Vue World'"></button>
     </div>
@@ -10,11 +11,18 @@
 <script>
 export default {
     name: 'HelloWorld',
-    data: {
-        message: '안녕하세요'
+    data() {
+        return{
+            message: '안녕하세요'
+        }
     },
     computed: {
-        reversedmessage: function() {
+        reversedmessage1: function() {
+            return this.message.split('').reverse().join('')
+        }
+    },
+    methods: {
+        reversedmessage2: function(){
             return this.message.split('').reverse().join('')
         }
     }
