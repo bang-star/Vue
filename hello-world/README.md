@@ -396,3 +396,29 @@ var vm = new Vue({
 2. 메소드
 
  - 메소드를 호출하면 렌더링을 다시 할 때마다 항상 함수를 실행한다.
+
+
+<br />
+
+### 계산된 속성(Computed) - Getter and Setter
+
+Computed 속성은 기본적으로 getter 함수만 가지고 있지만, 필요한 경우 setter 함수를 만들어 사용할 수 있다.
+
+vm.fullName = 'John Doe'를 실행하면 설정자가 호출되고 vm.firstName과 vm.lastName이 그에 따라 업데이트 된다.
+
+```JS
+computed: {
+    fullname: {
+        get: function() {
+            return this.firstName + ' ' + this.lastName
+        },
+        set: function(newVal) {
+            var names = newValue.split(' ')
+            this.firstName = names[0]
+            this.lastName = names[names.length-1]
+        }
+    }
+}
+```
+
+ - [Vue API Docs](https://v2.vuejs.org/v2/guide/computed.html#Computed-Setter)
