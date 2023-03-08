@@ -1,30 +1,22 @@
 <template>
     <div>
-        <h1>{{ message }}</h1>
+        <h2>{{ message }}</h2>
+        <h2>{{ reversedmessage }}</h2>
+        
+        <button @click="message = 'Hello Vue World'"></button>
     </div>
 </template>
 
 <script>
 export default {
     name: 'HelloWorld',
-    data() {
-        return {
-            message: 'Hello, Vue World',
+    data: {
+        message: '안녕하세요'
+    },
+    computed: {
+        reversedmessage: function() {
+            return this.message.split('').reverse().join('')
         }
-    },
-    created: function () {
-        console.log('created')
-        console.log(this.message)
-    },
-    mounted: function () {
-        console.log('mounted')
-        console.log(this.message)
-    },
-    destroyed: function() {
-        console.log('destroyed')
-        console.log(this.message)
-    },
-    methods: {
     }
 }
 </script>
