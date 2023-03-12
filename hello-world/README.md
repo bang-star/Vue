@@ -562,8 +562,9 @@ var vm = new Vue({
 
 - 표현식은 문자열 이외에 객체(Object) 또는 배열(Array)을 이용할 수 있습니다.
 
+### 클래스 바인딩
 
-### HTML 클래스 바인딩하기(객체 구문)
+#### HTML 클래스 바인딩하기(객체 구문)
 
 클래스를 동적으로 토글하기 위해 v-bind:class에 객체를 전달할 수 있습니다.
 
@@ -618,7 +619,7 @@ computed: {
 }
 ```
 
-### HTML 클래스 바인딩하기(배열 구문)
+#### HTML 클래스 바인딩하기(배열 구문)
 
  - 배열을 v-bind:class에 전달하여 클래스 목록을 지정할 수 있습니다.
 
@@ -647,7 +648,7 @@ computed: {
 <div v-bind:class="[{active : isActive}, errorClass]"></div>
 ```
 
-### HTML 클래스 바인딩하기(컴포넌트와 함께 사용하는 방법)
+#### HTML 클래스 바인딩하기(컴포넌트와 함께 사용하는 방법)
 
 사용자 정의 컴포넌트로 class 속성을 사용하면, 클래스가 컴포넌트의 루트 엘리먼트에 추가됩니다. 이 엘리먼트는 기존 클래스는 덮어쓰지 않습니다.
 
@@ -663,4 +664,33 @@ Vue.component('my-component', {
 <my-component v-bind:class="{ active : isActive }"></my-component>
 
 <p class="foo bar active">Hi</p>
+```
+<br />
+
+### 스타일 바인딩
+
+#### 인라인 스타일 바인딩하기(객체 구문)
+
+v-bind:style 객체 구문은 매우 직설적입니다. 거의 CSS처럼 보이지만 JavaScript 객체입니다. 속성 이름에 camelCase와 kebab-case(따옴표를 함께 사용해야 합니다)를 사용할 수 있습니다.
+
+```JavaScript
+<div v-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }"></div>
+
+data {
+    activeColor: 'red',
+    fontSize: 30
+}
+```
+
+<br />
+
+```JavaScript
+<div v-bind:style="styleObject"></div>
+
+data {
+    styleObject : {
+        color: 'red',
+        fontSize: '13px'
+    }
+}
 ```
