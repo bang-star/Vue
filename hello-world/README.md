@@ -29,7 +29,7 @@ In comparison, v-show is much simpler - the element is always rendered regardles
 Generally speaking, v-if has higher toggle costs while v-show has higher initial render costs. So prefer v-show if you need to toggle something very often, and prefer v-if if the condition is unlikely to change at runtime.₩
 
 
- - [Vue 공식 문서])(https://vuejs.org/)
+ - [Vue 공식 문서](https://vuejs.org/)
 
 ## 선언적 렌더링
 
@@ -488,3 +488,62 @@ var watchExampleVM = new Vue({
 watch 옵션을 사용하면 비동기 연산 (API 엑세스)를 수행하고, 우리가 그 연산을 얼마나 자주 수행하는지 제한하고, 최종 읍답을 얻을 때까지 중간 상태를 설정할 수 있다.
 
 - [Vue Watcher](https://v2.vuejs.org/v2/guide/computed.html)
+
+
+<br />
+
+### Computed vs Watch
+
+<hr>
+
+#### Computed 
+
+ - 계산해야 하는 목표 데이터를 정의하는 방식으로 소프트웨어 공학에서 이야기하는 `선언형 프로그래밍` ㅂ아식.
+ - 다른 데이터 기반으로 변경할 필요가 있는 데이터가 있는 경우, `watch`보다 `computed` 속성을 사용하는 것이 더 좋다.
+
+ - [선언형 프로그래밍](https://ko.wikipedia.org/wiki/%EC%84%A0%EC%96%B8%ED%98%95_%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D)
+
+#### Watch
+
+ - 감시할 데이터를 지정하고 그 데이터가 바뀌면 이런 함수를 실행하라는 방식으로 소프트웨어 공학에서 이야기하는 `명령형 프로그래밍` 방식.
+
+ - [명령형 프로그래밍](https://ko.wikipedia.org/wiki/%EB%AA%85%EB%A0%B9%ED%98%95_%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D)
+
+
+```JS
+<div id="demo">{{ fullName }}</div>
+
+// Computed
+var vm = new Vue({
+    el: '#demo',
+    data: {
+        firstName: 'Foo',
+        lastName: 'Bar'
+    },
+    computed: {
+        fullName: function() {
+            return this.firstName + ' ' + this.lastName
+        }
+    }
+})
+
+// Watch
+var vm = new Vue({
+    el: '#demo',
+    data: {
+        firstName: 'Foo',
+        lastName: 'Bar',
+        fullName: 'Foo Bar'
+    },
+    computed: {
+        firstName: function(val) {
+            this.fullName = val + ' ' + this.lastName
+        },
+        lastName: function(val) {
+            this.fullName = this.firstName + ' ' + val
+        },
+    }
+})
+```
+
+
