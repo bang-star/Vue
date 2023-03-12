@@ -546,4 +546,103 @@ var vm = new Vue({
 })
 ```
 
+<br />
 
+## 클래스와 스타일 바인딩
+
+### 클래스와 스타일 바인딩(Class and Style Bindings)
+
+- 데이터 바인딩은 엘리먼트의 클래스 목록과 인라인 스타일(inline style)을 조작하기 위해 일반적으로 사용됩니다.
+
+- 이 두 속성은 v-bind를 사용하여 처리할 수 있습니다.
+
+- 문자열 연결에 간섭하는 것은 짜증나는 일이며 오류가 발생하기 쉽습니다.
+
+- Vue는 class와 style에 v-bind를 사용할 때 특별히 향상된 기능을 제공합니다.
+
+- 표현식은 문자열 이외에 객체(Object) 또는 배열(Array)을 이용할 수 있습니다.
+
+
+### HTML 클래스 바인딩하기(객체 구문)
+
+클래스를 동적으로 토글하기 위해 v-bind:class에 객체를 전달할 수 있습니다.
+
+```JS
+// active 클래스의 존재 여부가 데이터 속성 isActive의 Boolean 값에 의해 결정되는 것을 의미합니다.
+<div v-bind:class="{ active: isActive }"></div>
+
+// 객체에 Key가 더 있으면 여러 클래스를 토글할 수 있습니다. 또한 v-bind:class 디렉티브는 일반 class 속성과 공존할 수 있습니다.
+<div class="static" v-bind:class="{ active: isActive, 'text-danger': hasError }"></div>
+
+data: {
+    isActive: true,
+    hasError: false
+}
+
+<div class="static active"></div>
+```
+
+<br />
+
+- 바인딩 객체가 인라인일 필요는 없습니다.
+
+```JS
+<div v-bind:class="classObject"></div>
+
+data: {
+    classObject: {
+        active: true,
+        'text-danger': false
+    }
+}
+```
+
+<br />
+
+- 객체가 Computed 속성일 수 있습니다.
+
+```JS
+<div v-bind:class="classObject"></div>
+
+data: {
+    isActive: true,
+    error: null
+},
+computed: {
+    classObject: function() {
+        return {
+            active: this.isActive && !this.error,
+            'text-danger': this.error && this.error.type === 'fatal'
+        }
+    }
+}
+```
+
+### HTML 클래스 바인딩하기(배열 구문)
+
+ - 배열을 v-bind:class에 전달하여 클래스 목록을 지정할 수 있습니다.
+
+```JS
+<div v-bind:class="[activeClass, errorClass]"></div>
+
+data: {
+    activeClass: 'active',
+    errorClass: 'text-danger'
+},
+computed: {
+    classObject: function() {
+        return {
+            active: this.isActive && !this.error,
+            'text-danger': this.error && this.error.type === 'fatal'
+        }
+    }
+}
+```
+
+ - 항상 errorClass를 적용하고 isActive가 ture일 때만 activeClass를 적용합니다.
+
+```JS
+<div v-bind:class="[isActive ? activeclass : '', errorClass]"></div>
+
+<div v-bind:class="[{active : isActive}, errorClass]"></div>
+```
