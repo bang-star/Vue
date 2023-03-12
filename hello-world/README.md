@@ -646,3 +646,21 @@ computed: {
 
 <div v-bind:class="[{active : isActive}, errorClass]"></div>
 ```
+
+### HTML 클래스 바인딩하기(컴포넌트와 함께 사용하는 방법)
+
+사용자 정의 컴포넌트로 class 속성을 사용하면, 클래스가 컴포넌트의 루트 엘리먼트에 추가됩니다. 이 엘리먼트는 기존 클래스는 덮어쓰지 않습니다.
+
+```Javascript
+Vue.component('my-component', {
+    template: '<p class="foo bar">Hi</p>'
+})
+
+<my-component class="baz boo"></my-component>
+
+<p class="foo bar baz boo">Hi</p>
+
+<my-component v-bind:class="{ active : isActive }"></my-component>
+
+<p class="foo bar active">Hi</p>
+```
