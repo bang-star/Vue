@@ -5,6 +5,8 @@
         <div v-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }">South</div>
         <!-- 객체 -->
         <div v-bind:style="styleObject">Korea</div>
+        <!-- 다중 값 제공 -->
+        <div v-bind:style="{ display: ['-webkit-box', '-ms-flexbox', 'flex']}">Best</div>
     </div>
 </template>
 

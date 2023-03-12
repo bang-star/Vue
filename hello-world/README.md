@@ -694,3 +694,19 @@ data {
     }
 }
 ```
+
+#### 인라인 스타일 바인딩하기(배열 구문)
+
+v-bind:style에 대한 배열 구문은 같은 스타일의 엘리먼트에 여러 개의 스타일 객체를 사용할 수 있게 합니다.
+
+```JavaScript
+<div v-bind:style="[baseStyle, overridingStyles]"></div>
+```
+
+#### 인라인 스타일 바인딩하기(다중 값 제공)
+
+브라우저가 지원하는 배열의 마지막 값만 렌더링합니다. 이 예제에서는 flexBox의 접두어가 붙지 않은 버전을 지원하는 브라우저에 대해 display: flex를 렌더링합니다.
+
+```JavaScript
+<div v-bind:style="{ display: ['-webkit-box', '-ms-flexbox', 'flex']}"></div>
+```
