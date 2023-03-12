@@ -1,57 +1,49 @@
 <template>
     <div>
         <h1>Welcome to Vue World</h1>
-
-        <p>
-            Ask a yes/no question:
-            <input v-model="question">
-        </p>
-        <p>{{ answer }}</p>
+        <!-- 객체에 Key가 더 있으면 여러 클래스를 토글할 수 있습니다. 또한 v-bind:class 디렉티브는 일반 class 속성과 공존할 수 있습니다. -->
+        <div 
+            class="static" 
+            v-bind:class="{ active: isActive, 'text-danger': hasError }">
+            <h2>Hello Daniel</h2>
+        </div>
+        <!-- 바인딩 객체가 인라인일 필요는 없습니다. -->
+        <div 
+            class="static" 
+            v-bind:class="classObject">
+            <h2>Hello Daniel</h2>
+        </div>
+        <!-- 객체가 Computed 속성일 수 있습니다. -->
+        <div 
+            class="static" 
+            v-bind:class="classObject2">
+            <h2>Hello Daniel</h2>
+        </div>
     </div>
 </template>
 
-
 <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+
 <script>
-export default{
+export default {
     name: 'HelloWorld',
     data() {
         return {
-                question: '',
-                answer: 'I cannot give you an answer until you ask a question!'
+            isActive: true,
+            hasError: false,
+            error: null,
+            classObject: {
+                active: true,
+                'text-danger': false
             }
-    },
-    watch: {
-        question: function (newQuestion, oldQuestion) {
-            this.answer = 'Waiting for you to stop typing...'
-            this.debouncedGetAnswer()
         }
     },
-    created: function () {
-        // _.debounce is a function provided by lodash to limit how
-        // often a particularly expensive operation can be run.
-        // In this case, we want to limit how often we access
-        // yesno.wtf/api, waiting until the user has completely
-        // finished typing before making the ajax request. To learn
-        // more about the _.debounce function (and its cousin
-        // _.throttle), visit: https://lodash.com/docs#debounce
-        this.debouncedGetAnswer = _.debounce(this.getAnswer, 500)
-    },
-    methods: {
-        getAnswer: function () {
-        if (this.question.indexOf('?') === -1) {
-            this.answer = 'Questions usually contain a question mark. ;-)'
-            return
-        }
-        this.answer = 'Thinking...'
-        var vm = this
-        axios.get('https://yesno.wtf/api')
-            .then(function (response) {
-                vm.answer = _.capitalize(response.data.answer)
-            })
-            .catch(function (error) {
-                vm.answer = 'Error! Could not reach the API. ' + error
-            })
+    computed: {
+        classObject2() {
+            return {
+                active: this.isActive && !this.error,
+                'text-danger': this.error && this.error.type === 'fatal'
+            }
         }
     }
 }
