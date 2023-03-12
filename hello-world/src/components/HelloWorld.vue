@@ -1,22 +1,19 @@
 <template>
     <div>
         <h1>Welcome to Vue World</h1>
-        <!-- 객체에 Key가 더 있으면 여러 클래스를 토글할 수 있습니다. 또한 v-bind:class 디렉티브는 일반 class 속성과 공존할 수 있습니다. -->
-        <div 
-            class="static" 
-            v-bind:class="{ active: isActive, 'text-danger': hasError }">
+        <!-- 배열을 v-bind:class에 전달하여 클래스 목록을 지정할 수 있습니다. -->
+        <div
+            class="test2"
+            v-bind:class="[activeClass, errorClass]">
             <h2>Hello Daniel</h2>
         </div>
-        <!-- 바인딩 객체가 인라인일 필요는 없습니다. -->
+        <!-- [삼항연산자] 항상 errorClass를 적용하고 isActive가 ture일 때만 activeClass를 적용합니다. -->
         <div 
-            class="static" 
-            v-bind:class="classObject">
+            v-bind:class="[isActive ? activeclass : '', errorClass]">
             <h2>Hello Daniel</h2>
         </div>
-        <!-- 객체가 Computed 속성일 수 있습니다. -->
         <div 
-            class="static" 
-            v-bind:class="classObject2">
+            v-bind:class="[{active : isActive}, errorClass]">
             <h2>Hello Daniel</h2>
         </div>
     </div>
@@ -35,7 +32,9 @@ export default {
             classObject: {
                 active: true,
                 'text-danger': false
-            }
+            },
+            activeClass: 'active',
+            errorClass: 'text-danger'
         }
     },
     computed: {
