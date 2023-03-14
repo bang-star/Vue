@@ -1,12 +1,30 @@
 <template>
     <div>
         <h1>Welcome to Vue World</h1>
-        <!-- 인라인 -->
-        <div v-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }">South</div>
-        <!-- 객체 -->
-        <div v-bind:style="styleObject">Korea</div>
-        <!-- 다중 값 제공 -->
-        <div v-bind:style="{ display: ['-webkit-box', '-ms-flexbox', 'flex']}">Best</div>
+        <h2 v-if="awesome">Awesome</h2>
+        <h2 v-else>Nope</h2>
+        <template v-if="awesome">
+            <h2>Korean</h2>
+            <h2>No1</h2>
+            <h2>Developer</h2>
+        </template>
+        <template>
+            <h2>Today</h2>
+            <h2>is</h2>
+            <h2>Monday</h2>
+        </template>
+        <div v-if="type==='A'">
+            A
+        </div>
+        <div v-else-if="type==='B'">
+            B
+        </div>
+        <div v-else-if="type==='C'">
+            C
+        </div>
+        <div v-else>
+            Not A/B/C
+        </div>
     </div>
 </template>
 
@@ -17,12 +35,8 @@ export default {
     name: 'HelloWorld',
     data() {
         return {
-            activeColor: 'red',
-            fontSize: '30',
-            styleObject: {
-                color: 'red',
-                fontSize: '20px',
-            }
+            awesome: true,
+            type: 'A'
         }
     },
     computed: {
