@@ -710,3 +710,32 @@ v-bind:style에 대한 배열 구문은 같은 스타일의 엘리먼트에 여�
 ```JavaScript
 <div v-bind:style="{ display: ['-webkit-box', '-ms-flexbox', 'flex']}"></div>
 ```
+
+<br />
+
+## 조건부 렌더링
+
+### v-if
+
+v-if 디렉티브는 조건에 따라 블록을 렌더링하기 위해 사용됩니다. 디렉티브의 표현식이 true 값을 반환할 때만 렌더링 됩니다.
+
+```html
+<h1 v-if="awesome">Vue is awesome!</h1>
+```
+
+v-else와 함께 'else 블록'을 추가하는 것도 가능하다.
+
+
+### <template>에 v-if을 갖는 조건부 그룹 만들기
+
+v-if는 디렉티브이기 때문에 하나의 엘리먼트에 추가해야합니다. 하지만 하나 이상의 엘리먼트를 트랜지션하려면 어떻게 해야할 까요?
+
+이 경우 보이지 않는 래퍼 역할을 하는 `<template>` 엘리먼트에 v-if를 사용할 수 있습니다. 최종 렌더링 결과에는 `<template>` 엘리먼트가 포함되지 않습니다.
+
+### v-else
+
+v-else 엘리먼트는 v-if 엘리먼트 또는 v-else-if 엘리먼트 바로 뒤에 있어야 합니다. 그렇지 않으면 인식할 수 없습니다.
+
+### v-else-if
+
+v-else-if는 이름에서 알 수 있듯, v-if에 대한 `else if 블록` 역할을 합니다. 또한 여러 개를 사용할 수 있습니다. `v-else`와 마찬가지로, `v-else-if` 엘리먼트는 `v-if` 또는 `v-else if` 엘리먼트 바로 뒤에 와야 합니다.
