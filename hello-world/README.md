@@ -739,3 +739,35 @@ v-else 엘리먼트는 v-if 엘리먼트 또는 v-else-if 엘리먼트 바로 �
 ### v-else-if
 
 v-else-if는 이름에서 알 수 있듯, v-if에 대한 `else if 블록` 역할을 합니다. 또한 여러 개를 사용할 수 있습니다. `v-else`와 마찬가지로, `v-else-if` 엘리먼트는 `v-if` 또는 `v-else if` 엘리먼트 바로 뒤에 와야 합니다.
+
+### key를 이용한 재사용 가능한 엘리먼트 제어
+
+Vue는 가능한 한 효율적으로 엘리먼트를 렌더링하려고 시도하며 종종 처음부터 렌더링을 하지 않고 다시 사용합니다. Vue를 매우 빠르게 만드는데 도움이 되는 것이외에 몇가지 유용한 이점이 있습니다. 예를 들어 사용자가 여러 로그인 유형을 트랜지션할 수 있도록 허용하는 경우입니다.
+
+```JS
+<template v-if="loginType === 'username'">
+    <label>사용자 이름</label>
+    <input placeholder="사용자 이름을 입력하세요.">
+</template>
+<template v-else>
+    <label>이메일</label>
+    <input placeholder="이메일 주소를 입력하세요.">
+</template>
+```
+
+이 코드에서는 loginType을 바꾸어도 사용자가 이미 입력한 내용은 지워지지 않습니다. 두 템플릿 모두 같은 요소를 사용하므로 `<input>`은 대체되지 않고 단지 placeHolder만 변경됩니다.
+
+```JS
+<template v-if="loginType === 'username'">
+    <label>사용자 이름</label>
+    <input placeholder="사용자 이름을 입력하세요." key='username-input'>
+</template>
+<template v-else>
+    <label>이메일</label>
+    <input placeholder="이메일 주소를 입력하세요." key='email-input'>
+</template>
+```
+
+유일한 값으로 key 속성을 추가하였다. `<label>`엘리먼트는 key 속성이 없기 때문에 여전히 효율적으로 재사용됩니다.
+
+
