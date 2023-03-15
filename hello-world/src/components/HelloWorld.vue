@@ -1,21 +1,16 @@
 <template>
     <div>
         <h1>Welcome to Vue World</h1>
-        <div id="example-1">
-            <ul>
-                <li v-for="(item, index) in items" :key="item.message + '-' + index">
-                    {{ item.message }}
-                    {{ parentItem +''+ index +'-'+ item.message }}
-                </li>
-            </ul>
-        </div>
-        <div id="example-2">
-            <ul>
-                <li v-for="item of items" v-bind:key="item.message">
-                    {{ item.message }}
-                </li>
-            </ul>
-        </div>
+        <ul id='example-1'>
+            <li v-for="(value, name) in object" v-bind:key="value">
+                {{ value }} : {{ name }}
+            </li>
+        </ul>
+        <ul id='example-2'>
+            <li v-for="(value, name, index) in object" v-bind:key="value">
+                {{ value }} : {{ name }} : {{ index }}
+            </li>
+        </ul>
     </div>
 </template>
 
@@ -26,12 +21,11 @@ export default {
     name: 'HelloWorld',
     data() {
         return {
-            parentItem: 'Parent',
-            items: [
-                { message: 'Foo' },
-                { message: 'Bar' },
-                { message: 'Baz' },
-            ]
+            object: {
+                title : 'title',
+                author: 'Daniel',
+                publishedAt: '2016-04-10'
+            }
         }
     },
     methods: {
