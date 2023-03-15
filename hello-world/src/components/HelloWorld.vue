@@ -1,12 +1,20 @@
 <template>
     <div>
         <h1>Welcome to Vue World</h1>
-
-        <div v-show="isShow">
-            I'm Daniel. It is div for `v-show`
+        <div id="example-1">
+            <ul>
+                <li v-for="(item, index) in items" :key="item.message + '-' + index">
+                    {{ item.message }}
+                    {{ parentItem +''+ index +'-'+ item.message }}
+                </li>
+            </ul>
         </div>
-        <div>
-            <button @click="toggle">Toggle</button>
+        <div id="example-2">
+            <ul>
+                <li v-for="item of items" v-bind:key="item.message">
+                    {{ item.message }}
+                </li>
+            </ul>
         </div>
     </div>
 </template>
@@ -18,13 +26,15 @@ export default {
     name: 'HelloWorld',
     data() {
         return {
-            isShow: true,
+            parentItem: 'Parent',
+            items: [
+                { message: 'Foo' },
+                { message: 'Bar' },
+                { message: 'Baz' },
+            ]
         }
     },
     methods: {
-        toggle() {
-            this.isShow = !isShow
-        }
     }
 }
 </script>
