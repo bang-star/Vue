@@ -780,3 +780,33 @@ Vue는 가능한 한 효율적으로 엘리먼트를 렌더링하려고 시도�
 <h1 v-show='ok'>안녕하세요</h1>
 ```
 
+<br />
+
+## 리스트 렌더링
+
+### v-for로 엘리먼트에 배열 매핑하기
+
+- `v-for 디렉티브`를 사요하여 배열을 기반으로 리스트를 렌더링할 수 있습니다. `v-for 디렉티브`는 item in items 형태로 특별한 문법이 필요합니다. 여기서 `items`는 `원본 데이터 배열`이고 `item`은 반복되는 배열 엘리먼트의 별칭(alias)입니다.
+
+```Javascript
+<ul id='example-1'>
+    <li v-for='item in items'>
+        {{ item.message }}
+    </li>
+</ul>
+
+var example1 = new Vue({
+    el: '#example-1',
+    data: {
+        parentItem: 'Parent',
+        items: [
+            { message: 'Foo' },
+            { message: 'Bar' },
+        ]
+    }
+})
+```
+
+- v-for 블록 안에는 부모 범위 속성에 대한 모든 권한이 있습니다. v-for는 또한 현재 항목의 인덱스에 대한 두 번째 argument 옵션을 제공합니다.
+
+- in 대신에 of를 구분자로 사용할 수 있습니다.
