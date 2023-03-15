@@ -546,4 +546,237 @@ var vm = new Vue({
 })
 ```
 
+<br />
+
+## 클래스와 스타일 바인딩
+
+### 클래스와 스타일 바인딩(Class and Style Bindings)
+
+- 데이터 바인딩은 엘리먼트의 클래스 목록과 인라인 스타일(inline style)을 조작하기 위해 일반적으로 사용됩니다.
+
+- 이 두 속성은 v-bind를 사용하여 처리할 수 있습니다.
+
+- 문자열 연결에 간섭하는 것은 짜증나는 일이며 오류가 발생하기 쉽습니다.
+
+- Vue는 class와 style에 v-bind를 사용할 때 특별히 향상된 기능을 제공합니다.
+
+- 표현식은 문자열 이외에 객체(Object) 또는 배열(Array)을 이용할 수 있습니다.
+
+### 클래스 바인딩
+
+#### HTML 클래스 바인딩하기(객체 구문)
+
+클래스를 동적으로 토글하기 위해 v-bind:class에 객체를 전달할 수 있습니다.
+
+```JS
+// active 클래스의 존재 여부가 데이터 속성 isActive의 Boolean 값에 의해 결정되는 것을 의미합니다.
+<div v-bind:class="{ active: isActive }"></div>
+
+// 객체에 Key가 더 있으면 여러 클래스를 토글할 수 있습니다. 또한 v-bind:class 디렉티브는 일반 class 속성과 공존할 수 있습니다.
+<div class="static" v-bind:class="{ active: isActive, 'text-danger': hasError }"></div>
+
+data: {
+    isActive: true,
+    hasError: false
+}
+
+<div class="static active"></div>
+```
+
+<br />
+
+- 바인딩 객체가 인라인일 필요는 없습니다.
+
+```JS
+<div v-bind:class="classObject"></div>
+
+data: {
+    classObject: {
+        active: true,
+        'text-danger': false
+    }
+}
+```
+
+<br />
+
+- 객체가 Computed 속성일 수 있습니다.
+
+```JS
+<div v-bind:class="classObject"></div>
+
+data: {
+    isActive: true,
+    error: null
+},
+computed: {
+    classObject: function() {
+        return {
+            active: this.isActive && !this.error,
+            'text-danger': this.error && this.error.type === 'fatal'
+        }
+    }
+}
+```
+
+#### HTML 클래스 바인딩하기(배열 구문)
+
+ - 배열을 v-bind:class에 전달하여 클래스 목록을 지정할 수 있습니다.
+
+```JS
+<div v-bind:class="[activeClass, errorClass]"></div>
+
+data: {
+    activeClass: 'active',
+    errorClass: 'text-danger'
+},
+computed: {
+    classObject: function() {
+        return {
+            active: this.isActive && !this.error,
+            'text-danger': this.error && this.error.type === 'fatal'
+        }
+    }
+}
+```
+
+ - 항상 errorClass를 적용하고 isActive가 ture일 때만 activeClass를 적용합니다.
+
+```JS
+<div v-bind:class="[isActive ? activeclass : '', errorClass]"></div>
+
+<div v-bind:class="[{active : isActive}, errorClass]"></div>
+```
+
+#### HTML 클래스 바인딩하기(컴포넌트와 함께 사용하는 방법)
+
+사용자 정의 컴포넌트로 class 속성을 사용하면, 클래스가 컴포넌트의 루트 엘리먼트에 추가됩니다. 이 엘리먼트는 기존 클래스는 덮어쓰지 않습니다.
+
+```Javascript
+Vue.component('my-component', {
+    template: '<p class="foo bar">Hi</p>'
+})
+
+<my-component class="baz boo"></my-component>
+
+<p class="foo bar baz boo">Hi</p>
+
+<my-component v-bind:class="{ active : isActive }"></my-component>
+
+<p class="foo bar active">Hi</p>
+```
+<br />
+
+### 스타일 바인딩
+
+#### 인라인 스타일 바인딩하기(객체 구문)
+
+v-bind:style 객체 구문은 매우 직설적입니다. 거의 CSS처럼 보이지만 JavaScript 객체입니다. 속성 이름에 camelCase와 kebab-case(따옴표를 함께 사용해야 합니다)를 사용할 수 있습니다.
+
+```JavaScript
+<div v-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }"></div>
+
+data {
+    activeColor: 'red',
+    fontSize: 30
+}
+```
+
+<br />
+
+```JavaScript
+<div v-bind:style="styleObject"></div>
+
+data {
+    styleObject : {
+        color: 'red',
+        fontSize: '13px'
+    }
+}
+```
+
+#### 인라인 스타일 바인딩하기(배열 구문)
+
+v-bind:style에 대한 배열 구문은 같은 스타일의 엘리먼트에 여러 개의 스타일 객체를 사용할 수 있게 합니다.
+
+```JavaScript
+<div v-bind:style="[baseStyle, overridingStyles]"></div>
+```
+
+#### 인라인 스타일 바인딩하기(다중 값 제공)
+
+브라우저가 지원하는 배열의 마지막 값만 렌더링합니다. 이 예제에서는 flexBox의 접두어가 붙지 않은 버전을 지원하는 브라우저에 대해 display: flex를 렌더링합니다.
+
+```JavaScript
+<div v-bind:style="{ display: ['-webkit-box', '-ms-flexbox', 'flex']}"></div>
+```
+
+<br />
+
+## 조건부 렌더링
+
+### v-if
+
+v-if 디렉티브는 조건에 따라 블록을 렌더링하기 위해 사용됩니다. 디렉티브의 표현식이 true 값을 반환할 때만 렌더링 됩니다.
+
+```html
+<h1 v-if="awesome">Vue is awesome!</h1>
+```
+
+v-else와 함께 'else 블록'을 추가하는 것도 가능하다.
+
+
+### <template>에 v-if을 갖는 조건부 그룹 만들기
+
+v-if는 디렉티브이기 때문에 하나의 엘리먼트에 추가해야합니다. 하지만 하나 이상의 엘리먼트를 트랜지션하려면 어떻게 해야할 까요?
+
+이 경우 보이지 않는 래퍼 역할을 하는 `<template>` 엘리먼트에 v-if를 사용할 수 있습니다. 최종 렌더링 결과에는 `<template>` 엘리먼트가 포함되지 않습니다.
+
+### v-else
+
+v-else 엘리먼트는 v-if 엘리먼트 또는 v-else-if 엘리먼트 바로 뒤에 있어야 합니다. 그렇지 않으면 인식할 수 없습니다.
+
+### v-else-if
+
+v-else-if는 이름에서 알 수 있듯, v-if에 대한 `else if 블록` 역할을 합니다. 또한 여러 개를 사용할 수 있습니다. `v-else`와 마찬가지로, `v-else-if` 엘리먼트는 `v-if` 또는 `v-else if` 엘리먼트 바로 뒤에 와야 합니다.
+
+### key를 이용한 재사용 가능한 엘리먼트 제어
+
+Vue는 가능한 한 효율적으로 엘리먼트를 렌더링하려고 시도하며 종종 처음부터 렌더링을 하지 않고 다시 사용합니다. Vue를 매우 빠르게 만드는데 도움이 되는 것이외에 몇가지 유용한 이점이 있습니다. 예를 들어 사용자가 여러 로그인 유형을 트랜지션할 수 있도록 허용하는 경우입니다.
+
+```JS
+<template v-if="loginType === 'username'">
+    <label>사용자 이름</label>
+    <input placeholder="사용자 이름을 입력하세요.">
+</template>
+<template v-else>
+    <label>이메일</label>
+    <input placeholder="이메일 주소를 입력하세요.">
+</template>
+```
+
+이 코드에서는 loginType을 바꾸어도 사용자가 이미 입력한 내용은 지워지지 않습니다. 두 템플릿 모두 같은 요소를 사용하므로 `<input>`은 대체되지 않고 단지 placeHolder만 변경됩니다.
+
+```JS
+<template v-if="loginType === 'username'">
+    <label>사용자 이름</label>
+    <input placeholder="사용자 이름을 입력하세요." key='username-input'>
+</template>
+<template v-else>
+    <label>이메일</label>
+    <input placeholder="이메일 주소를 입력하세요." key='email-input'>
+</template>
+```
+
+유일한 값으로 key 속성을 추가하였다. `<label>`엘리먼트는 key 속성이 없기 때문에 여전히 효율적으로 재사용됩니다.
+
+<br />
+
+### v-show
+
+엘리먼트를 조건부로 표시하기 위한 또 다른 옵션은 `v-show 디렉티브` 입니다. 사용법은 거의 동일하다. 차이점은 `v-show`가 있는 엘리먼트는 항상 렌더링 되고 DOM에 남아있다는 점입니다. v-show는 단순히 엘리먼트에 display CSS 속성을 토글합니다.
+
+```Javascript
+<h1 v-show='ok'>안녕하세요</h1>
+```
 
