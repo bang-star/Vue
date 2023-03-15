@@ -810,3 +810,50 @@ var example1 = new Vue({
 - v-for 블록 안에는 부모 범위 속성에 대한 모든 권한이 있습니다. v-for는 또한 현재 항목의 인덱스에 대한 두 번째 argument 옵션을 제공합니다.
 
 - in 대신에 of를 구분자로 사용할 수 있습니다.
+
+<br />
+
+### v-for와 객체
+
+v-for 디렉티브를 사용하여 객체의 속성을 반복할 수 있습니다.
+
+```Javascript
+<ul id='example-1'>
+    <li v-for='value in object'>
+        {{ value }}
+    </li>
+</ul>
+
+var example1 = new Vue({
+    el: '#example-1',
+    data: {
+        object: {
+            title : 'title',
+            author: 'Daniel',
+            publishedAt: '2016-04-10'
+        }
+    }
+})
+```
+
+- 키에 대한 두 번째 argument 옵션을 제공합니다.
+
+```JavaScript
+<ul id='example-1'>
+    <li v-for="(value, name) in object">
+        {{ value }} : {{ name }}
+    </li>
+</ul>
+```
+
+- 값, 키에 더불어 index도 사용할 수 있습니다.
+
+```JavaScript
+<ul id='example-1'>
+    <li v-for="(value, name, index) in object">
+        {{ value }} : {{ name }} : {{index}}
+    </li>
+</ul>
+```
+
+> 객체를 반복할 때 순서는 `Object.keys()`의 키 나열 순서에 따라 결정됩니다. 이 순서는 JavaScript 엔진 구현간에 ** 일관적이지는 않습니다.**
