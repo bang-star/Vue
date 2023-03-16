@@ -887,3 +887,15 @@ Vue는 감시중인 배열의 변이 메소드를 래핑하여 `뷰 갱신`을 �
  - splice()
  - sort()
  - reverse()
+
+### 배열 변경 감지 - 배열 대체
+
+이름에서 알 수 있듯 변이 메소드는 호출된 원본 배열을 변형합니다. 이와 비교하여 변형을 하지 않는 방법도 있습니다.
+
+바로 `filter()`, `concant()` 와 `slice()` 입니다. 이 방법을 사용하면 원본 배열을 변형하지 않고 항상 새 배열을 반환합니다. 변형이 없는 방법으로 작업할 때 이전 배열을 새 배열로 바꿀 수 있습니다.
+
+```javascript
+example1.items = example1.items.filter(function(item) {
+    return item.message.match(/Foo/)
+})
+```

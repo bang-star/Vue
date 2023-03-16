@@ -9,6 +9,7 @@
             </li>
         </ul>
         <button @click="pushItem()">Add Message</button>
+        <button @click="replaceItem()">replace Message</button>
     </div>
 </template>
 
@@ -29,6 +30,9 @@ export default {
     methods: {
         pushItem() {
             this.items.push({message: 'zero'})
+        },
+        replaceItem() {
+            this.items = this.items.filter((item) => item.message.match(/Foo/))
         }
     }
 }
