@@ -857,3 +857,33 @@ var example1 = new Vue({
 ```
 
 > 객체를 반복할 때 순서는 `Object.keys()`의 키 나열 순서에 따라 결정됩니다. 이 순서는 JavaScript 엔진 구현간에 ** 일관적이지는 않습니다.**
+
+<br />
+
+### Maintaining State
+
+Vue가 `v-for`에서 렌더링된 엘리먼트 목록을 갱신할 때 기본적으로 "in-place patch" 전략을 사용합니다. 데이터 항목의 순서가 변경된 경우 항목의 순서와 일치하도록 DOM 요소를 이동하는 대신 Vue 는 각 요소를 적절한 위치를 패치하고 해당 인덱스에서 렌더링할 내용을 반영하는지 확인합니다.
+
+Vue에서 개별 DOM 노드들을 추적하고 기존 엘리먼트를 재사용, 재정렬하기 위해서 v-for의 각 항목들에 `고유한 key` 속성을 제공해야 합니다. key에 대한 이상적인 값은 각 항목을 식별할 수 있는 `고유한 ID` 입니다.
+
+```HTML
+<div v-for="item in items" v-bind:key="item.id">
+    <!-- content-->
+</div>
+```
+
+> 객체나 배열처럼, 기본 타입(Primitive value)이 아닌 값을 키로 사용해서는 안됩니다. 대신 문자열이나 숫자를 사용하세요.
+
+<br />
+
+### 배열 변경 감지 - 변이 메소드
+
+Vue는 감시중인 배열의 변이 메소드를 래핑하여 `뷰 갱신`을 트리거합니다.
+
+ - push()
+ - pop()
+ - shift()
+ - unshift()
+ - splice()
+ - sort()
+ - reverse()
