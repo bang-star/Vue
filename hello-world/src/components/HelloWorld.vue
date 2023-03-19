@@ -13,6 +13,13 @@
                 v-for="todo in completedTodos" 
                 v-bind:key="todo.id">
                 <span>{{ todo.title }}</span>
+            <li v-for="(value, name) in object" v-bind:key="value">
+                {{ value }} : {{ name }}
+            </li>
+        </ul>
+        <ul id='example-2'>
+            <li v-for="(value, name, index) in object" v-bind:key="value">
+                {{ value }} : {{ name }} : {{ index }}
             </li>
         </ul>
     </div>
@@ -32,12 +39,6 @@ export default {
                 { id : 4, title: '제목 4', isComplete: false},
                 { id : 5, title: '제목 5', isComplete: true},
             ]
-        }
-    },
-
-    computed: {
-        completedTodos() {
-            return this.todos.filter(todo => todo.isComplete === true)
         }
     },
     methods: {
