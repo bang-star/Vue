@@ -780,3 +780,293 @@ Vue는 가능한 한 효율적으로 엘리먼트를 렌더링하려고 시도�
 <h1 v-show='ok'>안녕하세요</h1>
 ```
 
+<br />
+
+## 리스트 렌더링
+
+### v-for로 엘리먼트에 배열 매핑하기
+
+- `v-for 디렉티브`를 사요하여 배열을 기반으로 리스트를 렌더링할 수 있습니다. `v-for 디렉티브`는 item in items 형태로 특별한 문법이 필요합니다. 여기서 `items`는 `원본 데이터 배열`이고 `item`은 반복되는 배열 엘리먼트의 별칭(alias)입니다.
+
+```Javascript
+<ul id='example-1'>
+    <li v-for='item in items'>
+        {{ item.message }}
+    </li>
+</ul>
+
+var example1 = new Vue({
+    el: '#example-1',
+    data: {
+        parentItem: 'Parent',
+        items: [
+            { message: 'Foo' },
+            { message: 'Bar' },
+        ]
+    }
+})
+```
+
+- v-for 블록 안에는 부모 범위 속성에 대한 모든 권한이 있습니다. v-for는 또한 현재 항목의 인덱스에 대한 두 번째 argument 옵션을 제공합니다.
+
+- in 대신에 of를 구분자로 사용할 수 있습니다.
+
+<br />
+
+### v-for와 객체
+
+v-for 디렉티브를 사용하여 객체의 속성을 반복할 수 있습니다.
+
+```Javascript
+<ul id='example-1'>
+    <li v-for='value in object'>
+        {{ value }}
+    </li>
+</ul>
+
+var example1 = new Vue({
+    el: '#example-1',
+    data: {
+        object: {
+            title : 'title',
+            author: 'Daniel',
+            publishedAt: '2016-04-10'
+        }
+    }
+})
+```
+
+- 키에 대한 두 번째 argument 옵션을 제공합니다.
+
+```JavaScript
+<ul id='example-1'>
+    <li v-for="(value, name) in object">
+        {{ value }} : {{ name }}
+    </li>
+</ul>
+```
+
+- 값, 키에 더불어 index도 사용할 수 있습니다.
+
+```JavaScript
+<ul id='example-1'>
+    <li v-for="(value, name, index) in object">
+        {{ value }} : {{ name }} : {{index}}
+    </li>
+</ul>
+```
+
+> 객체를 반복할 때 순서는 `Object.keys()`의 키 나열 순서에 따라 결정됩니다. 이 순서는 JavaScript 엔진 구현간에 ** 일관적이지는 않습니다.**
+
+<br />
+
+### Maintaining State
+
+Vue가 `v-for`에서 렌더링된 엘리먼트 목록을 갱신할 때 기본적으로 "in-place patch" 전략을 사용합니다. 데이터 항목의 순서가 변경된 경우 항목의 순서와 일치하도록 DOM 요소를 이동하는 대신 Vue 는 각 요소를 적절한 위치를 패치하고 해당 인덱스에서 렌더링할 내용을 반영하는지 확인합니다.
+
+Vue에서 개별 DOM 노드들을 추적하고 기존 엘리먼트를 재사용, 재정렬하기 위해서 v-for의 각 항목들에 `고유한 key` 속성을 제공해야 합니다. key에 대한 이상적인 값은 각 항목을 식별할 수 있는 `고유한 ID` 입니다.
+
+```HTML
+<div v-for="item in items" v-bind:key="item.id">
+    <!-- content-->
+</div>
+```
+
+> 객체나 배열처럼, 기본 타입(Primitive value)이 아닌 값을 키로 사용해서는 안됩니다. 대신 문자열이나 숫자를 사용하세요.
+
+<br />
+
+### 배열 변경 감지 - 변이 메소드
+
+Vue는 감시중인 배열의 변이 메소드를 래핑하여 `뷰 갱신`을 트리거합니다.
+
+ - push()
+ - pop()
+ - shift()
+ - unshift()
+ - splice()
+ - sort()
+ - reverse()
+
+### 배열 변경 감지 - 배열 대체
+
+이름에서 알 수 있듯 변이 메소드는 호출된 원본 배열을 변형합니다. 이와 비교하여 변형을 하지 않는 방법도 있습니다.
+
+바로 `filter()`, `concant()` 와 `slice()` 입니다. 이 방법을 사용하면 원본 배열을 변형하지 않고 항상 새 배열을 반환합니다. 변형이 없는 방법으로 작업할 때 이전 배열을 새 배열로 바꿀 수 있습니다.
+
+```javascript
+example1.items = example1.items.filter(function(item) {
+    return item.message.match(/Foo/)
+})
+```
+
+<br />
+
+### 배열 변경 감지 - 주의 사항
+
+Javascript의 제한으로 인해 Vue는 배열에 대해 다음과 같은 변경 사항을 감지할 수 없습니다.
+
+  1. 인덱스로 배열에 있는 항목을 직접 설정하는 경우
+    
+    예: vm.items[indexOfItem] = newValue
+
+  2. 배열의 길이를 수정하는 경우
+
+    예: vm.items.length = newLength
+
+<br />
+
+```Javascript
+var vm = new Vue({
+
+    data: { items: ['a', 'b', 'c', 'd'] }
+
+    vm.items[1] = 'x'       // reactive 하지 않음
+    vm.items.length = 2     // reactive 하지 않음
+
+    // 주의사항 1번 극복 방법1
+    Vue.set(vm.items, indexOfItem, newValue)
+
+    // 주의사항 1번 극복 방법2
+    vm.items.splice(indexOfItem, 1, newValue)
+
+    // 주의사항 1번 극복 방법3
+    vm.$set(vm.items, indexOfItem, newValue)
+
+    // 주의사항 1번 극복 방법4
+    vm.items.splice(newLength)
+})
+```
+
+<br />
+
+
+
+### 객체 변경 감지에 관한 주의 사항
+
+모던 JavaScript의 한계로 Vue는 속성 추가 및 삭제를 감지하지 못합니다. Vue는 이미 만들어진 인스턴스에 새로운 루트레벨의 반응형 속성을 동적으로 추가하는 것을 허용하지 않습니다.
+
+```JavaScript
+var vm = new Vue({
+    data: {
+        a: 1
+    }
+})
+
+// `vm.a`는 반응형이지만, `vm.b`는 반응형이 아닙니다.
+vm.b = 2
+```
+
+1. `Vue.set(object, propertyName, value)` 메서드를 사용하여 중첩된 객체에 반응형 속성을 추가할 수 있습니다.
+
+```Javascript
+Vue.set(vm.userProfile, 'age', 27)
+vm.$set(vm.userProfile, 'age', 27)
+```
+
+2. `Object.assign()`을 사용해 기존의 객체에 새 속성을 할당할 수 있습니다. 이 경우 두 객체의 속성을 사용해 새 겍체를 만들어야 합니다.
+
+```Javascript
+vm.userProfile = Object.assign({}, vm.userProfile, {
+    age: 27,
+    favoriateColor: 'Vue Green'
+})
+```
+
+### 필터링/정렬 된 결과 표시하기
+
+원본 데이터를 실제로 변경하거나 재설정하지 않고 배열의 필터링된 버전이나 정렬된 버전을 표시해야 할 필요가 있습니다. 이 경우 필터링 된 배열이나 정렬된 배열을 반환하는 `계산된 속성`을 만들 수 있습니다.
+
+1. 계산된 속성을 사용하는 경우
+
+```HTML
+<li v-for="n in evenNumbers">{{ n }}</li>
+```
+
+```Javascript
+data: {
+    numbers: [1,2,3,4,5]
+},
+computed: {
+    evenNumbers: function() {
+        return this.numbers.filter(function(number)) {
+            return number % 2 == 0
+        }
+    }
+}
+```
+
+<br />
+
+2. 계산된 속성을 사용할 수 없는 경우 `(중첩된 v-for)`
+
+```HTML
+<li v-for="n in even(numbers)">{{ n }}</li>
+```
+
+```Javascript
+data: {
+    numbers: [1,2,3,4,5]
+},
+methods: {
+    even: function(numbers) {
+        return numbers.filter(function(number)) {
+            return number % 2 == 0
+        }
+    }
+}
+```
+
+<br />
+
+3. `Range v-for`
+
+v-for는 숫자를 사용할 수 있습니다. 이 경우 템플릿을 여러번 반복합니다.
+
+```HTML
+<div>
+    <span v-for="n in 10">{{ n }}</span>
+</div>
+```
+
+<br />
+
+4. `v-for 템플릿`
+
+템플릿 `v-if`와 마찬가지로, `<template> 태그`를 사용해 여러 엘리먼트의 블럭을 렌더링 할 수 있습니다.
+
+```HTML
+<ul>
+    <template v-for="item in items">
+        <li>{{ item.msg }}</li>
+        <li class="divider" role="presentation"></li>
+    </template>
+</ul>
+```
+
+<br />
+
+5. `v-for와 v-if`
+
+`v-if`와 `v-for`를 동시에 사용하는 것을 추천하지 않습니다.
+
+동일한 노드에 두 가지 모두 있다면, v-for가 v-if보다 높은 우선순위를 갖습니다. 즉, v-if는 루프가 반복될 때마다 실행됩니다. 이는 일부 항목만 렌더링 하려는 경우 유용합니다.
+
+```HTML
+<!-- V-for > V-if -->
+<li v-for="todo in todos" v-if="!todo.isComplete">
+    {{ todo }}
+</li>
+
+<!-- Useful -->
+<ul v-if="todos.length">
+    <li v-for="todo in todos">
+        {{ todo }}
+    </li>
+</ul>
+<p v-else>No todos left!</p>
+```
+
+* [Avoid v-if with v-for](https://v2.vuejs.org/v2/style-guide/#Avoid-v-if-with-v-for-essential)
+
+> 객체를 반복할 때 순서는 `Object.keys()`의 키 나열 순서에 따라 결정됩니다. 이 순서는 JavaScript 엔진 구현간에 ** 일관적이지는 않습니다.**
