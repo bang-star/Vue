@@ -3,52 +3,47 @@
         <h1>Welcome to Vue World</h1>
         <ul id='example-1'>
             <li 
-                v-for="item of items" 
+                v-for="item in itemObject" 
                 v-bind:key="item">
                 {{ item }}
             </li>
         </ul>
-        <button @click="replaceItem()">replaceItem Button</button>
-        <button @click="replaceLength()">replaceLength Button</button>
+        <button @click="addKeyValue()">addKeyValue Button</button>
     </div>
 </template>
 
 <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
 
 <script>
-// import Vue from 'vue'
+import Vue from 'vue'
 
 export default {
     name: 'HelloWorld',
     data() {
         return {
-            items: [ 'a', 'b', 'c' ]
+            itemObject: {
+                key1: 'key1',
+                key2: 'key2'
+            }
         }
     },
     methods: {
         /**
-         * [리스트 렌더링] 배열 변경 감지 - 주의 사항
+         * [리스트 렌더링] 객체 변경 감지에 관한 주의 사항
          */
 
-        // 1. 인덱스로 배열에 있는 항목을 직접 설정
-        replaceItem() {
+        addKeyValue() {
             // AS-IS
-            // this.items[0] = 'z'
-
-            // TO-BE(1) - Vue 를 통해 사용
-            // Vue.set(this.items, 1, 'x')
-
-            // TO-BE(2) - 컴포넌트 내에서
-            this.$set(this.items, 1, 'x')
-        },
-
-        // 2. 배열 길이를 수정하는 경우
-        replaceLength() {
-            // AS-IS
-            // this.items.length = 2
+            // this.itemObject.key3 = 'key3'
 
             // TO-BE
-            this.items.splice(2)
+            // Vue.set(this.itemObject, 'key3', 'key3')     // 방법 1
+            // this.$set(this.itemObject, 'key3', 'key3')   // 방법 2
+
+            // 방법 3
+            this.itemObject = Object.assign({}, this.itemObject, {
+                key3: 'key3'
+            })
         }
     }
 }

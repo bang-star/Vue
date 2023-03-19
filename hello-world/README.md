@@ -941,3 +941,36 @@ var vm = new Vue({
 <br />
 
 
+
+### 객체 변경 감지에 관한 주의 사항
+
+모던 JavaScript의 한계로 Vue는 속성 추가 및 삭제를 감지하지 못합니다. Vue는 이미 만들어진 인스턴스에 새로운 루트레벨의 반응형 속성을 동적으로 추가하는 것을 허용하지 않습니다.
+
+```JavaScript
+var vm = new Vue({
+    data: {
+        a: 1
+    }
+})
+
+// `vm.a`는 반응형이지만, `vm.b`는 반응형이 아닙니다.
+vm.b = 2
+```
+
+1. `Vue.set(object, propertyName, value)` 메서드를 사용하여 중첩된 객체에 반응형 속성을 추가할 수 있습니다.
+
+```Javascript
+Vue.set(vm.userProfile, 'age', 27)
+vm.$set(vm.userProfile, 'age', 27)
+```
+
+2. `Object.assign()`을 사용해 기존의 객체에 새 속성을 할당할 수 있습니다. 이 경우 두 객체의 속성을 사용해 새 겍체를 만들어야 합니다.
+
+```Javascript
+vm.userProfile = Object.assign({}, vm.userProfile, {
+    age: 27,
+    favoriateColor: 'Vue Green'
+})
+```
+
+
