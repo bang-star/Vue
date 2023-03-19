@@ -899,3 +899,45 @@ example1.items = example1.items.filter(function(item) {
     return item.message.match(/Foo/)
 })
 ```
+
+<br />
+
+### 배열 변경 감지 - 주의 사항
+
+Javascript의 제한으로 인해 Vue는 배열에 대해 다음과 같은 변경 사항을 감지할 수 없습니다.
+
+  1. 인덱스로 배열에 있는 항목을 직접 설정하는 경우
+    
+    예: vm.items[indexOfItem] = newValue
+
+  2. 배열의 길이를 수정하는 경우
+
+    예: vm.items.length = newLength
+
+<br />
+
+```Javascript
+var vm = new Vue({
+
+    data: { items: ['a', 'b', 'c', 'd'] }
+
+    vm.items[1] = 'x'       // reactive 하지 않음
+    vm.items.length = 2     // reactive 하지 않음
+
+    // 주의사항 1번 극복 방법1
+    Vue.set(vm.items, indexOfItem, newValue)
+
+    // 주의사항 1번 극복 방법2
+    vm.items.splice(indexOfItem, 1, newValue)
+
+    // 주의사항 1번 극복 방법3
+    vm.$set(vm.items, indexOfItem, newValue)
+
+    // 주의사항 1번 극복 방법4
+    vm.items.splice(newLength)
+})
+```
+
+<br />
+
+
