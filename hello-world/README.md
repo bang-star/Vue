@@ -973,4 +973,98 @@ vm.userProfile = Object.assign({}, vm.userProfile, {
 })
 ```
 
+### 필터링/정렬 된 결과 표시하기
 
+원본 데이터를 실제로 변경하거나 재설정하지 않고 배열의 필터링된 버전이나 정렬된 버전을 표시해야 할 필요가 있습니다. 이 경우 필터링 된 배열이나 정렬된 배열을 반환하는 `계산된 속성`을 만들 수 있습니다.
+
+1. 계산된 속성을 사용하는 경우
+
+```HTML
+<li v-for="n in evenNumbers">{{ n }}</li>
+```
+
+```Javascript
+data: {
+    numbers: [1,2,3,4,5]
+},
+computed: {
+    evenNumbers: function() {
+        return this.numbers.filter(function(number)) {
+            return number % 2 == 0
+        }
+    }
+}
+```
+
+<br />
+
+2. 계산된 속성을 사용할 수 없는 경우 `(중첩된 v-for)`
+
+```HTML
+<li v-for="n in even(numbers)">{{ n }}</li>
+```
+
+```Javascript
+data: {
+    numbers: [1,2,3,4,5]
+},
+methods: {
+    even: function(numbers) {
+        return numbers.filter(function(number)) {
+            return number % 2 == 0
+        }
+    }
+}
+```
+
+<br />
+
+3. `Range v-for`
+
+v-for는 숫자를 사용할 수 있습니다. 이 경우 템플릿을 여러번 반복합니다.
+
+```HTML
+<div>
+    <span v-for="n in 10">{{ n }}</span>
+</div>
+```
+
+<br />
+
+4. `v-for 템플릿`
+
+템플릿 `v-if`와 마찬가지로, `<template> 태그`를 사용해 여러 엘리먼트의 블럭을 렌더링 할 수 있습니다.
+
+```HTML
+<ul>
+    <template v-for="item in items">
+        <li>{{ item.msg }}</li>
+        <li class="divider" role="presentation"></li>
+    </template>
+</ul>
+```
+
+<br />
+
+5. `v-for와 v-if`
+
+`v-if`와 `v-for`를 동시에 사용하는 것을 추천하지 않습니다.
+
+동일한 노드에 두 가지 모두 있다면, v-for가 v-if보다 높은 우선순위를 갖습니다. 즉, v-if는 루프가 반복될 때마다 실행됩니다. 이는 일부 항목만 렌더링 하려는 경우 유용합니다.
+
+```HTML
+<!-- V-for > V-if -->
+<li v-for="todo in todos" v-if="!todo.isComplete">
+    {{ todo }}
+</li>
+
+<!-- Useful -->
+<ul v-if="todos.length">
+    <li v-for="todo in todos">
+        {{ todo }}
+    </li>
+</ul>
+<p v-else>No todos left!</p>
+```
+
+* [Avoid v-if with v-for](https://v2.vuejs.org/v2/style-guide/#Avoid-v-if-with-v-for-essential)
