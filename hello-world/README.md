@@ -1133,3 +1133,24 @@ var example2 = new Vue({
 example2.greet()        // => 'Hello Vue.js!'
 ```
 
+### 인라인 메소드 핸들러
+
+<hr />
+
+메소드 이름을 직접 바인딩하는 대신 인라인 JavaScript 구문에 메소드를 사용할 수도 있습니다.
+
+```JavaScript
+<div id="example-3">
+    <button v-on:click="say('hi')">Say Hi</button>
+    <button v-on:click="say('what')">Say What</button>
+</div>
+
+new Vue({
+    el: '#example-3',
+    methods: {
+        say: function(message) {
+            alert(message)
+        }
+    },
+})
+```
