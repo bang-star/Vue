@@ -1,6 +1,9 @@
 <template>
     <div>
         <h1>Welcome to Vue World</h1>
+        <form @submit.prevent>
+            <input type="text" @keyup.enter="test">
+        </form>
     </div>
 </template>
 
@@ -10,9 +13,26 @@
 export default {
     name: 'HelloWorld',
     data() {
-       
+       return {
+            name: 'Vue.js'
+       }
     },
     methods: {
+        say: function(message) {
+            alert(message)
+        },
+        warn: function(message, event) {
+            // 네이티브 이벤트에 액세스 할 수 있습니다.
+            if(event) event.preventDefault()
+
+            alert(message)
+        },
+        test() {
+            alert("submitted")
+        }
+    },
+    computed: {
+
     }
 }
 </script>
