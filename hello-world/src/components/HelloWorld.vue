@@ -1,9 +1,8 @@
 <template>
     <div>
         <h1>Welcome to Vue World</h1>
-        <button v-on:click="counter += 1">Add 1</button>
-        <button @click="counter += 1">Add 1</button>
-        <p>위 버튼을 클릭한 횟수는 {{counter}} 번 입니다.</p>
+        <button v-on:click="greet">Greet</button>
+        <button @click="greet">Greet</button>
     </div>
 </template>
 
@@ -14,14 +13,22 @@ export default {
     name: 'HelloWorld',
     data() {
        return {
-            counter: 0,
+            name: 'Vue.js'
        }
     },
-    method: {
+    methods: {
+        greet(event) {
+            // 메서드 안에서 사용하는 `this`는 Vue 인스턴스를 가리킵니다.
+            alert('Hello' + this.name + '!')
 
+            // `event`는 네이티브 DOM 이벤트입니다.
+            if(event) {
+                alert(event.target.tagName)
+            }
+        }
     },
     computed: {
-        
+
     }
 }
 </script>

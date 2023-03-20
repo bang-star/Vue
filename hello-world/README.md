@@ -1099,4 +1099,37 @@ var example1 = new Vue({
 })
 ```
 
- 
+### 메서드 이벤트 핸들러
+
+<hr />
+
+이전 예시에서는 간단한 counter 조작이었지만, 복잡한 로직이 사용될 것이라면 이벤트 핸들러에 메소드를 사용할 수 있습니다.
+
+```Javascript
+<div id="example-2">
+    <!-- `greet`는 메소드 이름으로 아래에 정의되어 있습니다. -->
+    <button v-on:click="greet">Greet</button>
+</div>
+
+var example2 = new Vue({
+    el: '#example-2',
+    data: {
+        name: 'Vue.js'
+    },
+    methods: {
+        greet: function(event) {
+            // 메서드 안에서 사용하는 `this`는 Vue 인스턴스를 가리킵니다.
+            alert('Hello' + this.name + '!')
+
+            // `event`는 네이티브 DOM 이벤트입니다.
+            if(event) {
+                alert(event.target.tagName)
+            }
+        }
+    }
+})
+
+// 또한 JavaScript를 이용해서 메소드를 호출할 수 있습니다.
+example2.greet()        // => 'Hello Vue.js!'
+```
+
