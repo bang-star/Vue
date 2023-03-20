@@ -1217,3 +1217,75 @@ new Vue({
 <!-- 스크롤의 기본 이벤트를 취소할 수 없습니다. -->
 <div v-on:scroll.passive="onScroll">...</div>
 ```
+
+<br />
+
+### 키 수식어
+
+<hr />
+
+키보드 이벤트를 청취할 때, 종종 공통 키 코드를 확인해야 합니다. Vue는 키 이벤트를 수신할 때 v-on에 대한 키 수식어를 추가할 수 있습니다.
+
+```HTML
+<!-- only call `vm.submit()` when the `key` is `Enter` -->
+<input v-on:keyup.enter="submit">
+```
+
+ - enter
+ - tab
+ - delete("Delete"와 "Backspace" 키 모두 캡처)
+ - esc
+ - space
+ - up, down, left, right
+
+<br />
+
+### 시스템 수식어 키 목록
+
+다음 수식어를 사용해 해당 키가 눌러진 경우에만 마우스 또는 키보드 이벤트 리스너를 트리거 할 수 있습니다.
+
+```HTML
+<!-- Alt + C -->
+<input @keyup.alt.67="clear">
+
+<!-- Ctrl + Click -->
+<div @click.ctrl="doSomethid">Do Something</div>
+```
+
+ - ctrl
+
+ - alt
+
+ - shift
+
+ - meta
+
+<br />
+
+#### 시스템 수식어 키 목록 - .exact 수식어
+
+.exact 수식어는 다른 시스템 수식어와 조합해 그 핸들러가 실행되기 위해 정확한 조합이 눌러야하는 것을 보여줍니다.
+
+```HTML
+<!-- Alt 또는 Shift와 함께 눌린 경우에도 실행됩니다. -->
+<button @click.ctrl="onClick">A</button>
+
+<!-- Ctrl 키만 눌려있을 때만 실행됩니다. -->
+<button @click.ctrl.exact="onClick">A</button>
+
+<!-- 아래 코드는 시스템 키가 눌리지 않은 상태인 경우에만 작동합니다. -->
+<button @click.exact="onClick">A</button>
+```
+
+<br />
+
+#### 시스템 수식어 키 목록 - .exact 수식어
+
+특정 마우스 버튼에 의해 트리거 된 이벤트로 핸들러를 제한합니다.
+
+ - left : 왼쪽 클릭
+
+ - right : 오른쪽 클릭
+ 
+ - middle : 중간 클릭
+

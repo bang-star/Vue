@@ -1,10 +1,8 @@
 <template>
     <div>
         <h1>Welcome to Vue World</h1>
-        <button v-on:click="say('hi')">Say Hi</button>
-        <button v-on:click="say('what')">Say What</button>
-        <form action="">
-            <button v-on:click="warn('Form cannot be submitted yet.', $event)">Sumbit</button>
+        <form @submit.prevent>
+            <input type="text" @keyup.enter="test">
         </form>
     </div>
 </template>
@@ -28,6 +26,9 @@ export default {
             if(event) event.preventDefault()
 
             alert(message)
+        },
+        test() {
+            alert("submitted")
         }
     },
     computed: {
