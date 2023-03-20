@@ -1070,3 +1070,33 @@ v-for는 숫자를 사용할 수 있습니다. 이 경우 템플릿을 여러번
 * [Avoid v-if with v-for](https://v2.vuejs.org/v2/style-guide/#Avoid-v-if-with-v-for-essential)
 
 > 객체를 반복할 때 순서는 `Object.keys()`의 키 나열 순서에 따라 결정됩니다. 이 순서는 JavaScript 엔진 구현간에 ** 일관적이지는 않습니다.**
+
+<br/> 
+
+## 이벤트 핸들링
+
+<hr />
+
+<br />
+
+### 이벤트 청취 
+
+<hr />
+
+`v-on 디렉티브`를 사용하여 DOM 이벤트를 듣고 트리거 될때 Javascript 를 실행할 수 있습니다.
+
+```Javascript
+<div id="example-1">
+    <button v-on:click="counter += 1">Add 1</button>
+    <p>위 버튼을 클릭한 횟수는 {{counter}} 번 입니다.</p>
+</div>
+
+var example1 = new Vue({
+    el: '#example-1',
+    data: {
+        counter: 0
+    }
+})
+```
+
+ 
