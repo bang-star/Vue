@@ -1154,3 +1154,21 @@ new Vue({
     },
 })
 ```
+
+때로 인라인 명령문 핸들러에서 `원본 DOM 이벤트`에 액세스 해야할 수도 있습니다. 특별한 `$event 변수`를 사용해 메소드에 전달할 수도 있습니다.
+
+```Javascript
+<button v-on:click="warn('Form cannot be submitted yet.', $event)">Sumbit</button>
+
+new Vue({
+    el: '#example-4',
+    methods: {
+        warn: function(message, event) {
+            // 네이티브 이벤트에 액세스 할 수 있습니다.
+            if(event) event.preventDefault()
+
+            alert(message)
+        }
+    },
+})
+```
