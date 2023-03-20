@@ -1133,6 +1133,8 @@ var example2 = new Vue({
 example2.greet()        // => 'Hello Vue.js!'
 ```
 
+<br />
+
 ### 인라인 메소드 핸들러
 
 <hr />
@@ -1171,4 +1173,47 @@ new Vue({
         }
     },
 })
+```
+
+<br />
+
+### 이벤트 수식어(이벤트, 이벤트 버블링 선행 필요)
+
+<hr />
+
+`이벤트 핸들러` 내부에서 `event.preventDefault()` 또는 `event.stopPropagation()`를 호출하는 것은 매우 보편적인 일입니다. 메소드 내에서 쉽게 이 작업을 할 수 있지만, DOM 이벤트 세부 사항을 처리하는 대신 `데이터 로직`에 대한 메소드만 사용할 수 있으면 더 좋을 것입니다. 이 문제를 해결하기 위해, Vue는 v-on 이벤트에 `이벤트 수식어`를 제공합니다. 수식어는 점으로 표시된 접미사입니다.
+
+ - stop : 전파 중단
+ - prevent : preventDefault
+ - capture : 이벤트 캡처
+ - self : 해당 엘리먼트에서만
+ - once : 한번만!
+ - [passive](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener)
+
+```HTML
+<!-- 클릭 이벤트 전파가 중단됩니다. -->
+<a v-on:click.stop="doThis"></a>
+
+<!-- 제출 이벤트가 페이지를 다시 로드하지 않습니다. -->
+<form v-on:submit.prevent="onSubmit"></form>
+
+<!-- 수식어는 체이닝 가능합니다. -->
+<a v-on:click.stop.prevent="doThat"></a>
+
+<!-- 단순히 수식어만 사용할 수 있습니다. -->
+<form v-on:submit.prevent></form>
+
+<!-- 이벤트 리스너를 추가할 때 캡처모드를 사용합니다. -->
+<!-- 즉, 내부 엘리먼트를 대상으로 하는 이벤트가 해당 엘리먼트에서 처리되기 전에 여기서 처리합니다. -->
+<div v-on:click.capture="doThis">...</div>
+
+<!-- event.target이 엘리먼트 자체인 경우에만 트리거를 처리합니다. -->
+<!-- 자식 엘리먼트에서는 안됩니다. -->
+<div v-on:click.self="doThat">...</div>
+
+<!-- 클릭 이벤트는 최대 한번만 트리거 됩니다. -->
+<a v-on:click.once="doThis"></a>
+
+<!-- 스크롤의 기본 이벤트를 취소할 수 없습니다. -->
+<div v-on:scroll.passive="onScroll">...</div>
 ```
