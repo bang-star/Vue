@@ -1445,3 +1445,67 @@ new Vue({
     }
 })
 ```
+
+<br />
+
+### 폼 바인딩 하기
+
+라이도, 체크박스 및 셀렉트 옵션의 경우, `v-model 바인딩 값`은 보통 정적인 문자열(또는 체크박스의 boolean) 입니다.
+
+```HTML
+<!-- `picked`는 선택시 문자열 "a" -->
+<input type="radio" v-model="picked" value="a">
+
+<!-- `toggle`는 선택시 true 또는 false -->
+<input type="checkbox" v-model="toggle">
+
+<!-- `selected`는 "ABC" 선택시 문자열 "abc" -->
+<select v-model="selected">
+    <option value="abc">ABC</option>
+</select>
+```
+
+<br />
+
+#### 값 바인딩 하기 - 체크 박스
+
+```HTML
+<input  type = "checkbox"
+        v-model="toggle"
+        true-value="yes"
+        false-value="no">
+
+<!-- 체크된 경우 -->
+vm.toggle === 'yes'
+
+<!-- 체크되지 않은 경우 -->
+vm.toggle === 'no'
+```
+
+<br />
+
+#### 값 바인딩 하기 - 라디오
+
+```HTML
+<input type="radio" v-model="pick" v-bind:value="a">
+
+<!-- 체크 하면 -->
+vm.pick === vm.a
+```
+
+<br />
+
+#### 값 바인딩 하기 - 셀렉트 옵션
+
+```HTML
+<select v-model="selected">
+    <!-- inline object literal -->
+    <option v-bind:value="{ number : 123 }">123</option>
+</select>
+
+<!-- 선택하면 -->
+typeof vm.selected -> 'object'
+vm.selected.number -> 123
+```
+
+> `true-value`와 `false-value` 속성은 폼 전송시 체크되지 않은 박스를 포함하기 않기 때문에 입력의 `value` 속성에 영향을 미치지 않습니다. 두 값 중 하나가 폼을 통해 전송 되려면 (예: `예` 또는 `아니오`) 라디오를 대신 사용하십시오.
