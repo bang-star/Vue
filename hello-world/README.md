@@ -1780,3 +1780,21 @@ todo: {
     v-bind:is-complete="todo.isComplete">
 </todo-item>
 ```
+
+<br />
+
+### Props - 리터럴 vs 동적
+
+리터럴 구문을 사용하여 숫자를 전달하려고 시도하는 실수를 많이 한다.
+
+```HTML
+<!-- 일반 문자열 "1"을 전달합니다. -->
+<comp some-prop="1"></comp>
+```
+
+`리터럴 prop`이기 떄문에 그 값은 실제 숫자가 아닌 일반 문자열 "1"로 전달됩니다. 실제 Javascript 숫자를 전달하려면 값이 Javascript 표현식으로 평가되도록 `v-bind를 사용`해야합니다.
+
+```HTML
+<!-- 일반 실제 숫자로 전달합니다. -->
+<comp v-bind:some-prop="1"></comp>
+```
