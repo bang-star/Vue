@@ -1704,3 +1704,23 @@ new Vue({
 ![image](https://user-images.githubusercontent.com/63120360/226656900-1545dcd6-a2e9-401c-8c94-1d60c5de30f6.png)
 
 Vue.js에서 `부모 자식 컴포넌트 관계`는 props는 아래로, events 위로 라고 요약할 수 있습니다. 부모는 `props`를 통해 자식에게 데이터를 전달하고 자식은 events 를 통해 부모에게 메시지를 보냅니다.
+
+
+<br />
+
+### Props - Props 로 데이터 전달하기
+
+모든 컴포넌트 인스턴스에는 `자체 격리 된 범위`가 있습니다. 즉, 하위 컴포넌트의 템플릿에서 상위 데이터를 직접 참조 할 수 없습니다. 부모 컴포넌트는 props 옵션을 사용하여 데이터를 하위 컴포넌트로 전달할 수 있습니다. 하위 컴포넌트는 props 옵션을 사용하여 수신 할 것으로 기대되는 props를 명시적으로 선언해야 합니다.
+
+```Javascript
+Vue.component('child', {
+    // props 정의
+    props: ['message'],
+    // 데이터와 마찬가지로 prop은 템플릿 내부에서 사용할 수 있으며 vm의 this.message로 사용할 수 있습니다.
+    template: '<span>{{ message }}</span>'
+})
+```
+
+```HTML
+<child message="안녕하세요!"></child>
+```

@@ -1,28 +1,22 @@
 <template>
     <div>
-        <my-component></my-component>
-        <simple-counter></simple-counter>
-        <simple-counter></simple-counter>
-        <simple-counter></simple-counter>
+        <MyComponent my-message="안녕하세요 Vue World"></MyComponent>
     </div>
 </template>
 
 <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
 
 <script>
-import MyComponent from './MyComponent.vue'
-import SimpleCounter from './SimpleCounter.vue'
+import MyComponent from './MyComponent.vue';
 
 export default {
     components: {
-        'my-component' : MyComponent,
-        'simple-counter' : SimpleCounter,
-        SimpleCounter,
+        MyComponent,
     },
     name: 'HelloWorld',
     data() {
        return {
-     
+            parentMessage: '',
        }
     },
     methods: {
