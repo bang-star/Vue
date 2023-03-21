@@ -1338,7 +1338,7 @@ new Vue({
 <p style="white-space: pre-line">{{ message }}</p>
 <br />
 
-<textare v-model="message" placeholder="여러줄을 입력하세요."></textare>
+<textarea v-model.trim="message" placeholder="여러줄을 입력하세요."></textarea>
 ```
 
 ![image](https://user-images.githubusercontent.com/63120360/226627301-a4db6df1-a95b-45bd-8490-5d7bb1ce19eb.png)
@@ -1509,3 +1509,34 @@ vm.selected.number -> 123
 ```
 
 > `true-value`와 `false-value` 속성은 폼 전송시 체크되지 않은 박스를 포함하기 않기 때문에 입력의 `value` 속성에 영향을 미치지 않습니다. 두 값 중 하나가 폼을 통해 전송 되려면 (예: `예` 또는 `아니오`) 라디오를 대신 사용하십시오.
+
+<br />
+
+### 수식어 .lazy
+
+기본적으로 v-model 은 각 입력 이벤트 후 입력과 데이터를 동기화 합니다. .lazy 수식어를 추가하여 change 이벤트 이후에 동기화 할 수 있습니다.
+
+```HTML
+<!-- "input" 대신 "change" 이후에 동기화 됩니다. -->
+<input v-model.lazy="msg">
+```
+
+<br />
+
+### 수식어 .trim
+
+v-model이 관리하는 input을 자동으로 trim 하기 원하는, trim 수정자를 추가하면 됩니다.
+
+```HTML
+<input v-model.trim="msg">
+```
+
+<br />
+
+### 수식어 .number
+
+사용자 입력이 자동으로 숫자로 형변환 되기를 원하면, v-model이 관리하는 input에 number 수식어를 추가하면 됩니다.
+
+```HTML
+<input v-model.number="age" type="number">
+```

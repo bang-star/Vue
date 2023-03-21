@@ -1,25 +1,24 @@
 <template>
     <div>
-        <!--  기본 사용법 - 다중 셀렉트 -->
+        <!-- 수식어 .lazy -->
         <div>
-            <select v-model="selected">
-                <option disabled value="">Please select one</option>
-                <option>A</option>
-                <option>B</option>
-                <option>C</option>
-            </select>
-            <span>선택: {{ selected }}</span>
+            <input type="text" v-model.lazy="msg1">
+            <p>{{ msg1 }}</p>
         </div>
-        <!--  기본 사용법 - 셀렉트(v-for) -->
+        <!-- 수식어 .trim -->
         <div>
-            <select v-model="selectedStatement">
-                <option v-for="(option, index) in options" 
-                        :value="option.value"
-                        :key="option.value + '-' + index">
-                    {{option.text}}
-                </option>
-            </select>
-            <span>선택: {{ selectedStatement }}</span>
+            <input type="text" v-model.trim="msg2">
+            <p>{{ msg2 }}</p>
+        </div>
+        <!-- 수식어 .number -->
+        <div>
+            <input v-model.number="age" type="number">
+            <p>{{ age }}</p>
+        </div>
+        <div>
+            <textarea v-model.trim="message" placeholder="여러줄을 입력하세요."></textarea>
+            <span>여러 줄을 가지는 메시지: </span>
+            <p style="white-space: pre-line">{{ message }}</p>
         </div>
     </div>
 </template>
@@ -31,28 +30,15 @@ export default {
     name: 'HelloWorld',
     data() {
        return {
-            selected: '',
-            selectedStatement: [],
-            options: [
-            {text: 'One', value: 'A'},
-            {text: 'Two', value: 'B'},
-            {text: 'Three', value: 'C'},
-        ]
+            msg1: '',
+            msg2: '',
+            message: '',
+            age: 0,
+        
        }
     },
     methods: {
-        say: function(message) {
-            alert(message)
-        },
-        warn: function(message, event) {
-            // 네이티브 이벤트에 액세스 할 수 있습니다.
-            if(event) event.preventDefault()
-
-            alert(message)
-        },
-        test() {
-            alert("submitted")
-        }
+      
     },
     computed: {
 
