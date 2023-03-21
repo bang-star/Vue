@@ -1300,3 +1300,243 @@ new Vue({
  2. JavaScript에서 이벤트 리스너를 수동으로 연결할 필요가 없으므로 `ViewModel` 코드는 순수 로직과 DOM이 필요하지 않습니다. 이렇게 하면 테스트가 쉬워집니다.
 
  3. `ViewModel`이 파기되면 모든 이벤트 리스너가 자동으로 제거 됩니다. 이벤트 제거에 대한 걱정이 필요 없어집니다.
+
+
+<br />
+
+## 폼 입력 바인딩 
+
+<hr />
+
+### 기본 사용법
+
+`v-model 디렉티브`를 사용하여 `폼 input`과 `textarea 엘리먼트`에 `양방향 데이터 바인딩`을 생성할 수 있습니다. 입력 유형에 따라 엘리먼트를 업데이트 하는 올바른 방법을 자동으로 선택합니다. 약간 이상하지만 v-model은 기본적으로 사용자 입력 이벤트에 대한 데이터를 업데이트 하는 `syntax sugar`이며 일부 경우에 특별한 주의를 해야합니다.
+
+> `v-model`은 모든 form 엘리먼트의 초기 `value`와 `checked` 그리고 `selected` 속성을 무시합니다. 항상 Vue 인스턴스 데이터를 원본 소스로 취급합니다. 컴포넌트의 `data` 옵션 안에 있는 Javascript에서 초기값을 선언해야합니다. 
+
+`v-model`은 내부적으로 서로 다른 속성을 사용하고 `서로 다른 입력 요소에 대해 서로 다른 이벤트`를 전송합니다.
+
+- text와 textarea태그는 value속성과 input 이벤트를 사용합니다.
+- 체크박스와 라디오 버튼은 checked 속성과 change 이벤트를 사용합니다.
+- select 태그는 value를 prop으로, change를 이벤트로 사용합니다.
+
+#### 기본 사용법 - 문자열
+
+```Javascript
+<input v-model="message" placeholder="여기를 수정해보세요">
+<p>메시지: {{ message }}</p>
+```
+
+![image](https://user-images.githubusercontent.com/63120360/226627169-352198e2-f2c6-400d-b3f5-ad9748e5718a.png)
+
+<br />
+
+#### 기본 사용법 - 여러 줄을 가진 문장
+
+```Javascript
+<span>여러 줄을 가지는 메시지: </span>
+<p style="white-space: pre-line">{{ message }}</p>
+<br />
+
+<textarea v-model.trim="message" placeholder="여러줄을 입력하세요."></textarea>
+```
+
+![image](https://user-images.githubusercontent.com/63120360/226627301-a4db6df1-a95b-45bd-8490-5d7bb1ce19eb.png)
+
+> 텍스트 영역의 보간 (`<textarea>{{text}}</textarea>`)은 작동하지 않습니다. 대신 `v-model`를 사용하십시오.
+
+<br />
+
+#### 기본 사용법 - 체크박스
+
+하나의 체크박스는 단일 boolean 값을 가집니다.
+
+```JavaScript
+<input type="checkbox" id="checkbox" v-model="checkced">
+<label for="checkbox">{{ checked }}</label>
+```
+
+<br />
+
+여러개의 체크박스는 같은 배열을 바인딩 할 수 있습니다.
+
+```JavaScript
+<div id="example-3">
+    <input type="checkbox" id="jack" value="jack" v-model="checkNames">
+    <input type="checkbox" id="John" value="John" v-model="checkNames">
+    <input type="checkbox" id="mike" value="mike" v-model="checkNames">
+    <input type="checkbox" id="nikol" value="nikol" v-model="checkNames">
+    <br />
+    <span>체크한 이름: {{ checkNames }}</span>
+</div>
+```
+
+![image](https://user-images.githubusercontent.com/63120360/226635652-8d9fd5c8-9f5e-4c98-bf39-d2ff05c4e65e.png)
+
+<br />
+
+#### 기본 사용법 - 라디오
+
+```Javascript
+<div id="example-4">
+    <input type="radio" id="one" value="One" v-model="picked">
+    <label for="one">One</label>
+    <input type="radio" id="two" value="Two" v-model="picked">
+    <label for="two">Two</label>
+    <br />
+    <span>선택: {{ picked }}</span>
+</div>
+```
+
+<br />
+
+#### 기본 사용법 - 셀렉트
+
+```Javascript
+<div id="example-5">
+    <select v-model="selected">
+        <option disabled value="">Please select one</option>
+        <option>A</option>
+        <option>B</option>
+        <option>C</option>
+    </select>
+    <span>선택: {{ selected }}</span>
+</div>
+```
+
+<br />
+
+#### 기본 사용법 - 다중 셀렉트
+
+```Javascript
+<div id="example-5">
+    <select v-model="selected">
+        <option disabled value="">Please select one</option>
+        <option>A</option>
+        <option>B</option>
+        <option>C</option>
+    </select>
+    <span>선택: {{ selected }}</span>
+</div>
+```
+
+<br />
+
+#### 기본 사용법 - 셀렉트
+
+```Javascript
+<div id="example-5">
+    <select v-model="selected">
+        <option v-for="option in options" v-bind:value="option.value">
+            {{option.text}}
+        </option>
+    </select>
+    <span>선택: {{ selected }}</span>
+</div>
+
+new Vue({
+    data : {
+        selected: 'A',
+        options: [
+            {text: 'One', value: 'A'},
+            {text: 'Two', value: 'B'},
+            {text: 'Three', value: 'C'},
+        ]
+    }
+})
+```
+
+<br />
+
+### 폼 바인딩 하기
+
+라이도, 체크박스 및 셀렉트 옵션의 경우, `v-model 바인딩 값`은 보통 정적인 문자열(또는 체크박스의 boolean) 입니다.
+
+```HTML
+<!-- `picked`는 선택시 문자열 "a" -->
+<input type="radio" v-model="picked" value="a">
+
+<!-- `toggle`는 선택시 true 또는 false -->
+<input type="checkbox" v-model="toggle">
+
+<!-- `selected`는 "ABC" 선택시 문자열 "abc" -->
+<select v-model="selected">
+    <option value="abc">ABC</option>
+</select>
+```
+
+<br />
+
+#### 값 바인딩 하기 - 체크 박스
+
+```HTML
+<input  type = "checkbox"
+        v-model="toggle"
+        true-value="yes"
+        false-value="no">
+
+<!-- 체크된 경우 -->
+vm.toggle === 'yes'
+
+<!-- 체크되지 않은 경우 -->
+vm.toggle === 'no'
+```
+
+<br />
+
+#### 값 바인딩 하기 - 라디오
+
+```HTML
+<input type="radio" v-model="pick" v-bind:value="a">
+
+<!-- 체크 하면 -->
+vm.pick === vm.a
+```
+
+<br />
+
+#### 값 바인딩 하기 - 셀렉트 옵션
+
+```HTML
+<select v-model="selected">
+    <!-- inline object literal -->
+    <option v-bind:value="{ number : 123 }">123</option>
+</select>
+
+<!-- 선택하면 -->
+typeof vm.selected -> 'object'
+vm.selected.number -> 123
+```
+
+> `true-value`와 `false-value` 속성은 폼 전송시 체크되지 않은 박스를 포함하기 않기 때문에 입력의 `value` 속성에 영향을 미치지 않습니다. 두 값 중 하나가 폼을 통해 전송 되려면 (예: `예` 또는 `아니오`) 라디오를 대신 사용하십시오.
+
+<br />
+
+### 수식어 .lazy
+
+기본적으로 v-model 은 각 입력 이벤트 후 입력과 데이터를 동기화 합니다. .lazy 수식어를 추가하여 change 이벤트 이후에 동기화 할 수 있습니다.
+
+```HTML
+<!-- "input" 대신 "change" 이후에 동기화 됩니다. -->
+<input v-model.lazy="msg">
+```
+
+<br />
+
+### 수식어 .trim
+
+v-model이 관리하는 input을 자동으로 trim 하기 원하는, trim 수정자를 추가하면 됩니다.
+
+```HTML
+<input v-model.trim="msg">
+```
+
+<br />
+
+### 수식어 .number
+
+사용자 입력이 자동으로 숫자로 형변환 되기를 원하면, v-model이 관리하는 input에 number 수식어를 추가하면 됩니다.
+
+```HTML
+<input v-model.number="age" type="number">
+```

@@ -1,9 +1,20 @@
 <template>
     <div>
-        <h1>Welcome to Vue World</h1>
-        <form @submit.prevent>
-            <input type="text" @keyup.enter="test">
-        </form>
+        <!-- 수식어 .lazy -->
+        <div>
+            <input type="text" v-model.lazy="msg1">
+            <p>{{ msg1 }}</p>
+        </div>
+        <!-- 수식어 .trim -->
+        <div>
+            <input type="text" v-model.trim="msg2">
+            <p>{{ msg2 }}</p>
+        </div>
+        <!-- 수식어 .number -->
+        <div>
+            <input v-model.number="age" type="number">
+            <p>{{ age }}</p>
+        </div>
     </div>
 </template>
 
@@ -14,22 +25,15 @@ export default {
     name: 'HelloWorld',
     data() {
        return {
-            name: 'Vue.js'
+            msg1: '',
+            msg2: '',
+            message: '',
+            age: 0,
+        
        }
     },
     methods: {
-        say: function(message) {
-            alert(message)
-        },
-        warn: function(message, event) {
-            // 네이티브 이벤트에 액세스 할 수 있습니다.
-            if(event) event.preventDefault()
-
-            alert(message)
-        },
-        test() {
-            alert("submitted")
-        }
+      
     },
     computed: {
 
