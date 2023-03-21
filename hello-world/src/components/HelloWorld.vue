@@ -15,11 +15,6 @@
             <input v-model.number="age" type="number">
             <p>{{ age }}</p>
         </div>
-        <div>
-            <textarea v-model.trim="message" placeholder="여러줄을 입력하세요."></textarea>
-            <span>여러 줄을 가지는 메시지: </span>
-            <p style="white-space: pre-line">{{ message }}</p>
-        </div>
     </div>
 </template>
 
