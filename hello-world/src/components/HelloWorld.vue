@@ -1,6 +1,9 @@
 <template>
     <div>
         <my-component></my-component>
+        <simple-counter></simple-counter>
+        <simple-counter></simple-counter>
+        <simple-counter></simple-counter>
     </div>
 </template>
 
@@ -8,10 +11,13 @@
 
 <script>
 import MyComponent from './MyComponent.vue'
+import SimpleCounter from './SimpleCounter.vue'
 
 export default {
     components: {
-        'my-component' : MyComponent
+        'my-component' : MyComponent,
+        'simple-counter' : SimpleCounter,
+        SimpleCounter,
     },
     name: 'HelloWorld',
     data() {

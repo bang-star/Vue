@@ -1669,6 +1669,8 @@ Vue.component('my-component', {
 
 - 이슈 벗어나기 1번째 시도
 
+    세 개의 컴포넌트 인스턴스가 모두 같은 data 객체를 공유하므로 하나의 카운터를 증가 시키면 모두 증가한다.
+
 ```HTML
 <div id="example-2">
     <simple-counter></simple-counter>
