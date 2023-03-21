@@ -1540,3 +1540,165 @@ v-model이 관리하는 input을 자동으로 trim 하기 원하는, trim 수정
 ```HTML
 <input v-model.number="age" type="number">
 ```
+
+<br />
+
+## 컴포넌트
+
+### 컴포넌트는 무엇인가?
+
+컴포넌트는 Vue의 가장 강력한 기능 중 하나입니다. 기본 HTML 엘리먼트를 확장하여 `재사용 가능한 코드를 캡슐화`하는 데 도움이 됩니다. 경우에 따라 특별한 is 속성으로 확장 된 원시 HTML 엘리먼트로 나타날 수도 있습니다.
+
+Vue 컴포넌트는 Vue 인스턴스이기도 합니다. 그러므로 모든 옵션 객체를 사용할 수 있습니다. (루트에만 사용하는 옵션은 제외) 그리고 같은 라이프사이클 훅을 사용할 수 있습니다.
+
+![image](https://user-images.githubusercontent.com/63120360/226651310-30991ee5-2c5a-443a-a557-54e9b0642f62.png)
+
+<br />
+
+### 컴포넌트 사용하기 - 전역 등록
+
+```Javascript
+new Vue({
+    el: '#some-element',
+    // 옵션
+})
+
+Vue.component('my-component', {
+    // 옵션
+})
+```
+
+일단 등록되면, 컴포넌트는 `인스턴스의 템플릿`에서 커스텀 `엘리먼트(<my-component></my-component>)`로 사용할 수 있습니다. 루트 Vue 인스턴스를 인스턴스화하기 전에 컴포넌트가 등록되어 있는지 확인하세요.
+
+```HTML
+<div id="example">
+    <my-component></my-component>
+</div>
+```
+
+```Javascript
+// 등록
+Vue.component('my-component', {
+    template: '<div>사용자 정의 컴포넌트</div>'
+})
+
+// 루트 인스턴스 생성
+new Vue({
+    el: '#example'
+})
+```
+
+```HTML
+<div id="example">
+    <div>사용자 정의 컴포넌트</div>
+</div>
+```
+
+<br />
+
+### 컴포넌트 사용하기 - 지역 등록
+
+모든 컴포넌트를 전역으로 등록 할 필요는 없습니다. 컴포넌트를 `components 인스턴스 옵션으로` 등록함으로써 다른 인스턴스/컴포넌트의 범위에서만 사용할 수 있는 컴포넌트를 만들 수 있습니다.
+
+동일한 캡슐화는 디렉티브와 같은 다른 등록 가능한 Vue 기능에도 적용됩니다.
+
+```Javascript
+var Child = {
+    template: '<div>사용자 정의 컴포넌트</div>'
+}
+
+new Vue({
+    // ...
+    components: {
+        // <my-component> 는 상위 템플릿에서만 사용할 수 있습니다.
+        'my-component': Child
+    }
+})
+```
+
+<br />
+
+### 컴포넌트 사용하기 - DOM 템플릿 구문 분석 경고
+
+DOM을 템플릿으로 사용할 때, Vue는 템플릿 콘텐츠만 가져올 수 있기 때문에 HTML이 작동하는 방식에 고유한 몇 가지 제한 사항이 적용됩니다. `<ul>, <ol>, <table>과 <select>`와 같은 일부 엘리먼트는 그 안에 어떤 엘리먼트가 나타날 수 있는지에 대한 제한을 가지고 있으며, `<option>`과 같은 특정 다른 엘리먼트 안에만 나타날 수 있습니다.
+
+ - 엘리먼트
+
+```HTML
+<table>
+    <my-row>...</my-row>
+</table>
+```
+
+<br />
+
+ - 이슈 벗어나기
+
+```HTML
+<table>
+    <tr is="my-row"></tr>
+</table>
+```
+
+<br />
+
+다음 소스 중 하나에 포함되면 문자열 템플릿을 사용하는 경우에는 이러한 제한 사항이 적용되지 않습니다.
+
+ - `<script type="text/x-template">`
+
+ - Javascript 인라인 템플릿 문자열
+
+ - `.vue 컴포넌트(추천)`
+
+<br />
+
+### 컴포넌트 사용하기 - data 는 반드시 함수!
+
+`Vue 생성자`에 사용할 수 있는 대부분의 옵션은 컴포넌트에서 사용할 수 있습니다. 한가지 지켜야할 점 중 하나, `data는 함수`여야 합니다.
+
+ - 이슈 발생 (콘솔 경고)
+
+```Javascript
+Vue.component('my-component', {
+    template: '<span>{{ message }}</span>',
+    data: {
+        message: 'hello'
+    }
+})
+```
+
+- 이슈 벗어나기 1번째 시도
+
+```HTML
+<div id="example-2">
+    <simple-counter></simple-counter>
+    <simple-counter></simple-counter>
+    <simple-counter></simple-counter>
+</div>
+```
+
+```Javascript
+var data = { counter: 0 }
+
+Vue.component('simple-counter', {
+    template: '<button v-on:click="counter += 1">{{ counter }}</button>',
+    // 데이터는 기술적으로 함수이므로 Vue는 따지지 않지만
+    // 각 컴포넌트 인스턴스에 대해 같은 객체 참조를 반환합니다.
+
+    data: function() {
+        return data
+    }
+})
+
+new Vue({
+    el: '#example-2'
+})
+```
+
+### 컴포넌트 사용하기 - 컴포넌트 작성
+
+컴포넌트는 `부모-자식 관계`에서 가장 일반적으로 `함께 사용`하기 위한 것입니다. 컴포넌트는 A는 자체 템플릿에서 컴포넌트 B를 사용할 수 있습니다. 그들은 필연적으로 서로 의사 소통이 필요합니다. 부모는 자식에게 데이터를 전달해야 할 수도 있으며, 자식은 자신에게 일어난 일은 부모에게 알릴 필요가 있습니다. 그러나 부모와 자식이 명확하게 정의된 인터페이스를 통해 가능한 분리된 상태로 유지하는 것도 매우 중요합니다. 이렇게 하면 각 컴포넌트의 코드를 `상대적으로 격리 할 수 있도록 작성`하고 추론할 수 있으므로 `유지 관리가 쉽고` 잠재적으로 쉽게 재사용 할 수 있습니다.
+
+![image](https://user-images.githubusercontent.com/63120360/226656900-1545dcd6-a2e9-401c-8c94-1d60c5de30f6.png)
+
+Vue.js에서 `부모 자식 컴포넌트 관계`는 props는 아래로, events 위로 라고 요약할 수 있습니다. 부모는 `props`를 통해 자식에게 데이터를 전달하고 자식은 events 를 통해 부모에게 메시지를 보냅니다.

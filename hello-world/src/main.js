@@ -3,6 +3,12 @@ import App from './App.vue'
 
 Vue.config.productionTip = false
 
+import MyComponent from './components/MyComponent'
+
+// 등록
+Vue.component('MyComponent', MyComponent)
+
+// Vue 인스턴스 생성
 new Vue({
   render: h => h(App),
 }).$mount('#app')
