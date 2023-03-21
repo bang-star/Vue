@@ -1743,3 +1743,40 @@ Vue.component({
 <!-- HTML는 kebab-case -->
 <child message="안녕하세요!"></child>
 ```
+
+<br />
+
+### Props - 동적 props
+
+정규 속성을 표현식에 바인딩하는 것과 비슷하게, v-bind를 사용하여 부모의 데이터에 props를 동적으로 바인딩 할 수 있습니다. 데이터가 상위에서 업데이트 될때마다 하위 데이터로도 전달됩니다.
+
+![image](https://user-images.githubusercontent.com/63120360/226670840-b12de6af-c8b1-4da9-9869-197b92002616.png)
+
+
+```HTML
+<div>
+    <input v-model="parentMsg">
+    <br />
+    <child v-bind:my-message="parentMsg"></child>
+</div>
+```
+
+```HTML
+<child :my-message="parentMsg"></child>
+```
+
+객체의 모든 속성을 props로 전달하려면, 인자없이 v-bind를 쓸 수 있습니다.(v-bind:prop-name 대신 v-bind)
+
+```Javascript
+todo: {
+    text: 'Learn Vue',
+    isComplete: false
+}
+```
+
+```HTML
+<todo-item
+    v-bind:text="todo.text"
+    v-bind:is-complete="todo.isComplete">
+</todo-item>
+```

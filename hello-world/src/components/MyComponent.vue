@@ -1,13 +1,19 @@
 <template>
-    <div class="foo bar">
-        {{ myMessage }}
+    <div>
+        <div>
+            Message From Parent : {{ myMessage }} 
+        </div>
+        <div>
+            Props From Parent : {{ text }} <br/>
+            Props From Parent : {{ isComplete }} 
+        </div>
     </div>
 </template>
 
 <script>
 export default {
     name: 'MyComponent',
-    props: ['myMessage'],
+    props: ['myMessage', 'text', 'isComplete'],
     data() {
         return {
         }

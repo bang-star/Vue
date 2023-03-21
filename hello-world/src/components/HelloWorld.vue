@@ -1,6 +1,10 @@
 <template>
     <div>
-        <MyComponent my-message="안녕하세요 Vue World"></MyComponent>
+        <input type="text" v-model="parentMessage">
+        <MyComponent 
+            :my-message="parentMessage"
+            v-bind="todo"
+        ></MyComponent>
     </div>
 </template>
 
@@ -17,6 +21,10 @@ export default {
     data() {
        return {
             parentMessage: '',
+            todo: {
+                text: 'Learn Vue',
+                isComplete: false
+            },
        }
     },
     methods: {
