@@ -1724,3 +1724,22 @@ Vue.component('child', {
 ```HTML
 <child message="안녕하세요!"></child>
 ```
+
+<br />
+
+### Props - camelCase vs kebab-case
+
+HTML 속성은 대소 문자를 구분하지 않으므로 문자열이 아닌 템플릿을 사용할 떄 `camelCased prop` 이름에 해당하는 `kebab-case`를 사용해야 합니다.
+
+```Javascript
+Vue.component({
+    // Javascript는 camelCase
+    props: ['myMessage'],
+    template: '<span>{{ myMessage }}</span>'
+})
+```
+
+```HTML
+<!-- HTML는 kebab-case -->
+<child message="안녕하세요!"></child>
+```
