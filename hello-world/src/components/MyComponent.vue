@@ -1,11 +1,13 @@
 <template>
     <div>
-        <div>
-            Message From Parent : {{ myMessage }} 
+       <div>
+            Prop From Parent : {{ text }} 
         </div>
         <div>
-            Props From Parent : {{ text }} <br/>
-            Props From Parent : {{ isComplete }} 
+            Local From Parent : {{ message }}
+        </div>
+        <div>
+            Calculated Prop From Parent : {{ calculateMessage }}
         </div>
     </div>
 </template>
@@ -13,10 +15,16 @@
 <script>
 export default {
     name: 'MyComponent',
-    props: ['myMessage', 'text', 'isComplete'],
+    props: ['text'],
     data() {
         return {
+            message: this.text, 
         }
     },
+    computed: {
+        calculateMessage() {
+            return this.text
+        }
+    }
 }
 </script>
