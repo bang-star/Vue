@@ -1,6 +1,7 @@
 <template>
     <div>
-        <MyComponent date-3d-date-picker="true" class="date-picker-theme-dark"></MyComponent>
+        <h2>{{ total }}</h2>
+        <MyComponent v-on:increment="incrementTotal"></MyComponent>
     </div>
 </template>
 
@@ -16,10 +17,13 @@ export default {
     name: 'HelloWorld',
     data() {
        return {
+            total: 0,
        }
     },
     methods: {
-      
+        incrementTotal() {
+            this.total += 1
+        }
     },
     computed: {
 

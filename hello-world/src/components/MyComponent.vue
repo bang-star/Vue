@@ -1,6 +1,6 @@
 <template>
-    <div class="form-control">
-        <input type="date">
+    <div>
+        <button @click="incrementCounter">{{ counter }}</button>
     </div>
 </template>
 
@@ -8,14 +8,21 @@
 export default {
     name: 'MyComponent',
     props: {
-        'text': String,
+
     },
     data() {
         return {
-            message: this.text, 
+            counter: 0,
         }
     },
     computed: {
+
+    },
+    methods: {
+        incrementCounter() {
+            this.counter += 1
+            this.$emit("increment")
+        }
     }
 }
 </script>

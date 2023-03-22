@@ -1911,3 +1911,52 @@ Props가 아닌 속성은 컴포넌트로 전달되지만 해당 props는 정의
  - `date-picker-theme-dark`는 부모에 의해 컴포넌트로 전달됩니다.
 
 대부분의 속성의 경우 컴포넌트에 제공된 값은 컴포넌트에서 `설정된 값을 대체`합니다. 예를 들어 type="large"가 전달되면 type="date"를 대체할 것이고 아마도 망가뜨릴 것입니다. 다행스럽게도 `class`와 `style`속성은 똑똑하기 때문에 두 값이 합쳐져서 최종 값인 "form-control date-picker-theme dark" 를 만듭니다.
+
+<br />
+
+#### Props가 아닌 속성 - v-on을 이용한 사용자 지정 이벤트
+
+모든 Vue 인스턴스는 다음과 같은 이벤트 인터페이스를 구현합니다.
+
+ - `$on(eventName)`을 사용하여 이벤트를 감지
+
+ 부모 컴포넌트는 자식 컴포넌트가 사용되는 템플릿에서 직접 `v-on`을 사용하여 **자식 컴포넌트에게 보내진 이벤트를 청취**할 수 있습니다.
+
+ - `$emit(eventName)`을 사용하여 이벤트를 트리거
+
+```HTML
+<div id="counter-event-example">
+    <p>{{ total }}</p>
+    <button-counter v-on:increment="incrementTotal"></button-counter>
+    <button-counter v-on:increment="incrementTotal"></button-counter>
+</div>
+
+<script>
+Vue.compoent('button-counter', {
+    template: '<button v-on:click="incrementCounter">{{ counter }}</button>',
+    date: function() {
+        return {
+            counter: 0
+        }
+    },
+    methods: {
+        incrementCounter: function() {
+            this.counter += 1
+            this.$emit('increment')
+        }
+    },
+})
+
+new Vue({
+    el: '#counter-event-example',
+    data: {
+        total: 0
+    },
+    methods: {
+        incrementTotal: function() {
+            this.total += 1
+        }
+    }
+})
+</script>
+```
