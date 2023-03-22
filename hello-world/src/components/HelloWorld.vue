@@ -1,7 +1,7 @@
 <template>
     <div>
         <input type="text" v-model="userInput"/>
-        <MyComponent v-bind:text="userInput"></MyComponent>
+        <MyComponent v-bind:text="userInput" defaultProp="10" :numberProp="15"></MyComponent>
     </div>
 </template>
 

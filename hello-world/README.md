@@ -1827,4 +1827,50 @@ computed: {
 }
 ```
 
-> 자바 스크립트의 객체와 배열은 참조로 전달되므로 prop 가 배열이나 객체인 경우 하위 객체 또는 배열 자체를 부모 상태로 변경하면 부모 상태에 ** 영향을 줍니다**
+> 자바 스크립트의 객체와 배열은 참조로 전달되므로 prop 가 배열이나 객체인 경우 하위 객체 또는 배열 자체를 부모 상태로 변경하면 부모 상태에 **영향을 줍니다**
+
+<br />
+
+### Props - 검증
+
+컴포넌트가 받는 중인 `prop에 대한 요구사항`을 지정할 수 있습니다. 요구사항이 충족되지 않으면 Vue에서 경고를 내보냅니다. 이 기능은 다른 사용자가 사용할 컴포넌트를 제작할 때 특히 유용합니다.
+
+props를 문자열 배열로 정의하는 대신 `유효성 검사 요구사항`이 있는 **객체**를 사용할 수 있습니다.
+
+- Type : String, Number, Function, Object, Array, Symbol
+
+```Javascript
+Vue.component('example', {
+    props: {
+        // 기본 타입 확인 (`null`은 어떤 타입이든 가능하다는 뜻입니다.)
+        propA: Number,
+        // 여러개의 가능한 타입
+        propB: [String, Number],
+        // 문자열이며 필수
+        propC: {
+            type: String,
+            required: true
+        },
+        // 숫자이며 기본 값을 가짐
+        propD: {
+            type: Number,
+            default: 100
+        },
+        // 객체/배열의 기본값은 팩토리 함수에서 반환 되어야 합니다.
+        propE: {
+            type: Object,
+            default: function() {
+                return { message: 'hello' }
+            }
+        },
+        // 사용자 정의 유효성 검사 가능
+        propF: {
+            validator: function(value) {
+                return value > 10
+            }
+        }
+    }
+})
+```
+
+> props는 컴포넌트 인스턴스가 생성되기 전에 검증되기 때문에 default 또는 validator 함수 내에서 data, computed 또는 methods와 같은 인스턴스 속성을 사용할 수 없습니다.
