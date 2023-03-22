@@ -2005,3 +2005,35 @@ new Vue({
 ```
 
 따라서 v-model을 사용하는 컴포넌트는 value prop을 가지며, 새로운 값으로 input 이벤트를 내보냅니다.
+
+<br />
+
+#### Props가 아닌 속성 - 컴포넌트의 v-model 사용자 정의
+
+컴포넌트의 v-model은 value를 보조 변수로 사용하고 input을 이벤트로 사용하지만 체크 박스와 라디오 버튼과 같은 일부 입력 타입은 다른 목적으로 value 속성을 사용할 수 있습니다. model 옵션을 사용하면 다음 경우에 충돌을 피할 수 있습니다.
+
+```javascript
+Vue.component('my-checkbox', {
+    model: {
+        prop: 'checked',
+        event: 'change'
+    },
+    props: {
+        // 다른 목적을 위해 'value' prop을 사용할 수 있습니다.
+        checked: Boolean,
+        value: String
+    }
+})
+```
+
+```HTML
+<my-checkbox v-model="foo" value="some value"></my-checkbox>
+
+<!-- 동일한 코드 -->
+<my-checkbox    
+        :checked="foo"
+        @change="val => {foo = val}"
+        value="some value">
+</my-checkbox>
+```
+
