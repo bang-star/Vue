@@ -2037,3 +2037,21 @@ Vue.component('my-checkbox', {
 </my-checkbox>
 ```
 
+<br />
+
+#### Props가 아닌 속성 :  비부모 - 자식간 통신
+
+두 컴포넌트가 서로 통신할 필요가 있지만 서로 부모/자식이 아닌 경우가 있다. 간단한 시나리오에서는 비어있는 Vue 인스턴스를 `중앙 이벤트 버스`로 사용할 수 있습니다.
+
+```Javascript
+var bus = new Vue()
+
+// 컴포넌트 A의 메소드
+bus.$emit('id-selected', 1)
+
+// 컴포넌트 B의 created 훅
+bus.$on('id-selected', function(id) {
+    // ...
+})
+```
+
