@@ -21,7 +21,7 @@ export default {
     methods: {
         incrementCounter() {
             this.counter += 1
-            this.$emit("increment")
+            this.$emit("update:foo", this.counter)
         }
     }
 }

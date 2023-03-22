@@ -1960,3 +1960,48 @@ new Vue({
 })
 </script>
 ```
+
+<br />
+
+#### Props가 아닌 속성 - .sync
+
+일부 경우에 속성에 **양방향 바인딩**이 필요할 수 있습니다. 자식 컴포넌트가 .sync를 가지는 속성을 변경하면 값의 변경이 부모에 반영됩니다. 편리하지만 단방향 데이터 흐름이 아니기 때문에 장기적으로 유지보수에 문제가 생깁니다. 자식 속성을 변경하는 코드는 부모의 상태에 영향을 미칩니다.
+
+- 부모 컴포넌트
+
+    ````HTML
+    <!-- .sync를 이용한 방법 -->
+    <comp :foo.sync="bar"></comp>
+    <!-- .snyc를 이용하지 않은 방법 -->
+    <comp :foo="bar" @update:foo="val => bar = val"></comp>
+    ````
+
+- 자식 컴포넌트
+
+    하위 컴포넌트가 foo를 갱신하려면 속성을 변경하는 대신 명시적으로 `이벤트(emit)`을 보내야합니다.
+
+    ```Javascript
+    this.$emit('update:foo', newValue)
+    ```
+<br />
+
+#### Props가 아닌 속성 - 사용자 정의 이벤트를 사용하여 폼 입력 컴포넌트 만들기
+
+사용자 정의 이벤트는 v-model에서 작동하는 사용자 정의 입력을 만드는데도 사용할 수 있습니다.
+
+```HTML
+<input v-model="something">
+```
+
+```HTML
+<input v-bind:value="something"
+       v-ond:input="something = $event.targer.value">
+```
+
+```HTML
+<custom-input :value="something"
+              @input="value ==> {something = value}">
+</custom-input>
+```
+
+따라서 v-model을 사용하는 컴포넌트는 value prop을 가지며, 새로운 값으로 input 이벤트를 내보냅니다.
