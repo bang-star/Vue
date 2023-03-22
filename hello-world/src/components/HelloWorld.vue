@@ -1,7 +1,6 @@
 <template>
     <div>
-        <input type="text" v-model="userInput"/>
-        <MyComponent v-bind:text="userInput" defaultProp="10" :numberProp="15"></MyComponent>
+        <MyComponent date-3d-date-picker="true" class="date-picker-theme-dark"></MyComponent>
     </div>
 </template>
 
@@ -17,9 +16,6 @@ export default {
     name: 'HelloWorld',
     data() {
        return {
-            parentMessage: '',
-            userInput: '',
-
        }
     },
     methods: {

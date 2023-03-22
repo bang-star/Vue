@@ -1874,3 +1874,40 @@ Vue.component('example', {
 ```
 
 > props는 컴포넌트 인스턴스가 생성되기 전에 검증되기 때문에 default 또는 validator 함수 내에서 data, computed 또는 methods와 같은 인스턴스 속성을 사용할 수 없습니다.
+
+
+<br />
+
+### Props가 아닌 속성
+
+Props가 아닌 속성은 컴포넌트로 전달되지만 해당 props는 정의되지 않은 속성입니다.
+
+명시적으로 정의된 props는 하위 컴포넌트에 정보를 전달하는데 적절하지만 `컴포넌트 라이브러리를 만드는 경우 컴포넌트가 사용될 수 있는 상황을 항상 예측할 수는 없습니다.` 이것이 컴포넌트가 컴포넌트의 루트 요소에 추가되는 `임의의 속성을 허용`해야하는 이유입니다.
+
+예를 들어, 우리가 input에 `data-3d-date-picker` 속성을 요구하는 부트스트랩 플러그인으로 써드 파티 bs-date-input 컴포넌트를 사용하고 있다고 상상해보자. 이 속성을 컴포넌트 인스턴스에 추가할 수 있습니다. 그리고 data-3d-date-picker="true" 속성은 bs-date-input의 루트 엘리먼트에 자동으로 추가 될 것입니다.
+
+```HTML
+<bs-date-input data-3d-date-picker="ture"></bs-date-input>
+```
+
+<br />
+
+#### Props가 아닌 속성 - 존재하는 속성 교체/병합
+
+```HTML
+<input type="data" class="form-control">
+```
+
+데이트피커 플러그인의 테마를 추가하려면 다음과 같이 특정 클래스를 추가해야 할 수도 있습니다.
+
+```HTML
+<bs-date-input data-3d-date-picker="ture" class="date-picker-theme-dark"></bs-date-input>
+```
+
+이 경우 class에 대한 두 개의 서로 다른 값이 정의됩니다. 
+
+ - 템플릿의 컴포넌트에 의해 설정된 `form-control`
+
+ - `date-picker-theme-dark`는 부모에 의해 컴포넌트로 전달됩니다.
+
+대부분의 속성의 경우 컴포넌트에 제공된 값은 컴포넌트에서 `설정된 값을 대체`합니다. 예를 들어 type="large"가 전달되면 type="date"를 대체할 것이고 아마도 망가뜨릴 것입니다. 다행스럽게도 `class`와 `style`속성은 똑똑하기 때문에 두 값이 합쳐져서 최종 값인 "form-control date-picker-theme dark" 를 만듭니다.
