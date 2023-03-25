@@ -3,7 +3,9 @@
         <h1>나는 부모 컴포넌트의 제목입니다.</h1>
         <button @click="toggle">toggle</button>
         <!-- 동적 컴포넌트 -->
-        <component v-bind:is="currentView"></component>
+        <keep-alive>
+            <component v-bind:is="currentView"></component>
+        </keep-alive>
     </div>
 </template>
 

@@ -2304,7 +2304,7 @@ var vm = new Vue({
 
 #### 동적 컴포넌트 - keep-alive
 
-트랜지션된 컴포넌트를 메모리에 유지하여 상태를 보존하거나 다시 렌더링하지 않도록 하려면 동적 컴포넌트를 `<keep-alive>` 엘리먼트에 래핑 할 수 있습니다.
+트랜지션된 컴포넌트를 메모리에 유지(캐싱)하여 상태를 보존하거나 다시 렌더링하지 않도록 하려면 동적 컴포넌트를 `<keep-alive>` 엘리먼트에 래핑 할 수 있습니다.
 
 ```HTML
 <keep-alive>
@@ -2314,10 +2314,14 @@ var vm = new Vue({
 </keep-alive>
 ```
 
+
+적용 전
+
+![image](https://user-images.githubusercontent.com/22147400/227699334-dcb1acd5-3bd4-4a70-847d-bdfcddb9bfe2.png)
+
 <br />
 
-#### 동적 컴포넌트
+적용 후
 
-같은 마운트 포인트를 사용하고 예약된 `<component> 엘리먼트`를 사용하여 여러 컴포넌트 간에 동적으로 트랜지션하고 `is 속성`에 동적으로 바인드 할 수 있습니다. 아주 자주 사용되는 기능 중 하나입니다.
+![image](https://user-images.githubusercontent.com/22147400/227699464-e3f5b3bc-1bdb-4af2-b194-d9bf5c4276fc.png)
 
-``
