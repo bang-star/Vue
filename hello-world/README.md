@@ -2198,4 +2198,64 @@ Vue.component('child-component', {
 
 <br />
 
-#### 
+#### 슬롯을 사용한 컨텐츠 배포 - 범위를 가지는 슬롯
+
+`범위가 지정된 슬롯`은 이미 렌더링 된 엘리먼트 대신 `재사용 가능한 템플릿`(데이터를 전달할 수 있음)으로 작동하는 특별한 유형의 슬롯입니다. prop은 컴포넌트에게 전달하는 것처럼, 하위 컴포넌트에서 단순히 데이터를 슬롯에 전달하면 됩니다. Boostrap과 같은 라이브러리를 사용하다 보면 많이 마주칠 수 있는 예시입니다.
+
+```HTML
+<div class="child">
+    <slot text="hello from child"></slot>
+</div>
+```
+
+```HTML
+<div class="parent">
+    <child>
+        <template slot-scope="props">
+            <span>hello from parent</span>
+            <span>{{ props.text }}</span>
+        </template>
+    </child>
+</div>
+```
+
+```HTML
+<div class="parent">
+    <div class="child">
+        <span>hello from parent</span>
+        <span>hello from child</span>
+    </div>
+</div>
+```
+
+```HTML
+<my-awesome-lit :items="items">
+    <!-- scoped slot 역시 이름을 가질 수 있습니다. -->
+    <li
+        slot="item"
+        slot-scope="props"
+        class="my-fancy-item">
+        {{ props.text }}
+    </li>
+</my-awesome-lit>
+```
+
+```HTML
+<ul>
+    <slot 
+        name="item"
+        v-for="item in items"
+        :text="item.text">
+    </slot>
+</ul>
+```
+
+#### Destructuring
+
+slot-scope 값은 실제로 함수 서명의 인수 위치에 나타날 수 있는 유효한 JavaScript 표현식입니다.
+
+```HTML
+<child>
+    <span slot-scope="{text}">{{text}}</span>
+</child>
+```
