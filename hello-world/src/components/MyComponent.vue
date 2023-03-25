@@ -1,7 +1,7 @@
 <template>
     <div>
         <slot>
-            <div v-for="n in 10000" :key="n">
+            <div v-for="n in 10" :key="n">
                 {{ n }} - MyComponent 기본 데이터입니다.
             </div>
         </slot>

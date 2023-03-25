@@ -2325,3 +2325,46 @@ var vm = new Vue({
 
 ![image](https://user-images.githubusercontent.com/22147400/227699464-e3f5b3bc-1bdb-4af2-b194-d9bf5c4276fc.png)
 
+
+<br />
+
+### 기타 - 재사용 가능한 컴포넌트 제작하기
+
+컴포넌트를 작성할 때 나중에 다른 곳에서 다시 사용할 것인지에 대한 여부를 명심하는 것이 좋습니다. 일회용 컴포넌트가 단단히 결합되어도 상관 없지만 재사용 가능한 컴포넌트는 깨끗한 공용 인터페이스를 정의 해야하며 사용된 컨텍스트에 대한 가정을 하지 않아야 합니다. Vue 컴포넌트의 API는 props, 이벤트 및 슬롯의 세 부분으로 나뉩니다.
+
+ - `Props` 는 외부 환경이 데이터를 컴포넌트로 전달하도록 허용합니다.
+ - `이벤트` 를 통해 컴포넌트가 외부 환경에서 사이드이펙트를 발생할 수 있도록 합니다.
+ - `슬롯` 을 사용하면 외부 환경에서 추가 컨텐츠가 포함된 컴포넌트를 작성할 수 있습니다.
+
+ ```HTML
+ <my-component
+    :foo="baz"
+    :bar="qux"
+    @event-a="doThis"
+    @event-b="doThat">
+    <img slot="icon" src="..." >
+    <p slot="main-text">Hello!</p>
+ </my-component>
+ ```
+
+ v-bind와 v-on을 위한 전용 약어문을 사용하여 의도를 명확하고 간결하게 템플릿에 전달할 수 있습니다.
+
+ <br />
+
+ ### 기타 - 자식 컴포넌트 참조
+
+ props 나 이벤트가 있었음에도 불구하고 때때로 Javascript 로 하위 컴포넌트에 직접 액세스 해야 할 수 도 있습니다. 이를 위해 ref 를 이용하여 참조 컴포넌트 ID를 자식 컴포넌트에 할당해야 합니다.
+
+ `ref`와 `v-for`와 함께 사용될 때, 얻을 수 있는 ref는 데이터 소스를 미러링하는 자식 컴포넌트를 포함하는 배열이 될 것입니다.
+
+ ```HTML
+ <div id="parent">
+    <user-profile ref="profile"></user-profile>
+ </div>
+ ```
+
+ ```JS
+ var parent = new Vue({ el: '#parent'})
+ // 자식 컴포넌트 인스턴스에 접근합니다.
+ var child = parent.$refs.profile
+ ```

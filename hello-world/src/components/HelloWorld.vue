@@ -2,10 +2,11 @@
     <div>
         <h1>나는 부모 컴포넌트의 제목입니다.</h1>
         <button @click="toggle">toggle</button>
-        <!-- 동적 컴포넌트 -->
-        <keep-alive>
+        <my-component ref="my-component"></my-component>
+        <your-component ref="your-component"></your-component>
+        <!-- <keep-alive>
             <component v-bind:is="currentView"></component>
-        </keep-alive>
+        </keep-alive> -->
     </div>
 </template>
 
@@ -21,6 +22,10 @@ export default {
         'your-component': YourComponent
     },
     name: 'HelloWorld',
+    mounted() {
+        const child = this.$refs['my-component']
+        console.log(child)
+    },
     data() {
        return {
             currentView: 'my-component',
