@@ -2,10 +2,10 @@
     <div>
         <h1>나는 부모 컴포넌트의 제목입니다.</h1>
         <MyComponent>
-            <template slot-scope="prop">
+            <template slot-scope="{text}">
                 <span>hello from parent</span>
                 <br />
-                <span>{{ prop.text }}</span>
+                <span>{{ text }}</span>
             </template>
         </MyComponent>
     </div>
