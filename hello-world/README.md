@@ -2373,7 +2373,7 @@ var vm = new Vue({
 
 <br />
 
- ### 기타 - 비동기 컴포넌트
+ #### 기타 - 비동기 컴포넌트
 
  대규모 응용 프로그램에서는 응용 프로그램을 더 작은 덩어리로 나누고 실제로 필요할 때만 서버에서 컴포넌트를 로드해야 할 수도 있습니다. Vue를 사용하면 컴포넌트 정의를 비동기식으로 해결하는 팩토리 함수로 컴포넌트를 정의할 수 있습니다. Vue는 컴포넌트가 실제로 렌더링되어야 할 때만 팩토링 기능을 트리거하고 이후의 리렌더링을 위해 결과를 캐시합니다.
 
@@ -2404,3 +2404,98 @@ var vm = new Vue({
     }
  })
  ```
+
+<br />
+
+#### 기타 - 고급 비동기 컴포넌트
+
+비동기 컴포넌트 팩토리는 다음 형태의 객체를 반환할 수 있습니다.
+
+```JS
+const AsyncComp = () => ({
+    // 로드하는 컴포넌트입니다. 반드시 Promise이어야 합니다.
+    component: import('./MyComp.vue'),
+    // 비동기 컴포넌트가 로드되는 동안 사용할 컴포넌트
+    loading: LoadingComp,
+    // 실패했을 경우 사용하는 컴포넌트
+    error: ErrorComp,
+    // 로딩 컴포넌트를 보여주기전 지연하는 정도. 기본값: 200ms
+    delay: 200,
+    // 시간이 초과되면 에러용 컴포넌트가 표시됩니다.
+    // 기본값: Infinity
+    timeout: 3000
+})
+```
+
+<br />
+
+#### 기타 - 컴포넌트 이름 규약
+
+컴포넌트 (또는 prop)를 등록할 때 kebab-case, camelCase 또는 PascalCase를 사용할 수 있습니다.
+
+```JS
+components: {
+    // kebab-case를 사용한 등록
+    'kebab-cased-component': { /* ... */ },
+    // camelCase를 사용한 등록
+    'camelCasedComponent': { /* ... */ },
+    // PascalCase를 사용한 등록
+    'PascalCasedComponent': { /* ... */ },
+}
+```
+
+ - kebab-case
+ - camelCase를 사용하여 컴포넌트가 정의된 경우 camelCase 또는 kebab-case
+ - PascalCase를 사용하여 컴포넌트가 정의된 경우 kebab-case, camelCase or PascalCase
+
+<br />
+
+#### 기타 - 인라인 템플릿
+
+하위 컴포넌트에 inline-template 이라는 특수한 속성이 존재할 때, 컴포넌트는 그 내용을 분산 된 내용으로 취급하지 않고 템플릿으로 사용합니다. 따라서 보다 유연한 템플릿 작성이 가능합니다.
+
+그러나, inline-template 은 템플릿의 범위를 추론하기 더 어렵게 만듭니다. 가장 좋은 방법은 `template 옵션`을 사용하거나 `.vue`파일의 `template 엘리먼트`를 사용하여 컴포넌트 내부에 템플릿을 정의하는 것입니다.
+
+```HTML
+<my-component inline-template>
+    <div>
+        <p>이것은 컴포넌트의 자체 템플릿으로 컴파일됩니다.</p>
+        <p>부모가 만들어낸 내용이 아닙니다.</p>
+    </div>
+</my-component>
+```
+
+<br />
+
+#### 기타 - X Templates
+
+템플리트를 정의하는 또 다른 방법은 `text/x-template` 유형의 스크립트 엘리먼트 내부에 ID로 템플릿을 참조하는 것입니다. 기능은 큰 템플릿이나 매우 작은 응용 프로그램의 데모에는 유용할 수 있지만 템플릿을 나머지 컴포넌트 정의와 분리하기 때문에 피해야합니다.
+
+```HTML
+<script type="text/x-template" id="hello-world-template">
+    <p>Hello Hello Hello</p>
+</script>
+```
+
+```JS
+Vue.component('hello-world', {
+    template: '#hello-world-template'
+})
+```
+
+<br />
+
+#### 기타 - v-once를 이용한 비용이 적게 드는 정적 컴포넌트
+
+일반 HTML 엘리먼트를 렌더링하는 것은 Vue에서 매우 빠르지만 가끔 정적 콘텐츠가 많이 포함 된 컴포넌트가 있을 수 있습니다. 이런 경우, v-once 디렉티브를 루트 엘리먼트에 추가함으로써 `캐시가 한번만 실행되도록` 할 수 있습니다.
+
+```JS
+Vue.component('term-of-service', {
+    template: `\
+    <div v-once>
+        <h1>Term of Service</h1>
+        ... a lot of static content ... \
+    </div>\
+    `
+})
+```
