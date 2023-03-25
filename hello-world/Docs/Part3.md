@@ -171,3 +171,23 @@ export default {
 - component-a: ComponentA
 - ComponentA: ComponentA
 - ComponentA
+
+<br />
+
+### 모듈 시스템 - 모듈 시스템에서 컴포넌트를 다른 컴포넌트에 지역적으로 등록하기
+
+모듈 시스템을 사용한다는 것은 `Babel`이나 `Webpack`같은 것과 함께 프로젝트를 구성하는 것을 의미합니다. 이 경우에는 `components 디렉토리`를 만들고 각 컴포넌트들을 그 자체로 `하나의 파일에 관리`하는 것을 추천합니다.
+
+그러면 어떤 컴포넌트를 다른 컴포넌트에 지역적으로 등록하기 전에 `사용할 컴포넌트`를 가져와야 합니다. 예를 들면 `ComponentB.js`나 `ComponentB.vue`같은 파일에서 아래처럼 다른 컴포넌트를 가져오는 것입니다.
+
+```JS
+import ComponentA from './ComponentA'
+import ComponentC from './ComponentC'
+
+export default {
+    components: {
+        ComponentA,
+        ComponentC,
+    }
+}
+```
