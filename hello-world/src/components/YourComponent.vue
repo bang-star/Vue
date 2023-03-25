@@ -1,14 +1,14 @@
 <template>
     <div>
         <slot>
-            MyComponent 기본 데이터입니다.
+            YourComponent 기본 데이터입니다.
         </slot>
     </div>
 </template>
 
 <script>
 export default {
-    name: 'MyComponent',
+    name: 'YourComponent',
     props: {
 
     },
