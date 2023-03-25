@@ -2,7 +2,7 @@
     <div>
         <slot>
             <div v-for="n in 10" :key="n">
-                {{ n }} - MyComponent 기본 데이터입니다.
+                {{ n }} - YourComponent 기본 데이터입니다.
             </div>
         </slot>
     </div>
@@ -10,7 +10,7 @@
 
 <script>
 export default {
-    name: 'MyComponent',
+    name: 'YourComponent',
     props: {
 
     },

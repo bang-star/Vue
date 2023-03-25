@@ -1,39 +1,40 @@
 <template>
     <div>
-        <!-- 수식어 .lazy -->
-        <div>
-            <input type="text" v-model.lazy="msg1">
-            <p>{{ msg1 }}</p>
-        </div>
-        <!-- 수식어 .trim -->
-        <div>
-            <input type="text" v-model.trim="msg2">
-            <p>{{ msg2 }}</p>
-        </div>
-        <!-- 수식어 .number -->
-        <div>
-            <input v-model.number="age" type="number">
-            <p>{{ age }}</p>
-        </div>
+        <h1>나는 부모 컴포넌트의 제목입니다.</h1>
+        <button @click="toggle">toggle</button>
+        <my-component ref="my-component"></my-component>
+        <your-component ref="your-component"></your-component>
+        <!-- <keep-alive>
+            <component v-bind:is="currentView"></component>
+        </keep-alive> -->
     </div>
 </template>
 
 <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
 
 <script>
+// import MyComponent from './MyComponent.vue';
+import YourComponent from './YourComponent.vue';
+
 export default {
+    components: {
+        'my-component': () => import('./MyComponent.vue'),
+        'your-component': YourComponent
+    },
     name: 'HelloWorld',
+    mounted() {
+        const child = this.$refs['my-component']
+        console.log(child)
+    },
     data() {
        return {
-            msg1: '',
-            msg2: '',
-            message: '',
-            age: 0,
-        
+            currentView: 'my-component',
        }
     },
     methods: {
-      
+        toggle() {
+            this.currentView = (this.currentView === 'my-component') ? 'your-component' : 'my-component'
+        }
     },
     computed: {
 
