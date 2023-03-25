@@ -191,3 +191,47 @@ export default {
     }
 }
 ```
+
+### 모듈 시스템 - 기본 컴포넌트를 자동으로 전역 등록하기
+
+`Webpack`을 쓴다면(`Vue CLI 3+`을 사용하는 경우 내장되어 있음) `require.context`를 써서 자주 쓰는 기본 컴포넌트들을 전역 등록할 수 있습니다. 아래의 예시는 어플리케이션의 엔트리 파일(e.g src/main.js)에 기본 컴포넌트들을 전역적으로 불러오는 코드입니다.
+
+```JS
+import Vue from 'vue'
+import upperFirst from 'lodash/upperFirst'
+import camelCase form 'lodash/camelCase'
+
+const requireComponent = require.context(
+    // 컴포넌트들이 있는 폴더
+    './components',
+    // 하위 폴더까지 포함할지 여부
+    false,
+    // 기본 컴포넌트를 찾는데 사용할 정규표현식
+    /Base[A-Z]\w+\.(vue|js)$/
+)
+
+requireComponent.keys().foreach(fileName => {
+    // 컴포넌트 설정 가져오기
+    const componentConfig = requireComponent(fileName)
+
+    // 컴포넌트의 파스칼표기법 이름 가져오기
+    const componentName = upperFirst(
+        camelCase(
+            // 폴더 위와 무관하게 파일 이름 추출
+            fileName
+                .split('/')
+                .pop()
+                .replace(/\.\w+$, '')
+        )
+    )
+})
+
+// 컴포넌트를 지역적으로 등록
+Vue.component(
+    componentName,
+    // `export default`를 이용한 컴포넌트는 `.default`로 컴포넌트 옵션을 추출하고 그렇지 않은 컴포넌트는 모듈의 루트를 호출
+    componentConfig.default || componentConfig
+)
+```
+
+`전역 등록`은 (new Vue)로 루트 Vue 인스턴스가 만들어지기 전에 반드시 이뤄져야 한다.
