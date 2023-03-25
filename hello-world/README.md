@@ -2259,3 +2259,43 @@ slot-scope 값은 실제로 함수 서명의 인수 위치에 나타날 수 있�
     <span slot-scope="{text}">{{text}}</span>
 </child>
 ```
+
+<br />
+
+### 동적 컴포넌트
+
+같은 마운트 포인트를 사용하고 예약된 `<component> 엘리먼트`를 사용하여 **여러 컴포넌트 간에 동적으로 트랜지션**하고 `is 속성`에 **동적으로 바인드**  할 수 있습니다. 
+
+
+```JS
+var vm = new Vue({
+    el: '#example',
+    data: {
+        currentView: 'home'
+    },
+    components: {
+        home: { /* ... */},
+        posts: { /* ... */},
+        archive: { /* ... */},
+    }
+})
+```
+
+```JS
+var Home = {
+    template: '<p>Welcome home!</p>'
+}
+
+var vm = new Vue({
+    el: '#example',
+    data: {
+        currentView: Home
+    }
+})
+```
+
+```HTML
+<component v-bind:is="currentView">
+    <!-- vm.currentView가 변경되면 컴포넌트가 변경됩니다. -->
+</component>
+```

@@ -1,13 +1,10 @@
 <template>
     <div>
         <h1>나는 부모 컴포넌트의 제목입니다.</h1>
-        <MyComponent>
-            <template slot-scope="{text}">
-                <span>hello from parent</span>
-                <br />
-                <span>{{ text }}</span>
-            </template>
-        </MyComponent>
+        <!-- 정적 컴포넌트 -->
+        <my-component></my-component>
+        <!-- 동적 컴포넌트 -->
+        <component v-bind:is="currentView"></component>
     </div>
 </template>
 
@@ -18,12 +15,12 @@ import MyComponent from './MyComponent.vue';
 
 export default {
     components: {
-        MyComponent,
+        'my-component': MyComponent,
     },
     name: 'HelloWorld',
     data() {
        return {
-            price: 0,
+            currentView: 'my-component',
        }
     },
     methods: {

@@ -1,6 +1,8 @@
 <template>
     <div>
-        <slot text="hello from child"></slot>
+        <slot>
+            기본 데이터입니다.
+        </slot>
     </div>
 </template>
 
