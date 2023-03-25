@@ -117,3 +117,57 @@ new Vue({el: '#app'})
 이렇게 등록한 컴포넌트들은 모든 하위 컴포넌트에도 사용 가능합니다. 즉 왼쪽의 3개의 컴포넌트들은 각각의 컴포넌트 안에서도 사용할 수 있습니다.
 
 <br />
+
+### 지역 등록
+
+전역 등록이 좋은 것만은 아닙니다. 예를 들어 `Webpack`같은 빌드 시스템을 사용하고 모든 컴포넌트를 전역 등록했으며 설사 어떤 컴포넌트를 더 이상 사용하지 않더라도 최종 빌드에는 들어가 있게 됩니다. 사용자가 내려받아야 하는 자바스크립트의 양이 불필요하게 커지게 됩니다.
+
+```JS
+var ComponentA = { /* ... */ }
+var ComponentB = { /* ... */ }
+var ComponentC = { /* ... */ }
+```
+
+이 경우에 컴포넌트를 일반 자바스크립트 객체로 정의할 수 있습니다.
+
+```JS
+new Vue({
+    el: '#app',
+    components: {
+        'component-a': ComponentA,
+        'component-b': ComponentB
+    }    
+})
+```
+
+그러면 사용할 컴포넌트들만 `components`옵션을 통해 쓸 수 있습니다. `components` 객체의 각 속성에서 키가 커스텀 엘리먼트의 이름이 되고 Value가 사용할 컴포넌트 객체를 지정합니다.
+
+```JS
+var ComponentA = { /* ... */ }
+
+var ComponentB = {
+    components: {
+        'component-a': ComponentA
+    }
+    // ...
+}
+```
+
+`지역 등록된 컴포넌트`는 `하위 컴포넌트`에서는 사용이 불가능하다는 점을 유의해야 합니다. 예를 들어 ComponentA를 ComponentB에서 쓰고 싶다면 아래와 같이 해야합니다.
+
+```JS
+import ComponentA from './ComponentA.vue'
+
+export default {
+    components: {
+        ComponentA
+    }
+    // ...
+}
+```
+
+`Babel`이나 `Webpack`을 이용해서 ES2015를 적용하고 있다면 `싱글 파일 컴포넌트(SFC)`를 이용해서 이렇게 할 수도 있습니다. ES2015 이상에서는 객체 내의 components 옵션에서 ComponentA: ComponentA라고 하지 않고 ComponentA라고만 해도 됩니다.
+
+- component-a: ComponentA
+- ComponentA: ComponentA
+- ComponentA
