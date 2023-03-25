@@ -1,6 +1,9 @@
 <template>
     <div>
-        <button @click="incrementCounter">{{ counter }}</button>
+        <h2>나는 자식 컴포넌트의 제목입니다.</h2>
+        <slot>
+            제공된 콘텐츠가 없는 경우에만 보실 수 있습니다.
+        </slot>
     </div>
 </template>
 
@@ -19,10 +22,7 @@ export default {
 
     },
     methods: {
-        incrementCounter() {
-            this.counter += 1
-            this.$emit("update:foo", this.counter)
-        }
+
     }
 }
 </script>
