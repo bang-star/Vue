@@ -2151,4 +2151,51 @@ Vue.component('child-component', {
 
 <br />
 
+#### 슬롯을 사용한 컨텐츠 배포 - 이름을 가지는 슬롯
+
+`<slot> 엘리먼트`는 **특별한 속성**인 `name`을 가지고 있습니다. 이 속성은 어떻게 내용을 배포해야 하는지를 더 커스터마이징하는 데 사용할 수 있습니다. 이름이 다른 슬롯이 여러 개 있을 수 있습니다. `이름을 가진 슬롯`을 내용 조각에 해당 slot 속성이 있는 모든 엘리먼트와 일치합니다.
+
+명명되지 않은 슬롯이 하나 있을 수 있습니다. 기본 슬롯은 일치하지 않는 콘텐츠의 포괄적인 컨텐츠 역할을 합니다. 기본 슬롯이 없으면 일치하지 않는 콘텐츠가 삭제됩니다.
+
+```HTML
+<div class="container">
+    <header>
+        <slot name="header"></slot>
+    </header>
+    <main>
+        <slot></slot>
+    </main>
+    <footer>
+        <slot name="footer"></slot>
+    </footer>
+</div>
+```
+
+```HTML
+<app-layout>
+    <h1 slot="header">여기에 페이지 제목이 위치합니다.</h1>
+    <p>메인 컨텐츠의 단락입니다.</p>
+    <p>하나 더 있습니다.</p>
+    <p slot="footer">여기에 연락처 정보입니다.</p>
+</app-layout>
+```
+
+```HTML
+<div class="container">
+    <header>
+        <h1>여기에 페이지 제목이 위치합니다.</h1>
+    </header>
+
+    <main>
+        <p>메인 컨텐츠의 단락입니다.</p>
+        <p>하나 더 있습니다.</p>
+    </main>
+    <footer>
+        <p>여기에 연락처 정보입니다.</p>
+    </footer>
+</div>
+```
+
+<br />
+
 #### 
