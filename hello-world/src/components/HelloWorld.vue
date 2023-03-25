@@ -13,12 +13,12 @@
 <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
 
 <script>
-import MyComponent from './MyComponent.vue';
+// import MyComponent from './MyComponent.vue';
 import YourComponent from './YourComponent.vue';
 
 export default {
     components: {
-        'my-component': MyComponent,
+        'my-component': () => import('./MyComponent.vue'),
         'your-component': YourComponent
     },
     name: 'HelloWorld',

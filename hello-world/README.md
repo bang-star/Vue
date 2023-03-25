@@ -2328,7 +2328,9 @@ var vm = new Vue({
 
 <br />
 
-### 기타 - 재사용 가능한 컴포넌트 제작하기
+### 기타
+
+#### 기타 - 재사용 가능한 컴포넌트 제작하기
 
 컴포넌트를 작성할 때 나중에 다른 곳에서 다시 사용할 것인지에 대한 여부를 명심하는 것이 좋습니다. 일회용 컴포넌트가 단단히 결합되어도 상관 없지만 재사용 가능한 컴포넌트는 깨끗한 공용 인터페이스를 정의 해야하며 사용된 컨텍스트에 대한 가정을 하지 않아야 합니다. Vue 컴포넌트의 API는 props, 이벤트 및 슬롯의 세 부분으로 나뉩니다.
 
@@ -2351,7 +2353,7 @@ var vm = new Vue({
 
  <br />
 
- ### 기타 - 자식 컴포넌트 참조
+ #### 기타 - 자식 컴포넌트 참조
 
  props 나 이벤트가 있었음에도 불구하고 때때로 Javascript 로 하위 컴포넌트에 직접 액세스 해야 할 수 도 있습니다. 이를 위해 ref 를 이용하여 참조 컴포넌트 ID를 자식 컴포넌트에 할당해야 합니다.
 
@@ -2367,4 +2369,38 @@ var vm = new Vue({
  var parent = new Vue({ el: '#parent'})
  // 자식 컴포넌트 인스턴스에 접근합니다.
  var child = parent.$refs.profile
+ ```
+
+<br />
+
+ ### 기타 - 비동기 컴포넌트
+
+ 대규모 응용 프로그램에서는 응용 프로그램을 더 작은 덩어리로 나누고 실제로 필요할 때만 서버에서 컴포넌트를 로드해야 할 수도 있습니다. Vue를 사용하면 컴포넌트 정의를 비동기식으로 해결하는 팩토리 함수로 컴포넌트를 정의할 수 있습니다. Vue는 컴포넌트가 실제로 렌더링되어야 할 때만 팩토링 기능을 트리거하고 이후의 리렌더링을 위해 결과를 캐시합니다.
+
+ 팩토리 함수는 resolve 콜백을 받습니다. 이 콜백은 서버에서 컴포넌트 정의를 가져 왔을 때 호출되어야 합니다. 또한 reject (reason)을 호출하여 로드가 실패 했음을 알릴 수 있습니다. 여기서 setTimemout은 데모 용 입니다.
+
+ ```JS
+ Vue.component('async-example', function(resolve, reject) {
+    setTimeout(function() {
+        // 컴포넌트 정의를 resolve 콜백에 전달
+        resolve({
+            template: '<div>I am asnyc!</div>'
+        }, 1000)
+    })
+ })
+ ```
+
+ ```JS
+ Vue.component(
+    'async-webpack-example',
+    // 'import' 함수는 'Promise'를 반환합니다.
+    () => import('./my-async-component')
+ )
+
+ new Vue({
+    // ...
+    components: {
+        'my-component' : () => import('./my-async-component')
+    }
+ })
  ```
