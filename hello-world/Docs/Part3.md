@@ -254,3 +254,21 @@ Vue.component('blog-post', {
 <!-- HTML에서의 kebab-case -->
 <blog-post post-title="hello!"></blog-post>
 ```
+
+### Props - Prop 타입(추천하는 방향)
+
+일반적으로 생각해 보면, prop에 특정 타입의 값을 넣고 싶은 경우가 있을 수 있습니다. 이떄, 다음과 같이 prop을 속성 이름과 타입을 포함하는 오브젝트로 선언함으로써 타입이 지정된 prop의 리스트를 구현할 수 있습니다.
+
+이는 컴포넌트를 읽기 좋게 문서화할 뿐 아니라 브라우저의 자바스크립트 콘솔에서도 잘못된 타입이 전달된 경우 경고를 띄워줄 수 있도록 해줍니다.
+
+```JS
+props: {
+    title: String,
+    likes: Number,
+    isPublished: Boolean,
+    commentIds: Array,
+    author: Object,
+    callback: Function,
+    contactsPromise: Promise // or any other constructor
+}
+```
