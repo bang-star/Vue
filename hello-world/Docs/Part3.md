@@ -235,3 +235,22 @@ Vue.component(
 ```
 
 `전역 등록`은 (new Vue)로 루트 Vue 인스턴스가 만들어지기 전에 반드시 이뤄져야 한다.
+
+### Props - Prop 대소문자 구분 (camelCase vs kebab-case)
+
+(Remind) Props를 통해서 부모 영역의 데이터를 자식 컴포넌트에 전달할 수 있어야 합니다.
+
+HTML 속성은 `대소문자 구분이 없기 때문에 `브라우저는 대문자를 `소문자로 변경하여 읽습니다`. 그렇기 때문에 `camelCase`(대소문자 혼용)로 prop의 이름을 정한 경우에 DOM 템플릿 안에서는 kebab-case(하이픈으로 연결된 구조)를 사용하여야 올바르게 동작합니다.
+
+```JS
+Vue.component('blog-post', {
+    // Javascript에서의 camelCase
+    props: ['postTitle'],
+    template: '<h3>{{ postTitle }}</h3>'
+})
+```
+
+```HTML
+<!-- HTML에서의 kebab-case -->
+<blog-post post-title="hello!"></blog-post>
+```
