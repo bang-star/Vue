@@ -236,7 +236,9 @@ Vue.component(
 
 `전역 등록`은 (new Vue)로 루트 Vue 인스턴스가 만들어지기 전에 반드시 이뤄져야 한다.
 
-### Props - Prop 대소문자 구분 (camelCase vs kebab-case)
+### Props
+
+#### Props - Prop 대소문자 구분 (camelCase vs kebab-case)
 
 (Remind) Props를 통해서 부모 영역의 데이터를 자식 컴포넌트에 전달할 수 있어야 합니다.
 
@@ -255,7 +257,9 @@ Vue.component('blog-post', {
 <blog-post post-title="hello!"></blog-post>
 ```
 
-### Props - Prop 타입(추천하는 방향)
+<br />
+
+#### Props - Prop 타입(추천하는 방향)
 
 일반적으로 생각해 보면, prop에 특정 타입의 값을 넣고 싶은 경우가 있을 수 있습니다. 이떄, 다음과 같이 prop을 속성 이름과 타입을 포함하는 오브젝트로 선언함으로써 타입이 지정된 prop의 리스트를 구현할 수 있습니다.
 
@@ -271,4 +275,91 @@ props: {
     callback: Function,
     contactsPromise: Promise // or any other constructor
 }
+```
+
+<br />
+
+#### Props - 정적 & 동적 prop 전달하기
+
+아래와 같이 정적인 prop을 전달할 수있습니다.
+
+```HTML
+<blog-post title="My journey with Vue"></blog-post>
+```
+
+혹은 아래와 같이 v-bind를 이용해서 동적인 prop을 전달할 수도 있습니다.
+
+```html
+<!-- 변수에 담긴 값을 동적으로 할당 -->
+<blog-post v-bind:title="post.title"></blog-post>
+
+<!-- 복잡한 표현식의 값을 동적으로 할당 -->
+<blog-post v-bind:title="post.title + 'by ' + post.author.name"></blog-post>
+```
+
+위 두 가지 경우는 모두 문자열 형태(String)의 변수를 전달하지만 실제로는 모든 타입의 변수가 prop으로 전달될 수 있습니다.
+
+
+아래와 같이 숫자(number) 타입의 prop을 전달할 수 있습니다.
+
+```HTML
+<!-- '42'는 정적인 값이지만, Vue에서 해당 값이 숫자라는 것을 알 수 있도록 하기 위해 -->
+<!-- v-bind를 이용해 문자열이 아닌 Javascript 표현식이라는 것을 알려줍니다. -->
+<blog-post v-bind:likes="42"></blog-post>
+
+<!-- 변수의 값을 동적으로 할당할 수도 있습니다. -->
+<blog-post v-bind:likes="post.likes"></blog-post>
+```
+
+#### 논리(Boolean) 타입 전달
+
+```HTML
+<!-- 값이 없는 props은 'true'를 전달합니다. -->
+<blog-post is-published></blog-post>
+
+<!-- `false`는 정적인 값이지만, Vue에서 해당 값이 논리 자료형이라는 것을 알 수 있도록 하기 위해 -->
+<!-- v-bind를 이용해 문자열이 아닌 Javascript 표현식이라는 것을 알려줍니다. -->
+<blog-post v-bind:is-published="false"></blog-post>
+
+<!-- 변수의 값을 동적으로 할당할 수도 있습니다. -->
+<blog-post v-bind:is-published="post.isPublished"></blog-post>
+```
+
+#### 배열 타입 전달
+
+```HTML
+<blog-post v-bind:comment-ids="[234, 266, 273]"></blog-post>
+<blog-post v-bind:comment-ids="post.commendIds"></blog-post>
+```
+
+#### 객체(Object) 타입 전달
+
+```HTML
+<blog-post v-bind:author="{
+    name: 'Veronica',
+    company: 'Veridian Dynamics'
+}"></blog-post>
+<blog-post v-bind:comment-ids="post.author"></blog-post>
+```
+
+#### 객체 속성(Properties)의 전달
+
+오브젝트의 모든 속성을 전달하길 원하는 경우, v-bind:prop-name 대신 v-bind만 작성함으로써 모든 속성을 prop으로 전달할 수 있습니다.
+
+```JS
+post: {
+    id: 1,
+    title: 'My Journey'
+}
+```
+
+```HTML
+<blog-post v-bind="post"></blog-post>
+```
+
+```HTML
+<blog-post 
+    v-bind:id="post.id"
+    v-bind:title="post.title"
+></blog-post>
 ```
