@@ -612,10 +612,6 @@ Vue.component('base-input', {
 </base-input>
 ```
 
-### 커스텀 이벤트
-
-<br />
-
 ## 커스텀 이벤트
 
 <hr>
@@ -641,7 +637,7 @@ this.$emit('myEvent')
 
 <br />
 
-### 커스텀 이벤트 - 컴포넌트의 v-model 커스터마이징(Optional)
+### 컴포넌트의 v-model 커스터마이징
 
 v-model을 사용하는 컴포넌트는 기본값으로 value를 prop으로 사용하고, input을 이벤트로 사용합니다. 이 때, 체크박스와 같이 value 속성을 다른 용도로 사용하여야 하는 경우에는 model 옵션을 이용하여 문제가 생기는 것을 방지할 수 있습니다.
 
@@ -672,3 +668,62 @@ v-model을 컴포넌트에 사용하게 되면 lovingVue의 값은 checked prop�
 그리고 lovingVue 속성은 `<base-checked>`가 change 이벤트를 emit할 때 새로운 값으로 업데이트됩니다.
 
 이 때, checked 속성을 컴포넌트의 props 옵션에 선언해 주어야 합니다.
+
+
+<br />
+
+### 네이티브 이벤트를 컴포넌트에 바인딩 하기
+
+컴포넌트에서 루트 엘리먼트의 네이티브 이벤트를 직접 감지하고 싶은 경우가 있습니다. 이 경우, v-on에 .native 수식어를 사용할 수 있습니다.
+
+```HTML
+<base-input v-on:focus.native="onFocus"></base-input>
+```
+
+위와 같은 테크닉은 경우에 따라 유용하긴 하지만 `<input>`과 같이 특수한 경우엔 좋지 않은 선택일 수 있습니다. 예를 들어, `<base-input>`이라는 컴포넌트의 루트 엘리먼트가 실제로는 `<label>` 엘리먼트인 경우를 생각해 볼 수있습니다. 즉, input의 focus 이벤트를 기대하지만 사실상 루트 엘리먼트는 label 인 것입니다.
+
+이러한 문제를 해결하기 위해서 Vue는 컴포넌트에서 사용된 리스너를 포함하는 오브젝트인 `$listeners` 속성을 제공합니다.
+
+```Javascript
+{
+    focus: function(event) { /* ... */ },
+    input: function(value) { /* ... */ }
+}
+```
+
+`$listeners` 속성을 이용하면 컴포넌트에서 `v-on=$listeners`를 이용해 부모 엘리먼트가 가진 이벤트 리스너를 특정 자식 엘리먼트에게 전달할 수 있습니다. 가령 `<input>` 같은 엘리먼트에 v-model 를 적용하고 싶은 경우라면, 아래와 같이 inputListeners 같은 새로운 `computed 속성`을 생성하여 유용하게 활용할 수 있습니다.
+
+`<base-input>` 컴포넌트는 완전히 투명한 (일반적인 <input>과 동일하게 동작하는) wrapper라고 볼 수 있습니다. 모든 속성과 리스너가 .native 수식어 없이도 기존과 동일하게 동작합니다.
+
+```Javascript
+Vue.component('base-input', {
+    inheritAttrs: false,
+    props: ['label', 'value'],
+    computed: {
+        inputListeners: function() {
+            var vm = this
+            // `Object.assign`는 오브젝트를 새로운 오브젝트로 병합합니다.
+            return Object.assign({}, 
+                // 우선 부모 엘리먼트의 모든 리스너를 추가합니다.
+                this.$listeners,
+                // 그 다음, 기존 리스너를 override 하는 커스텀 리스너를 추가할 수 있습니다.
+                {
+                    // 아래 구문을 사용하면 v-model과 같이 동작하도록 만들 수 있습니다.
+                    input: function (event) {
+                        vm.$emit('input', event.target.value)
+                    }
+                }
+            )
+        }
+    }
+    template: `
+        <label>
+            {{ label }}
+            <input
+                v-bind="$attrs"
+                v-bind:value="value"
+                v-on="inputListeners">
+        </label>
+    `
+})
+```
