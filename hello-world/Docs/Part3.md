@@ -235,3 +235,379 @@ Vue.component(
 ```
 
 `전역 등록`은 (new Vue)로 루트 Vue 인스턴스가 만들어지기 전에 반드시 이뤄져야 한다.
+
+### Props
+
+#### Props - Prop 대소문자 구분 (camelCase vs kebab-case)
+
+(Remind) Props를 통해서 부모 영역의 데이터를 자식 컴포넌트에 전달할 수 있어야 합니다.
+
+HTML 속성은 `대소문자 구분이 없기 때문에 `브라우저는 대문자를 `소문자로 변경하여 읽습니다`. 그렇기 때문에 `camelCase`(대소문자 혼용)로 prop의 이름을 정한 경우에 DOM 템플릿 안에서는 kebab-case(하이픈으로 연결된 구조)를 사용하여야 올바르게 동작합니다.
+
+```JS
+Vue.component('blog-post', {
+    // Javascript에서의 camelCase
+    props: ['postTitle'],
+    template: '<h3>{{ postTitle }}</h3>'
+})
+```
+
+```HTML
+<!-- HTML에서의 kebab-case -->
+<blog-post post-title="hello!"></blog-post>
+```
+
+<br />
+
+#### Props - Prop 타입(추천하는 방향)
+
+일반적으로 생각해 보면, prop에 특정 타입의 값을 넣고 싶은 경우가 있을 수 있습니다. 이떄, 다음과 같이 prop을 속성 이름과 타입을 포함하는 오브젝트로 선언함으로써 타입이 지정된 prop의 리스트를 구현할 수 있습니다.
+
+이는 컴포넌트를 읽기 좋게 문서화할 뿐 아니라 브라우저의 자바스크립트 콘솔에서도 잘못된 타입이 전달된 경우 경고를 띄워줄 수 있도록 해줍니다.
+
+```JS
+props: {
+    title: String,
+    likes: Number,
+    isPublished: Boolean,
+    commentIds: Array,
+    author: Object,
+    callback: Function,
+    contactsPromise: Promise // or any other constructor
+}
+```
+
+<br />
+
+#### Props - 정적 & 동적 prop 전달하기
+
+아래와 같이 정적인 prop을 전달할 수있습니다.
+
+```HTML
+<blog-post title="My journey with Vue"></blog-post>
+```
+
+혹은 아래와 같이 v-bind를 이용해서 동적인 prop을 전달할 수도 있습니다.
+
+```html
+<!-- 변수에 담긴 값을 동적으로 할당 -->
+<blog-post v-bind:title="post.title"></blog-post>
+
+<!-- 복잡한 표현식의 값을 동적으로 할당 -->
+<blog-post v-bind:title="post.title + 'by ' + post.author.name"></blog-post>
+```
+
+위 두 가지 경우는 모두 문자열 형태(String)의 변수를 전달하지만 실제로는 모든 타입의 변수가 prop으로 전달될 수 있습니다.
+
+
+아래와 같이 숫자(number) 타입의 prop을 전달할 수 있습니다.
+
+```HTML
+<!-- '42'는 정적인 값이지만, Vue에서 해당 값이 숫자라는 것을 알 수 있도록 하기 위해 -->
+<!-- v-bind를 이용해 문자열이 아닌 Javascript 표현식이라는 것을 알려줍니다. -->
+<blog-post v-bind:likes="42"></blog-post>
+
+<!-- 변수의 값을 동적으로 할당할 수도 있습니다. -->
+<blog-post v-bind:likes="post.likes"></blog-post>
+```
+
+#### 논리(Boolean) 타입 전달
+
+```HTML
+<!-- 값이 없는 props은 'true'를 전달합니다. -->
+<blog-post is-published></blog-post>
+
+<!-- `false`는 정적인 값이지만, Vue에서 해당 값이 논리 자료형이라는 것을 알 수 있도록 하기 위해 -->
+<!-- v-bind를 이용해 문자열이 아닌 Javascript 표현식이라는 것을 알려줍니다. -->
+<blog-post v-bind:is-published="false"></blog-post>
+
+<!-- 변수의 값을 동적으로 할당할 수도 있습니다. -->
+<blog-post v-bind:is-published="post.isPublished"></blog-post>
+```
+
+#### 배열 타입 전달
+
+```HTML
+<blog-post v-bind:comment-ids="[234, 266, 273]"></blog-post>
+<blog-post v-bind:comment-ids="post.commendIds"></blog-post>
+```
+
+#### 객체(Object) 타입 전달
+
+```HTML
+<blog-post v-bind:author="{
+    name: 'Veronica',
+    company: 'Veridian Dynamics'
+}"></blog-post>
+<blog-post v-bind:comment-ids="post.author"></blog-post>
+```
+
+#### 객체 속성(Properties)의 전달
+
+오브젝트의 모든 속성을 전달하길 원하는 경우, v-bind:prop-name 대신 v-bind만 작성함으로써 모든 속성을 prop으로 전달할 수 있습니다.
+
+```JS
+post: {
+    id: 1,
+    title: 'My Journey'
+}
+```
+
+```HTML
+<blog-post v-bind="post"></blog-post>
+```
+
+```HTML
+<blog-post 
+    v-bind:id="post.id"
+    v-bind:title="post.title"
+></blog-post>
+```
+
+<br />
+
+### Props - 단방향 데이터 흐름
+
+모든 prop들은 부모 컴포넌트와 자식 컴포넌트 사이에 `단방향`으로 내려가는 바인딩 형태를 취합니다. 부모의 속성이 변경되면 자식 속성에게 전달되지만, 반대 방향으로는 전달되지 않습니다. (** 자식의 데이터가 부모에게 전달되는 것을 막는 것은 자식 요소가 의도치 않게 부모 요소의 상태를 변경함으로써 앱의 데이터 흐름을 이해하기 어렵게 만드는 일을 막기 위해서입니다. **)
+
+부모 컴포넌트가 업데이트 될 때마다 자식 요소의 모든 prop 들이 최신 값으로 새로고침 됩니다. 이는 곧 사용자가 prop을 자식 컴포넌트 안에서 수정해서는 안된다는 것이기도 합니다. 만약 수정을 시도하는 경우, Vue는 콘솔에 경고를 표시합니다.
+
+prop을 직접 변경하고 싶을 수 있는 상황의 예시
+
+1. prop은 초기값만 전달하고, 자식 컴포넌트는 그 초기값을 로컬 데이터 속성으로 활용하고 싶은 경우
+
+    해당 경우에는 로컬 데이터 속성을 따로 선언하고 그 속성의 초기값으로써 prop을 사용하는 것이 바람직합니다.
+
+    ```JS
+    props: ['initialCounter'],
+    data: function() {
+        return {
+            counter: this.initialCounter
+        }
+    }
+    ```
+
+2. 전달된 prop의 형태를 바꾸어야 하는 경우
+
+해당 경우에는 computed 속성을 사용하는 것이 가장 바람직합니다.
+
+```JS
+props: ['size'],
+computed: {
+    normalizedSize: function() {
+        return this.size.trim().toLowerCase()
+    }
+}
+```
+
+> 자바스크립트 오브젝트나 배열을 prop으로 전달하는 경우, 객체를 복사하는 것이 아니라 참조하게 됩니다. 즉, 전달받은 오브젝트나 배열을 수정하게 되는 경우, 자식 요소가 부모 요소의 상태를 **변경하게 될 것** 입니다.
+
+<br />
+
+### Props - 유효성 검사
+
+컴포넌트는 prop의 유효성 검사를 위해 요구사항을 특정할 수 있습니다. 요구사항이 충족되지 않은 경우 Vue는 브라우저의 자바스크립트 콘솔을 통해 경고를 표시합니다. 이는 다른 사람들도 사용하는 컴포넌트를 개발하는 경우에 특히 유용합니다. Prop들의 유효성 검사를 위해 prop의 값에 배열이나 문자열 대신 오브젝트를 삽입할 수 있습니다.
+
+```Javascript
+Vue.component('my-component', {
+    props: {
+        // 기본 타입 체크(`Null`이나 `undefined`는 모든 타입을 허용합니다.)
+        propA: Number,
+        // 여러 타입 허용
+        propB: [String, Number],
+        // 필수 문자열
+        propC: {
+            type: String,
+            required: true
+        },
+        // 기본값이 있는 숫자
+        propD: {
+            type: Number,
+            default: 100
+        },
+        // 기본값이 있는 오브젝트
+        propE: {
+            type: Object,
+            // 오브젝트나 배열은 꼭 기본값을 반환하는 팩토리 함수의 형태로 사용되어야 합니다.
+            default: function() {
+                return { message : 'hello' }
+            }
+        },
+        // 커스텀 유효성 검사 함수
+        propF: {
+            validator: function() {
+                // 값이 항상 아래 세 개의 문자열 중 하나여야 합니다.
+                return ['success', 'warning', 'danger'].indexOf(value) !== -1
+            }
+        }
+    }
+})
+```
+
+> [유의사항] 컴포넌트 인스턴스가 생성되기 전에 일어나므로 `computed`, `method`, `data`를 사용할 수 없습니다.
+
+<br />
+
+### Props - Type Checks
+
+Type은 [String, Number, Boolean, Array, Object, Data, Function, Symbol] 네이티브 생성자 중 하나가 될 수 있습니다.
+
+또한, type에는 커스텀 생성자가 사용될 수도 있습니다. 확인은 instanceof 를 통해 이루어집니다.
+
+예를 들어, 아래와 같은 생성자 함수가 선언되어 있다면 author prop이 new Person으로 생성된 값인지 확인할 수 있습니다.
+
+```javascript
+function Person(firstName, lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+}
+
+Vue.component('blog-post', {
+    props: {
+        author: Person
+    }
+})
+```
+
+<br />
+
+### Props - Prop이 아닌 속성 (Optional)
+
+컴포넌트 `non-prop 속성`은 컴포넌트에 전달되지만, `props`나 `emits`에 정의된 **특성을 지니고 있지 않은 속성** 또는 **이벤트 리스너**를 의미합니다.
+
+**명확하게 정의된 prop**을 통해서 자식 컴포넌트에 정보를 전달하는 것이 권장됩니다. 하지만, 컴포넌트 라이브러리를 만드는 등의 경우 어떤 맥락에서 해당 컴포넌트가 사용될지를 확실히 결정할 수 없는 경우가 있습니다. 이러한 경우에 대응하기 위해서 컴포넌트는 **임의의 속성값**을 받아와 컴포넌트의 **루트 엘리먼트**에 추가해 줄 수 있습니다.
+
+```javascript
+app.component('date-picker', {
+    template:
+    `<div class="date-picker">
+        <input type="datetime">
+    </div`>
+})
+```
+
+```HTML
+<!-- non-prop 속성과 Date-picker 컴포넌트 -->
+<date-picker data-status="activated"></date-picker>
+
+<!-- 렌더링된 date-picker 컴포넌트 -->
+<div class="date-picker" data-status="activated">
+    <input type="datetime">
+</div>
+```
+
+<br />
+
+이벤트 리스너에도 동일한 규칙이 적용됩니다.
+
+```html
+<date-picker @change="submitChange"></date-picker>
+```
+
+```Javascript
+app.component('date-picker', {
+    created() {
+        console.log(this.$attrs)
+    }
+})
+```
+
+```html
+<div id="date-picker" class="demo">
+    <date-picker @change="showChange"></date-picker>
+</div>
+```
+
+```Javascript
+const app = Vue.createApp({
+    methods: {
+        showChange(event) {
+            console.log(event.target.value)
+        }
+    }
+})
+
+app.component('date-picker', {
+    template: `
+        <select>
+            <option value="1">Monday</option>
+            <option value="2">Tuesday</option>
+            <option value="3">Wednesday</option>
+        </select>
+    `
+})
+```
+
+이 경우, `change` 이벤트 리스너는 `부모 컴포넌트`에서 `자식 컴포넌트`로 전달되며, `<select>`의 change는 네이티브 이벤트로 처리됩니다. date-picker에서 명시적으로 이벤트를 emit할 필요가 없습니다.
+
+<br />
+
+### Props - Prop이 아닌 속성(Optional) - 기존 속성의 대체 및 병합
+
+bootstrap-date-input의 템플릿이라고 생각해 봅시다.
+
+```HTML
+<input type="date" class="form-control">
+```
+
+날짜 선택 플러그인의 테마를 설정하기 위해서는 아래와 같이 특정 클래스를 작성해주어야 합니다.
+
+```HTML
+<bootstrap-date-input data-date-picker="activated" class="date-picker-theme-dark">
+</bootstrap-date-input>
+```
+
+이 경우, 두 개의 각각 다른 값이 class에 선언됩니다.
+
+ - form-control: 컴포넌트 템플릿으로부터 부여
+ - data-date-picker : 컴포넌트의 부모로부터 전달받아 부여(Props)
+
+대부분 속성의 경우, 전달받은 속성이 기존에 선언된 속성을 대체합니다. 예를 들어, type="text"를 type="date"가 선언된 컴포넌트에 전달하는 경우에는 속성이 `대체`되고 문제를 일으키게 될 가능성이 생깁니다. 하지만 다행히도 `class` 와 `style` 속성의 경우에는 조금 더 똑똑하게 반응합니다. 즉, 앞의 form-control와 date-picker-theme-dark의 예제와 같이 두 개의 값이 `합쳐져서 적용(병합)`됩니다.
+
+<br />
+
+### Props - Prop이 아닌 속성(Optional) - 속성 상속 비활성화
+
+컴포넌트의 루트 엘리먼트가 상속된 속성을 갖지 않기를 원하는 경우, 컴포넌트에 inheritAttrs: false 옵션을 줄 수 있습니다.
+
+```JS
+Vue.component('my-component', {
+    inheritAttrs: false,
+    // ...
+})
+
+{
+    require: true,
+    placeholder: 'Enter your username'
+}
+```
+
+이는 컴포넌트에 전달된 속성의 이름과 값을 가지고 있는 인스턴스 속성인 $attrs와 조합하면 유용하게 사용할 수 있습니다.
+
+```JS
+Vue.component('base-input', {
+    inheritAttrs: false,
+    props: ['label', 'value'],
+    template: `
+        <label>
+            {{ label }}
+            <input
+                v-bind="$attrs"
+                v-bind:value="value"
+                v-on:input="$emit('input', $event.target.value)">
+        </label>
+    `
+})
+```
+
+`inheritAttrs: false`와 `$attrs`를 이용하면 수동으로 전달할 속성을 선택할 수 있습니다.(style과 class는 영향 주지 않음)
+
+이러한 패턴을 이용하면 기본 컴포넌트의 실제 루트를 크게 신경쓰지 않고도 기본 HTML 엘리먼트에 가깝게 사용할 수 있습니다.
+
+```HTML
+<base-input
+    v-model="username"
+    required
+    placeholder="Enter your username">
+</base-input>
+```
