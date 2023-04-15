@@ -541,3 +541,73 @@ app.component('date-picker', {
 이 경우, `change` 이벤트 리스너는 `부모 컴포넌트`에서 `자식 컴포넌트`로 전달되며, `<select>`의 change는 네이티브 이벤트로 처리됩니다. date-picker에서 명시적으로 이벤트를 emit할 필요가 없습니다.
 
 <br />
+
+### Props - Prop이 아닌 속성(Optional) - 기존 속성의 대체 및 병합
+
+bootstrap-date-input의 템플릿이라고 생각해 봅시다.
+
+```HTML
+<input type="date" class="form-control">
+```
+
+날짜 선택 플러그인의 테마를 설정하기 위해서는 아래와 같이 특정 클래스를 작성해주어야 합니다.
+
+```HTML
+<bootstrap-date-input data-date-picker="activated" class="date-picker-theme-dark">
+</bootstrap-date-input>
+```
+
+이 경우, 두 개의 각각 다른 값이 class에 선언됩니다.
+
+ - form-control: 컴포넌트 템플릿으로부터 부여
+ - data-date-picker : 컴포넌트의 부모로부터 전달받아 부여(Props)
+
+대부분 속성의 경우, 전달받은 속성이 기존에 선언된 속성을 대체합니다. 예를 들어, type="text"를 type="date"가 선언된 컴포넌트에 전달하는 경우에는 속성이 `대체`되고 문제를 일으키게 될 가능성이 생깁니다. 하지만 다행히도 `class` 와 `style` 속성의 경우에는 조금 더 똑똑하게 반응합니다. 즉, 앞의 form-control와 date-picker-theme-dark의 예제와 같이 두 개의 값이 `합쳐져서 적용(병합)`됩니다.
+
+<br />
+
+### Props - Prop이 아닌 속성(Optional) - 속성 상속 비활성화
+
+컴포넌트의 루트 엘리먼트가 상속된 속성을 갖지 않기를 원하는 경우, 컴포넌트에 inheritAttrs: false 옵션을 줄 수 있습니다.
+
+```JS
+Vue.component('my-component', {
+    inheritAttrs: false,
+    // ...
+})
+
+{
+    require: true,
+    placeholder: 'Enter your username'
+}
+```
+
+이는 컴포넌트에 전달된 속성의 이름과 값을 가지고 있는 인스턴스 속성인 $attrs와 조합하면 유용하게 사용할 수 있습니다.
+
+```JS
+Vue.component('base-input', {
+    inheritAttrs: false,
+    props: ['label', 'value'],
+    template: `
+        <label>
+            {{ label }}
+            <input
+                v-bind="$attrs"
+                v-bind:value="value"
+                v-on:input="$emit('input', $event.target.value)">
+        </label>
+    `
+})
+```
+
+`inheritAttrs: false`와 `$attrs`를 이용하면 수동으로 전달할 속성을 선택할 수 있습니다.(style과 class는 영향 주지 않음)
+
+이러한 패턴을 이용하면 기본 컴포넌트의 실제 루트를 크게 신경쓰지 않고도 기본 HTML 엘리먼트에 가깝게 사용할 수 있습니다.
+
+```HTML
+<base-input
+    v-model="username"
+    required
+    placeholder="Enter your username">
+</base-input>
+```

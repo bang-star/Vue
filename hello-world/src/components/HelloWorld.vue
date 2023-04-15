@@ -1,13 +1,7 @@
 <template>
     <div>
-        <h1>나는 부모 컴포넌트의 제목입니다.</h1>
-        <button @click="toggle">toggle</button>
-        <!-- <my-component :author="{ firstName: 'daniel', lastName: 'Bang'}"></my-component> -->
         <my-component :author="authorObj"></my-component>
-        <!-- <your-component ref="your-component"></your-component> -->
-        <!-- <keep-alive>
-            <component v-bind:is="currentView"></component>
-        </keep-alive> -->
+        <BaseInput v-model="username" required placeholder="enter your name" label="label"></BaseInput>
     </div>
 </template>
 
@@ -15,12 +9,12 @@
 
 <script>
 import MyComponent from './MyComponent.vue';
-// import YourComponent from './YourComponent.vue';
+import BaseInput from './BaseInput.vue';
 
 export default {
     components: {
         'my-component': MyComponent,
-        // 'your-component': YourComponent,
+        BaseInput
     },
     name: 'HelloWorld',
     mounted() {
@@ -29,6 +23,7 @@ export default {
     },
     data() {
        return {
+            username: '',
             currentView: 'my-component',
             authorObj: { 
                 firstName: 'daniel',
