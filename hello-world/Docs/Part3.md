@@ -448,3 +448,24 @@ Vue.component('my-component', {
 
 <br />
 
+### Props - Type Checks
+
+Type은 [String, Number, Boolean, Array, Object, Data, Function, Symbol] 네이티브 생성자 중 하나가 될 수 있습니다.
+
+또한, type에는 커스텀 생성자가 사용될 수도 있습니다. 확인은 instanceof 를 통해 이루어집니다.
+
+예를 들어, 아래와 같은 생성자 함수가 선언되어 있다면 author prop이 new Person으로 생성된 값인지 확인할 수 있습니다.
+
+```javascript
+function Person(firstName, lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+}
+
+Vue.component('blog-post', {
+    props: {
+        author: Person
+    }
+})
+```
+
