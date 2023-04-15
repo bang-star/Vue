@@ -236,9 +236,9 @@ Vue.component(
 
 `전역 등록`은 (new Vue)로 루트 Vue 인스턴스가 만들어지기 전에 반드시 이뤄져야 한다.
 
-### Props
+## Props
 
-#### Props - Prop 대소문자 구분 (camelCase vs kebab-case)
+### Props - Prop 대소문자 구분 (camelCase vs kebab-case)
 
 (Remind) Props를 통해서 부모 영역의 데이터를 자식 컴포넌트에 전달할 수 있어야 합니다.
 
@@ -259,7 +259,7 @@ Vue.component('blog-post', {
 
 <br />
 
-#### Props - Prop 타입(추천하는 방향)
+### Props - Prop 타입(추천하는 방향)
 
 일반적으로 생각해 보면, prop에 특정 타입의 값을 넣고 싶은 경우가 있을 수 있습니다. 이떄, 다음과 같이 prop을 속성 이름과 타입을 포함하는 오브젝트로 선언함으로써 타입이 지정된 prop의 리스트를 구현할 수 있습니다.
 
@@ -279,7 +279,7 @@ props: {
 
 <br />
 
-#### Props - 정적 & 동적 prop 전달하기
+### Props - 정적 & 동적 prop 전달하기
 
 아래와 같이 정적인 prop을 전달할 수있습니다.
 
@@ -311,7 +311,7 @@ props: {
 <blog-post v-bind:likes="post.likes"></blog-post>
 ```
 
-#### 논리(Boolean) 타입 전달
+### Props - 논리(Boolean) 타입 전달
 
 ```HTML
 <!-- 값이 없는 props은 'true'를 전달합니다. -->
@@ -325,14 +325,14 @@ props: {
 <blog-post v-bind:is-published="post.isPublished"></blog-post>
 ```
 
-#### 배열 타입 전달
+### Props - 배열 타입 전달
 
 ```HTML
 <blog-post v-bind:comment-ids="[234, 266, 273]"></blog-post>
 <blog-post v-bind:comment-ids="post.commendIds"></blog-post>
 ```
 
-#### 객체(Object) 타입 전달
+### Props - 객체(Object) 타입 전달
 
 ```HTML
 <blog-post v-bind:author="{
@@ -342,7 +342,7 @@ props: {
 <blog-post v-bind:comment-ids="post.author"></blog-post>
 ```
 
-#### 객체 속성(Properties)의 전달
+### Props - 객체 속성(Properties)의 전달
 
 오브젝트의 모든 속성을 전달하길 원하는 경우, v-bind:prop-name 대신 v-bind만 작성함으로써 모든 속성을 prop으로 전달할 수 있습니다.
 
@@ -611,3 +611,154 @@ Vue.component('base-input', {
     placeholder="Enter your username">
 </base-input>
 ```
+
+## 커스텀 이벤트
+
+<hr>
+
+### 커스텀 이벤트 - 이벤트 이름
+
+컴포넌트 및 props와 달리, `이벤트`는 자동 대소문자 변환을 제공하지 않습니다. 대소문자를 혼용하는 대신에 emit할 **정확한 이벤트 이름** 을 작성하는 것이 권장됩니다.
+
+예를 들어, 아래와 같이 camelCase로 작성된 이벤트를 emit하는 경우, kebab-case로 이벤트를 작성하게 되면 아무 동작도 하지 않습니다.
+
+```JS
+this.$emit('myEvent')
+```
+
+```HTML
+<!-- 이벤트가 동작하지 않음 -->
+<my-component v-on:my-event="doSomething"></my-component>
+```
+
+컴포넌트 및 props와는 다르게 이벤트 이름은 자바스크립트 변수나 속성의 이름으로 사용되는 경우가 없습니다. 따라서 camelCase나 PascalCase를 사용할 필요가 없습니다. 또한, (HTML의 대소문자 구분을 위해) DOM 템플릿의 v-on 이벤트 리스너는 항상 자동으로 소문자 변환되기 때문에 v-on:myEvent는 자동으로 v-on:myevent로 변환됩니다. 즉, myEvent 이벤트를 들을 수 없습니다.
+
+이러한 이유 때문에, `이벤트 이름`에는 `kebab-case`를 사용하는 것이 권장됩니다.
+
+<br />
+
+### 컴포넌트의 v-model 커스터마이징
+
+v-model을 사용하는 컴포넌트는 기본값으로 value를 prop으로 사용하고, input을 이벤트로 사용합니다. 이 때, 체크박스와 같이 value 속성을 다른 용도로 사용하여야 하는 경우에는 model 옵션을 이용하여 문제가 생기는 것을 방지할 수 있습니다.
+
+```javascript
+Vue.component('base-checkbox', {
+    model: {
+        prop: 'checked',
+        event: 'change'
+    },
+    props: {
+        checked: Boolean
+    },
+    template: `
+        <input
+            type="checkbox"
+            v-bind:checked="checked"
+            v-on:change="$emit('change', $event.target.checked)"
+    `
+})
+```
+
+```HTML
+<base-checkbox v-model="lovingVue"></base-checkbox>
+```
+
+v-model을 컴포넌트에 사용하게 되면 lovingVue의 값은 checked prop으로 전달됩니다.
+
+그리고 lovingVue 속성은 `<base-checked>`가 change 이벤트를 emit할 때 새로운 값으로 업데이트됩니다.
+
+이 때, checked 속성을 컴포넌트의 props 옵션에 선언해 주어야 합니다.
+
+
+<br />
+
+### 네이티브 이벤트를 컴포넌트에 바인딩 하기
+
+컴포넌트에서 루트 엘리먼트의 네이티브 이벤트를 직접 감지하고 싶은 경우가 있습니다. 이 경우, v-on에 .native 수식어를 사용할 수 있습니다.
+
+```HTML
+<base-input v-on:focus.native="onFocus"></base-input>
+```
+
+위와 같은 테크닉은 경우에 따라 유용하긴 하지만 `<input>`과 같이 특수한 경우엔 좋지 않은 선택일 수 있습니다. 예를 들어, `<base-input>`이라는 컴포넌트의 루트 엘리먼트가 실제로는 `<label>` 엘리먼트인 경우를 생각해 볼 수있습니다. 즉, input의 focus 이벤트를 기대하지만 사실상 루트 엘리먼트는 label 인 것입니다.
+
+이러한 문제를 해결하기 위해서 Vue는 컴포넌트에서 사용된 리스너를 포함하는 오브젝트인 `$listeners` 속성을 제공합니다.
+
+```Javascript
+{
+    focus: function(event) { /* ... */ },
+    input: function(value) { /* ... */ }
+}
+```
+
+`$listeners` 속성을 이용하면 컴포넌트에서 `v-on=$listeners`를 이용해 부모 엘리먼트가 가진 이벤트 리스너를 특정 자식 엘리먼트에게 전달할 수 있습니다. 가령 `<input>` 같은 엘리먼트에 v-model 를 적용하고 싶은 경우라면, 아래와 같이 inputListeners 같은 새로운 `computed 속성`을 생성하여 유용하게 활용할 수 있습니다.
+
+`<base-input>` 컴포넌트는 완전히 투명한 (일반적인 <input>과 동일하게 동작하는) wrapper라고 볼 수 있습니다. 모든 속성과 리스너가 .native 수식어 없이도 기존과 동일하게 동작합니다.
+
+```Javascript
+Vue.component('base-input', {
+    inheritAttrs: false,
+    props: ['label', 'value'],
+    computed: {
+        inputListeners: function() {
+            var vm = this
+            // `Object.assign`는 오브젝트를 새로운 오브젝트로 병합합니다.
+            return Object.assign({}, 
+                // 우선 부모 엘리먼트의 모든 리스너를 추가합니다.
+                this.$listeners,
+                // 그 다음, 기존 리스너를 override 하는 커스텀 리스너를 추가할 수 있습니다.
+                {
+                    // 아래 구문을 사용하면 v-model과 같이 동작하도록 만들 수 있습니다.
+                    input: function (event) {
+                        vm.$emit('input', event.target.value)
+                    }
+                }
+            )
+        }
+    }
+    template: `
+        <label>
+            {{ label }}
+            <input
+                v-bind="$attrs"
+                v-bind:value="value"
+                v-on="inputListeners">
+        </label>
+    `
+})
+```
+
+<br />
+
+### .sync  수식어
+
+`prop`에 대해서 "양방향 바인딩"이 필요한 경우가 있습니다. 안타깝게도, 진짜 양방향 바인딩은 유지보수 측면에서 이슈를 발생시킬 수 있습니다. 자식 컴포넌트가 변이 코드 없이 부모 컴포넌트를 변경할 수 있게 되면, 부모 요소와 자식 요소 중 변이를 발생시킨 지점을 특정할 수 없게 되기 때문입니다.
+
+그렇기 떄문에 이벤트를 emit할 때에는 update:myPropName과 같은 패턴이 권장됩니다. 예를 들어 title이라는 prop을 갖는 요소가 있다고 할 때, 아래와 같이 새로운 값을 할당하도록 요청할 수 있습니다.
+
+```Javascript
+this.$emit('update:title', newTitle)
+```
+
+```HTML
+<text-document
+    v-bind:title="doc.title"
+    v-on:update:title="doc.title = $event">
+</text-document>
+```
+
+```HTML
+<text-document v-bind:title.sync="doc.title"></text-document>
+```
+
+> `v-bind`와 `.sync` 수식어는 표현식과 함께 동작하지 않는다는 것에 주의하세요.(e.g. `v-bind:title.sync="doc.title + '!'`는 동작하지 않습니다.). `v-model`과 같이, 표현식이 아닌 속성의 이름만 사용할 수 있습니다.
+
+**.sync**수식어는 여러 개의 props를 한 번에 전달하기 위해서 v-bind와 사용될 수도 있습니다.
+
+```HTML
+<text-document v-bind.sync="doc"></text-document>
+```
+
+위 구문은 doc 객체의 각 속성(e.g.title)을 각각의 prop 처럼 전달하고, 각각의 업데이트 리스너로써 v-on을 추가합니다.
+
+> `v-bind.sync="title: doc.title}`와 같은 리터럴 오브젝트는 `v-bind:sync` 이러한 복잡한 표현식을 파싱하는 과정에서 발생할 수 있는 극단적인 경우가 너무 많기 때문에 동작하지 않습니다.
