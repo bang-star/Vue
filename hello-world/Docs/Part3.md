@@ -469,3 +469,75 @@ Vue.component('blog-post', {
 })
 ```
 
+<br />
+
+### Props - Prop이 아닌 속성 (Optional)
+
+컴포넌트 `non-prop 속성`은 컴포넌트에 전달되지만, `props`나 `emits`에 정의된 **특성을 지니고 있지 않은 속성** 또는 **이벤트 리스너**를 의미합니다.
+
+**명확하게 정의된 prop**을 통해서 자식 컴포넌트에 정보를 전달하는 것이 권장됩니다. 하지만, 컴포넌트 라이브러리를 만드는 등의 경우 어떤 맥락에서 해당 컴포넌트가 사용될지를 확실히 결정할 수 없는 경우가 있습니다. 이러한 경우에 대응하기 위해서 컴포넌트는 **임의의 속성값**을 받아와 컴포넌트의 **루트 엘리먼트**에 추가해 줄 수 있습니다.
+
+```javascript
+app.component('date-picker', {
+    template:
+    `<div class="date-picker">
+        <input type="datetime">
+    </div`>
+})
+```
+
+```HTML
+<!-- non-prop 속성과 Date-picker 컴포넌트 -->
+<date-picker data-status="activated"></date-picker>
+
+<!-- 렌더링된 date-picker 컴포넌트 -->
+<div class="date-picker" data-status="activated">
+    <input type="datetime">
+</div>
+```
+
+<br />
+
+이벤트 리스너에도 동일한 규칙이 적용됩니다.
+
+```html
+<date-picker @change="submitChange"></date-picker>
+```
+
+```Javascript
+app.component('date-picker', {
+    created() {
+        console.log(this.$attrs)
+    }
+})
+```
+
+```html
+<div id="date-picker" class="demo">
+    <date-picker @change="showChange"></date-picker>
+</div>
+```
+
+```Javascript
+const app = Vue.createApp({
+    methods: {
+        showChange(event) {
+            console.log(event.target.value)
+        }
+    }
+})
+
+app.component('date-picker', {
+    template: `
+        <select>
+            <option value="1">Monday</option>
+            <option value="2">Tuesday</option>
+            <option value="3">Wednesday</option>
+        </select>
+    `
+})
+```
+
+이 경우, `change` 이벤트 리스너는 `부모 컴포넌트`에서 `자식 컴포넌트`로 전달되며, `<select>`의 change는 네이티브 이벤트로 처리됩니다. date-picker에서 명시적으로 이벤트를 emit할 필요가 없습니다.
+
+<br />
