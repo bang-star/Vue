@@ -401,3 +401,50 @@ computed: {
 ```
 
 > 자바스크립트 오브젝트나 배열을 prop으로 전달하는 경우, 객체를 복사하는 것이 아니라 참조하게 됩니다. 즉, 전달받은 오브젝트나 배열을 수정하게 되는 경우, 자식 요소가 부모 요소의 상태를 **변경하게 될 것** 입니다.
+
+<br />
+
+### Props - 유효성 검사
+
+컴포넌트는 prop의 유효성 검사를 위해 요구사항을 특정할 수 있습니다. 요구사항이 충족되지 않은 경우 Vue는 브라우저의 자바스크립트 콘솔을 통해 경고를 표시합니다. 이는 다른 사람들도 사용하는 컴포넌트를 개발하는 경우에 특히 유용합니다. Prop들의 유효성 검사를 위해 prop의 값에 배열이나 문자열 대신 오브젝트를 삽입할 수 있습니다.
+
+```Javascript
+Vue.component('my-component', {
+    props: {
+        // 기본 타입 체크(`Null`이나 `undefined`는 모든 타입을 허용합니다.)
+        propA: Number,
+        // 여러 타입 허용
+        propB: [String, Number],
+        // 필수 문자열
+        propC: {
+            type: String,
+            required: true
+        },
+        // 기본값이 있는 숫자
+        propD: {
+            type: Number,
+            default: 100
+        },
+        // 기본값이 있는 오브젝트
+        propE: {
+            type: Object,
+            // 오브젝트나 배열은 꼭 기본값을 반환하는 팩토리 함수의 형태로 사용되어야 합니다.
+            default: function() {
+                return { message : 'hello' }
+            }
+        },
+        // 커스텀 유효성 검사 함수
+        propF: {
+            validator: function() {
+                // 값이 항상 아래 세 개의 문자열 중 하나여야 합니다.
+                return ['success', 'warning', 'danger'].indexOf(value) !== -1
+            }
+        }
+    }
+})
+```
+
+> [유의사항] 컴포넌트 인스턴스가 생성되기 전에 일어나므로 `computed`, `method`, `data`를 사용할 수 없습니다.
+
+<br />
+
