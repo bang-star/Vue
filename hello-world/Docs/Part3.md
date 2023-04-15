@@ -638,3 +638,37 @@ this.$emit('myEvent')
 컴포넌트 및 props와는 다르게 이벤트 이름은 자바스크립트 변수나 속성의 이름으로 사용되는 경우가 없습니다. 따라서 camelCase나 PascalCase를 사용할 필요가 없습니다. 또한, (HTML의 대소문자 구분을 위해) DOM 템플릿의 v-on 이벤트 리스너는 항상 자동으로 소문자 변환되기 때문에 v-on:myEvent는 자동으로 v-on:myevent로 변환됩니다. 즉, myEvent 이벤트를 들을 수 없습니다.
 
 이러한 이유 때문에, `이벤트 이름`에는 `kebab-case`를 사용하는 것이 권장됩니다.
+
+<br />
+
+### 커스텀 이벤트 - 컴포넌트의 v-model 커스터마이징(Optional)
+
+v-model을 사용하는 컴포넌트는 기본값으로 value를 prop으로 사용하고, input을 이벤트로 사용합니다. 이 때, 체크박스와 같이 value 속성을 다른 용도로 사용하여야 하는 경우에는 model 옵션을 이용하여 문제가 생기는 것을 방지할 수 있습니다.
+
+```javascript
+Vue.component('base-checkbox', {
+    model: {
+        prop: 'checked',
+        event: 'change'
+    },
+    props: {
+        checked: Boolean
+    },
+    template: `
+        <input
+            type="checkbox"
+            v-bind:checked="checked"
+            v-on:change="$emit('change', $event.target.checked)"
+    `
+})
+```
+
+```HTML
+<base-checkbox v-model="lovingVue"></base-checkbox>
+```
+
+v-model을 컴포넌트에 사용하게 되면 lovingVue의 값은 checked prop으로 전달됩니다.
+
+그리고 lovingVue 속성은 `<base-checked>`가 change 이벤트를 emit할 때 새로운 값으로 업데이트됩니다.
+
+이 때, checked 속성을 컴포넌트의 props 옵션에 선언해 주어야 합니다.
