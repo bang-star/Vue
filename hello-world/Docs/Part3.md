@@ -1203,3 +1203,98 @@ v-on과 v-bind처럼 v-slot도 단축표기를 가지고 있습니다. 인수 �
 ```
 
 실제로 범위가 있는 슬롯의 사용 예시를 보려면 [Vue Virtual Scroller](https://github.com/Akryum/vue-virtual-scroller), [Vue Promised](https://github.com/posva/vue-promised), [Portal Vue](https://github.com/LinusBorg/portal-vue) 같은 라이브러리들을 둘러볼 것을 추천합니다.
+
+<br />
+
+### 삭제될 문법(To be deprecated)
+
+#### Slot 인수를 사용하는 이름이 있는 슬롯
+
+v-slot 디렉티브는 slot과 slot-scope 인수들을 대체하는, 더 발전된 API로 Vue 2.6.0에 도입되었습니다. 내용물을 부모 컴포넌트에서 이름이 있는 슬롯에 보내려면 slot 인수를 <template>에서 사용해야 합니다.
+
+```HTML
+<base-layout>
+    <template slot="header">
+        <h1>Here might be a page title</h1>
+    </template>
+
+    <p>A paragraph for the main content.</p>
+    <p>And another one.</p>
+
+    <template slot="footer">
+        <p>Here's some contact info</p>
+    </template>
+</base-layout>
+```
+
+```HTML
+<base-layout>
+    <template v-slot:header>
+        <h1>Here might be a page title</h1>
+    </template>
+
+    <p>A paragraph for the main content.</p>
+    <p>And another one.</p>
+
+    <template v-slot:footer>
+        <p>Here's some contact info</p>
+    </template>
+</base-layout>
+```
+
+슬롯으로 전달된 속성들을 받기 위해서 부모 컴포넌트는 slot-scope 인수와 함께 <template>을 사용할 수 있습니다
+
+```HTML
+<!-- 1 -->
+<slot-example>
+    <template slot="default" slot-scope="slotProps">
+        {{ slotProps.msg }}
+    </template>
+</slot-example>
+
+<!-- 2 -->
+<slot-example>
+    <template slot-scope="slotProps">
+        {{ slotProps.msg }}
+    </template>
+</slot-example>
+
+<!-- 3 -->
+<slot-example>
+    <template slot-scope="{msg}">
+        {{ msg }}
+    </template>
+</slot-example>
+
+<!-- 4 -->
+<slot-example>
+    <span slot-scope="slotProps">
+        {{ slotProps.msg }}
+    </span>
+</slot-example>
+```
+
+**TODO **
+
+```HTML
+<!-- new-1 -->
+<slot-example>
+    <template v-slot:default slot-scope="slotProps">
+        {{ slotProps.msg }}
+    </template>
+</slot-example>
+
+<!-- new-2 -->
+<slot-example>
+    <template slot-scope="slotProps">
+        {{ slotProps.msg }}
+    </template>
+</slot-example>
+
+<!-- new-3 -->
+<slot-example>
+    <template slot-scope="{msg}">
+        {{ msg }}
+    </template>
+</slot-example>
+```
