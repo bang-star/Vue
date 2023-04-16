@@ -796,3 +796,100 @@ navigation-link template
 ```
 
 컴포넌트를 렌더링할 때 `<slot></slot>`이 "Your Profile"로 교체됩니다. 슬롯에는 HTML 같은 템플릿 코드를 포함시킬 수 있기 때문입니다. 만약 `<navigation-link>` 템플릿이 `<slot> 요소`를 가지고 있지 않다면 그 자리에 들어갔어야 할 모든 내용이 무시될 것입니다.
+
+
+<br />
+
+### 컴파일 될 때의 범위(Compilations scope)
+
+슬롯 안에 데이터 옵션을 사용하고 싶을 수 있습니다.
+
+부모 템플릿 안에 있는 것들은 부모 컴포넌트의 범위에 컴파일 되고 자식 템플릿 안에 있는 것들은 자식 컴포넌트의 범위에 컴파일 됩니다.
+
+```HTML
+<navigation-link url="/profile">
+    Checking here will send you to : {{ url }}
+    <!-- 
+        url은 undefined로 나올 겁니다. 이 데이터는 <navigation-link>로 넘어가지만
+        <navigation-link> 컴포넌트 안에 정의도어 있지 않다.
+     -->
+</navigation-link>
+```
+
+navigation-link template
+
+```HTML
+<a
+    v-bind:href="url">
+    Logged in as {{ user.name }}
+</a>
+```
+
+```HTML
+<a 
+    v-bind:href="url"
+    class="nav-link">
+    <!-- Font Awesome 아이콘을 추가합시다. -->
+    <slot></slot>
+</a>
+```
+
+### 기본값 지정(Fallback Content)
+
+아무 컨텐츠도 전달되지 않았을 때 슬롯에 렌더링시킬 대비책(즉 기본값)을 지정해 놓는 것이 유용한 경우가 있을 수 있습니다.
+
+submit-button template
+
+```HTML
+<!-- 1 -->
+<button type="submit">
+    <slot></slot>
+</button>
+```
+
+<br />
+
+```HTML
+<!-- 1 to 2 -->
+<submit-button></submit-button>
+```
+
+<br />
+
+```HTML
+<!-- 1 to 2 -->
+<button type="submit">
+    Submit
+</button>
+```
+
+<br />
+
+```HTML
+<!-- 1 to 3 -->
+<button type="submit">
+    <slot>Submit</slot>
+</button>
+```
+
+<br />
+
+<br />
+
+```HTML
+<!-- 3 to 4 -->
+<submit-button>
+    Save
+</submit-button>
+```
+
+
+<br />
+
+```HTML
+<!-- 3 to 5 -->
+<button type="submit">
+    Save
+</button>
+```
+
