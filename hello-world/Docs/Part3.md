@@ -1126,4 +1126,80 @@ function(slotProps) {
 </base-layout>
 ```
 
-### 
+<br />
+
+### 이름이 있는 슬롯 디렉티브의 단축표기(Named Slots Shorthand)
+
+v-on과 v-bind처럼 v-slot도 단축표기를 가지고 있습니다. 인수 앞에 쓰는 부분(v-slot:)을 `특수 기호인 #`으로 대체하는 것입니다. 예를 들어 v-slot:header는 #header로 쓸 수도 있습니다.
+
+```HTML
+<base-layout>
+    <template #header>
+        <h1>Here might be a page title</h1>
+    </template>
+
+    <p>A paragraph for the main content.</p>
+    <p>And another one.</p>
+
+    <template #footer>
+        <p>Here's some contact info</p>
+    </template>
+</base-layout>
+```
+
+```HTML
+<!-- 1. 다른 디렉티브와 마찬가지로 단축 표기는 오직 인수가 있을 떄만 가능합니다. -->
+<current-user #="{user}">
+    {{user.firstName}}
+</current-user>
+```
+
+```HTML
+<!-- 2. 단축 표기를 쓰려면 반드시 슬롯의 이름을 특정해야 합니다. -->
+<current-user #default="{user}">
+    {{user.firstName}}
+</current-user>
+```
+
+<br />
+
+### 다른 사례들(Other Examples)
+
+슬롯 속성을 통해 입력되는 속성에 따라 슬롯을 다른 내용을 렌더링할 수 있는 재사용가능한 템플릿으로 변환할 수 있습니다. 부모 컴포넌트를 레이아웃 용도로만 사용하고 데이터 로직을 캡슐화한 재사용가능 컴포넌트를 디자인할 때 가장 유용한 방법입니다.
+
+**todo-list template**
+
+```HTML
+<ul>
+    <li
+        v-for="todo in filteredTodos"
+        v-bind:key="todo.id">
+        {{ todo.text }}
+    </li>
+</ul>
+```
+
+```HTML
+<ul>
+    <li
+        v-for="todo in filteredTodos"
+        v-bind:key="todo.id">
+        <!-- 각 할일에 대해 슬롯을 만들고 `todo` 객체를 슬롯 속성으로 전달 -->
+        <slot name="todo" v-bind:todo="todo">
+            <!-- 기본값 -->
+            {{ todo.text }}
+        </slot>
+    </li>
+</ul>
+```
+
+```HTML
+<todo-list v-bind:todos="todos">
+    <template v-slo:todo="{todo}">
+        <span v-if="todo.isComplete">checked</span>
+        {{todo.text}}
+    </template>
+</todo-list>
+```
+
+실제로 범위가 있는 슬롯의 사용 예시를 보려면 [Vue Virtual Scroller](https://github.com/Akryum/vue-virtual-scroller), [Vue Promised](https://github.com/posva/vue-promised), [Portal Vue](https://github.com/LinusBorg/portal-vue) 같은 라이브러리들을 둘러볼 것을 추천합니다.
