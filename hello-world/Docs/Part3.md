@@ -997,3 +997,88 @@ v-slot만 `<template>` 태그에 추가할 수 있다는 점을 유의하시기 
     </footer>
 </base-layout>
 ```
+
+<br />
+
+### 범위가 있는 슬롯(Scoped Slots)
+
+자식 컴포넌트에서만 접근할 수 있는 데이터에서 슬롯에 필요한 내용을 가져와야 할 수 있습니다.
+
+**current-user template**
+
+```HTML
+<span>
+    <slot>{{user.lastName}}</slot>
+</span>
+```
+
+```HTML
+<current-user>
+    {{ user.firstName }}
+</current-user>
+```
+
+부모 컴포넌트의 슬롯에서 user를 사용하려면 user를 `<slot> 요소`에 속성으로 연결해야 합니다.
+<slot> 요소에 연결된 속성을 `슬롯 속성(slot props)`라고 합니다. 이제 `부모 컴포넌트의 범위(scope)`에서 v-slot에 연결한 ‘슬롯 속성(slotProps)’를 쓸 수 있습니다
+
+```HTML
+<span>
+    <slot v-bind:user="user">
+        {{ user.lastName }}
+    </slot>
+</span>
+```
+
+```HTML
+<current-user>
+    <template v-slot:default="slotProps">
+        {{ slotProps.user.firstName }}
+    </template>
+</current-user>
+```
+
+#### 범위가 있는 슬롯(Scoped Slots), 단톡 디폴트 슬롯을 위한 축약 문법(Abbreviated Syntax for Lone Default Slots)
+
+제공된 내용이 디폴트 슬롯 밖에 없으면 컴포넌트의 태그를 슬롯의 템플릿으로 바로 쓸 수 있습니다. 즉 v-slot을 컴포넌트에다가 쓸 수 있다는 것입니다.
+
+```HTML
+<current-user>
+    <template v-slot:default="slotProps">
+        {{slotProps.user.firstName}}
+    </template>
+</current-user>
+```
+
+```HTML
+<current-user v-slot:default="slotProps">
+    {{slotProps.user.firstName}}
+</current-user>
+```
+
+```HTML
+<current-user v-slot="slotProps">
+    {{slotProps.user.firstName}}
+</current-user>
+```
+
+범위를 모호하게 만들기 떄문에 디폴트 슬롯을 위한 축약 문법은 이름이 있는 슬롯들과 함께 쓸 수 없습니다.
+
+```HTML
+<current-user v-slot="slotProps">
+    {{slotProps.user.firstName}}
+    <template v-slot:other="otherSlotProps">
+        slotProps is NOT available here
+    </template>
+</current-user>
+```
+
+```HTML
+<current-user>
+    <template v-slot:default="slotProps">
+        {{slotProps.user.firstName}}
+    </template>
+    <template v-slot:other="otherSlotProps">
+        slotProps is NOT available here
+    </template>
+</current-user>
+```
