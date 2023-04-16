@@ -1298,3 +1298,82 @@ v-slot 디렉티브는 slot과 slot-scope 인수들을 대체하는, 더 발전�
     </template>
 </slot-example>
 ```
+
+<br />
+
+## 동기 & 비동기 컴포넌트
+
+### keep-alive 동적 컴포넌트
+
+초기에는, 탭 인터페이스에서 컴포넌트들을 전환하기 위해서 is 특성을 사용했습니다.
+
+```HTML
+<component v-bind:is="currentTabComponent"></component>
+```
+
+컴포넌트들을 전환할 때 가끔 성능상의 이유로 상태를 유지하거나 재-렌더링을 피하길 원할 수 있습니다. 예를 들면, 탭 인터페이스를 약간 확장 하는 경우가 있습니다.
+
+동적 컴포넌트를 재생성하는 것은 보통은 유용한 동작입니다. 하지만 이 경우에는, 탭 컴포넌트 인스턴스가 처음 생성될 때 캐시 되는 것을 선호합니다. 이런 문제를 해결하기 위해서, 동적 컴포넌트를 `<keep-alive>` 엘리먼트로 둘러쌀 수 있습니다.
+이제 Posts 탭은 (게시물이 선택된) 상태를 유지할 수 있고 다시 렌더링하지도 않습니다.
+
+```HTML
+<!-- Inactive components will be cached! -->
+<keep-alive>
+    <component v-bind:is="currentTabComponent"></component>
+</keep-alive>
+```
+
+<br />
+
+### 비동기 컴포넌트
+
+규모가 큰 어플리케이션의 경우, 앱을 작은 조각들로 나누어 두고 필요한 경우에만 서버로부터 필요한 컴포넌트를 로드해야 할 수 있습니다. 이런 작업을 쉽게 할 수 있도록 Vue는 팩토리 함수를 이용해 컴포넌트를 비동기적으로 정의하는 것을 허용합니다. Vue는 컴포넌트가 필요할 때 팩토리 함수를 실행하고 미래를 위해 결과를 캐시합니다.
+
+```JS
+Vue.component('async-example', function(resolve, reject) {
+    setTimeout(function() {
+        // 컴포넌트 정의를 resolve 콜백을 통해 전달
+        resolve({
+            template: "<div>I am async!</div>"
+        })
+    }, 1000);
+})
+```
+
+```JS
+Vue.component(
+    "async-webpack-example",
+    // 'import' 함수는 Promise를 반환합니다.
+    () => import("./my-async-component")
+);
+```
+
+```JS
+new Vue({
+    // ...
+    components: {
+        "my-components": () => import("./my-async-component")
+    }
+})
+```
+
+<br />
+
+### 비동기 컴포넌트, Handling Loading State 
+
+비동기 컴포넌트 팩토리는 아래와 같은 포맷으로 오브젝트를 반환할 수도 있습니다.
+
+```JS
+const AsyncComponent = () => ({
+    // 로드 할 컴포넌트(Promise)
+    component: import("./MyComponent.vue"),
+    // 비동기 컴포넌트가 로딩중 일 때 사용할 컴포넌트
+    loading: LoadingComponent,
+    // 비동기 컴포넌트 로딩이 실패했을 때 사용할 컴포넌트
+    error: ErrorComponent,
+    // 로딩 컴포넌트를 보여주기 전의 지연시간. (기본값: 200ms)
+    delay: 200,
+    // 초과되었을 때 에러 컴포넌트를 표시할 타임아웃. (기본값: 무한대)
+    timeout: 3000
+})
+```
