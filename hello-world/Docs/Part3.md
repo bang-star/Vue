@@ -1082,3 +1082,34 @@ v-slot만 `<template>` 태그에 추가할 수 있다는 점을 유의하시기 
     </template>
 </current-user>
 ```
+
+<br />
+
+### 범위가 있는 슬롯(Scoped Slots), 슬롯 속성 구조분해(Destructing Slot Props)
+
+프레임워크 내부에서 `범위가 있는 슬롯`은 하나의 인수를 가지는 함수로 슬롯에 들어가는 내용을 감싸는 방식으로 작동합니다.
+
+v-slot의 값은 함수 정의식의 인수 위치에서 가능한 어떤 종류의 자바스크립트 표현식도 다 가능합니다. 그러므로 싱글 파일 컴포넌트나 모던 브라우저처럼 지원되는 모든 환경에서 아래와 같이 특정 슬롯 속성을 추출하는 [ES2015 구조분해](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)를 할 수 있다는 뜻입니다.
+
+```JS
+function(slotProps) {
+    // ... slot content
+}
+```
+
+```HTML
+<!-- 1. 구조분해 -->
+<current-user v-slot="{ user }">
+    {{ user.firstName }}
+</current-user>
+
+<!-- 2. 구조분해 - 속성 이름 -->
+<current-user v-slot="{ user : person }">
+    {{ person.firstName }}
+</current-user>
+
+<!-- 3. 구조분해 - default 값 -->
+<current-user v-slot="{ user : {firstName : 'Guest'} }">
+    {{ user.firstName }}
+</current-user>
+```
