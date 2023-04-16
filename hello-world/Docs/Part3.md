@@ -1113,3 +1113,15 @@ function(slotProps) {
     {{ user.firstName }}
 </current-user>
 ```
+
+### 가변(동적) 슬롯 이름(Dynamic Slot names)
+
+가변 디렉티브 인수는 가변 슬롯 이름을 정의하는 방식으로 v-slot에서도 작동합니다.
+
+```HTML
+<base-layout>
+    <template v-slot:[dynamicSlotName]>
+        ...
+    </template>
+</base-layout>
+```
