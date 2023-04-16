@@ -893,3 +893,107 @@ submit-button template
 </button>
 ```
 
+<br />
+
+### 이름이 있는 슬롯(Named Slots)
+
+여러 개의 슬롯을 쓰면 더 유용할 때가 있습니다.
+이런 경우를 위해서 `<slot>` 요소는 서로 다른 슬롯들을 정의할 때 쓸 수 있는 name이라는 특별한 속성을 가지고 있습니다.
+
+**base-layout template**
+
+```HTML
+<div class="container">
+    <header>
+        <!-- 헤더 -->
+    </header>
+    <main>
+        <!-- 본문 -->
+    </main>
+    <footer>
+        <!-- 바닥 -->
+    </footer>
+</div>
+```
+
+<br />
+
+```HTML
+<div class="container">
+    <header>
+        <slot name="header"></slot>
+    </header>
+    <main>
+        <slot></slot>
+    </main>
+    <footer>
+        <slot name="footer"></slot>
+    </footer>
+</div>
+```
+
+이름이 있는 슬롯에 내용을 전달하려면 `<template>`에 `v-slot 디렉티브`를 쓰고 그 속성에 앞에서 지정한 ‘name’을 넣으면 됩니다.
+
+
+**base-layout template**
+
+```HTML
+<base-layout>
+    <template v-slot:header>
+        <h1>Here might be a page title</h1>
+    </template>
+    <p>A paragraph for the main content</p>
+    <p>And another one</p>
+    <template v-slot:footer>
+        <h1>Here's some contact info</h1>
+    </template>
+</base-layout>
+```
+
+**OR**
+
+```HTML
+<base-layout>
+    <template v-slot:header>
+        <h1>Here might be a page title</h1>
+    </template>
+     <template v-slot:default>
+        <p>A paragraph for the main content</p>
+        <p>And another one</p>
+    </template>
+    <template v-slot:footer>
+        <h1>Here's some contact info</h1>
+    </template>
+</base-layout>
+```
+
+v-slot만 `<template>` 태그에 추가할 수 있다는 점을 유의하시기 바랍니다
+
+```HTML
+<base-layout>
+    <template v-slot:header>
+        <h1>Here might be a page title</h1>
+    </template>
+    <p>A paragraph for the main content</p>
+    <p>And another one</p>
+    <template v-slot:footer>
+        <h1>Here's some contact info</h1>
+    </template>
+</base-layout>
+```
+
+
+```HTML
+<base-layout>
+    <header>
+        <h1>Here might be a page title</h1>
+    </header>
+     <main>
+        <p>A paragraph for the main content</p>
+        <p>And another one</p>
+    </main>
+    <footer>
+        <h1>Here's some contact info</h1>
+    </footer>
+</base-layout>
+```
