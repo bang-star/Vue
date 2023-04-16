@@ -1298,3 +1298,28 @@ v-slot 디렉티브는 slot과 slot-scope 인수들을 대체하는, 더 발전�
     </template>
 </slot-example>
 ```
+
+<br />
+
+## 동기 & 비동기 컴포넌트
+
+### keep-alive 동적 컴포넌트
+
+초기에는, 탭 인터페이스에서 컴포넌트들을 전환하기 위해서 is 특성을 사용했습니다.
+
+```HTML
+<component v-bind:is="currentTabComponent"></component>
+```
+
+컴포넌트들을 전환할 때 가끔 성능상의 이유로 상태를 유지하거나 재-렌더링을 피하길 원할 수 있습니다. 예를 들면, 탭 인터페이스를 약간 확장 하는 경우가 있습니다.
+
+동적 컴포넌트를 재생성하는 것은 보통은 유용한 동작입니다. 하지만 이 경우에는, 탭 컴포넌트 인스턴스가 처음 생성될 때 캐시 되는 것을 선호합니다. 이런 문제를 해결하기 위해서, 동적 컴포넌트를 `<keep-alive>` 엘리먼트로 둘러쌀 수 있습니다.
+이제 Posts 탭은 (게시물이 선택된) 상태를 유지할 수 있고 다시 렌더링하지도 않습니다.
+
+```HTML
+<!-- Inactive components will be cached! -->
+<keep-alive>
+    <component v-bind:is="currentTabComponent"></component>
+</keep-alive>
+```
+
