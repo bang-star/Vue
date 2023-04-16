@@ -762,3 +762,37 @@ this.$emit('update:title', newTitle)
 위 구문은 doc 객체의 각 속성(e.g.title)을 각각의 prop 처럼 전달하고, 각각의 업데이트 리스너로써 v-on을 추가합니다.
 
 > `v-bind.sync="title: doc.title}`와 같은 리터럴 오브젝트는 `v-bind:sync` 이러한 복잡한 표현식을 파싱하는 과정에서 발생할 수 있는 극단적인 경우가 너무 많기 때문에 동작하지 않습니다.
+
+<br />
+
+## Slots
+
+### 슬롯에 들어가는 내용(slot content)
+
+Vue에 있는 컨텐트 배포 API는 `<slot> 요소`를 컨텐트 배포 통로로 사용하는 [Web Components spec draf](https://github.com/WICG/webcomponents/blob/gh-pages/proposals/Slots-Proposal.md)에서 영향을 받았습니다. 디자인 프레임워크 또는 확장을 위한 프레임워크를 사용하다 보면 아래와 같은 컴포넌트를 볼 수 있습니다. HTML 태그가 아닌 navigation-link template 입니다.
+
+```HTML
+<navigation-link url="/profile">
+    Your Profile
+</navigation-link>
+```
+
+navigation-link template
+
+```HTML
+<a
+    v-bind:href="url"
+    class="nav-link">
+    <slot></slot>
+</a>
+```
+
+```HTML
+<navigation-link url="/profile">
+    <!-- Font Awesome 아이콘을 추가합시다. -->
+    <span class="fa fa-user"></span>
+    Your Profile
+</navigation-link>
+```
+
+컴포넌트를 렌더링할 때 `<slot></slot>`이 "Your Profile"로 교체됩니다. 슬롯에는 HTML 같은 템플릿 코드를 포함시킬 수 있기 때문입니다. 만약 `<navigation-link>` 템플릿이 `<slot> 요소`를 가지고 있지 않다면 그 자리에 들어갔어야 할 모든 내용이 무시될 것입니다.
