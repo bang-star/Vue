@@ -762,3 +762,539 @@ this.$emit('update:title', newTitle)
 위 구문은 doc 객체의 각 속성(e.g.title)을 각각의 prop 처럼 전달하고, 각각의 업데이트 리스너로써 v-on을 추가합니다.
 
 > `v-bind.sync="title: doc.title}`와 같은 리터럴 오브젝트는 `v-bind:sync` 이러한 복잡한 표현식을 파싱하는 과정에서 발생할 수 있는 극단적인 경우가 너무 많기 때문에 동작하지 않습니다.
+
+<br />
+
+## Slots
+
+### 슬롯에 들어가는 내용(slot content)
+
+Vue에 있는 컨텐트 배포 API는 `<slot> 요소`를 컨텐트 배포 통로로 사용하는 [Web Components spec draf](https://github.com/WICG/webcomponents/blob/gh-pages/proposals/Slots-Proposal.md)에서 영향을 받았습니다. 디자인 프레임워크 또는 확장을 위한 프레임워크를 사용하다 보면 아래와 같은 컴포넌트를 볼 수 있습니다. HTML 태그가 아닌 navigation-link template 입니다.
+
+```HTML
+<navigation-link url="/profile">
+    Your Profile
+</navigation-link>
+```
+
+navigation-link template
+
+```HTML
+<a
+    v-bind:href="url"
+    class="nav-link">
+    <slot></slot>
+</a>
+```
+
+```HTML
+<navigation-link url="/profile">
+    <!-- Font Awesome 아이콘을 추가합시다. -->
+    <span class="fa fa-user"></span>
+    Your Profile
+</navigation-link>
+```
+
+컴포넌트를 렌더링할 때 `<slot></slot>`이 "Your Profile"로 교체됩니다. 슬롯에는 HTML 같은 템플릿 코드를 포함시킬 수 있기 때문입니다. 만약 `<navigation-link>` 템플릿이 `<slot> 요소`를 가지고 있지 않다면 그 자리에 들어갔어야 할 모든 내용이 무시될 것입니다.
+
+
+<br />
+
+### 컴파일 될 때의 범위(Compilations scope)
+
+슬롯 안에 데이터 옵션을 사용하고 싶을 수 있습니다.
+
+부모 템플릿 안에 있는 것들은 부모 컴포넌트의 범위에 컴파일 되고 자식 템플릿 안에 있는 것들은 자식 컴포넌트의 범위에 컴파일 됩니다.
+
+```HTML
+<navigation-link url="/profile">
+    Checking here will send you to : {{ url }}
+    <!-- 
+        url은 undefined로 나올 겁니다. 이 데이터는 <navigation-link>로 넘어가지만
+        <navigation-link> 컴포넌트 안에 정의도어 있지 않다.
+     -->
+</navigation-link>
+```
+
+navigation-link template
+
+```HTML
+<a
+    v-bind:href="url">
+    Logged in as {{ user.name }}
+</a>
+```
+
+```HTML
+<a 
+    v-bind:href="url"
+    class="nav-link">
+    <!-- Font Awesome 아이콘을 추가합시다. -->
+    <slot></slot>
+</a>
+```
+
+### 기본값 지정(Fallback Content)
+
+아무 컨텐츠도 전달되지 않았을 때 슬롯에 렌더링시킬 대비책(즉 기본값)을 지정해 놓는 것이 유용한 경우가 있을 수 있습니다.
+
+submit-button template
+
+```HTML
+<!-- 1 -->
+<button type="submit">
+    <slot></slot>
+</button>
+```
+
+<br />
+
+```HTML
+<!-- 1 to 2 -->
+<submit-button></submit-button>
+```
+
+<br />
+
+```HTML
+<!-- 1 to 2 -->
+<button type="submit">
+    Submit
+</button>
+```
+
+<br />
+
+```HTML
+<!-- 1 to 3 -->
+<button type="submit">
+    <slot>Submit</slot>
+</button>
+```
+
+<br />
+
+<br />
+
+```HTML
+<!-- 3 to 4 -->
+<submit-button>
+    Save
+</submit-button>
+```
+
+
+<br />
+
+```HTML
+<!-- 3 to 5 -->
+<button type="submit">
+    Save
+</button>
+```
+
+<br />
+
+### 이름이 있는 슬롯(Named Slots)
+
+여러 개의 슬롯을 쓰면 더 유용할 때가 있습니다.
+이런 경우를 위해서 `<slot>` 요소는 서로 다른 슬롯들을 정의할 때 쓸 수 있는 name이라는 특별한 속성을 가지고 있습니다.
+
+**base-layout template**
+
+```HTML
+<div class="container">
+    <header>
+        <!-- 헤더 -->
+    </header>
+    <main>
+        <!-- 본문 -->
+    </main>
+    <footer>
+        <!-- 바닥 -->
+    </footer>
+</div>
+```
+
+<br />
+
+```HTML
+<div class="container">
+    <header>
+        <slot name="header"></slot>
+    </header>
+    <main>
+        <slot></slot>
+    </main>
+    <footer>
+        <slot name="footer"></slot>
+    </footer>
+</div>
+```
+
+이름이 있는 슬롯에 내용을 전달하려면 `<template>`에 `v-slot 디렉티브`를 쓰고 그 속성에 앞에서 지정한 ‘name’을 넣으면 됩니다.
+
+
+**base-layout template**
+
+```HTML
+<base-layout>
+    <template v-slot:header>
+        <h1>Here might be a page title</h1>
+    </template>
+    <p>A paragraph for the main content</p>
+    <p>And another one</p>
+    <template v-slot:footer>
+        <h1>Here's some contact info</h1>
+    </template>
+</base-layout>
+```
+
+**OR**
+
+```HTML
+<base-layout>
+    <template v-slot:header>
+        <h1>Here might be a page title</h1>
+    </template>
+     <template v-slot:default>
+        <p>A paragraph for the main content</p>
+        <p>And another one</p>
+    </template>
+    <template v-slot:footer>
+        <h1>Here's some contact info</h1>
+    </template>
+</base-layout>
+```
+
+v-slot만 `<template>` 태그에 추가할 수 있다는 점을 유의하시기 바랍니다
+
+```HTML
+<base-layout>
+    <template v-slot:header>
+        <h1>Here might be a page title</h1>
+    </template>
+    <p>A paragraph for the main content</p>
+    <p>And another one</p>
+    <template v-slot:footer>
+        <h1>Here's some contact info</h1>
+    </template>
+</base-layout>
+```
+
+
+```HTML
+<base-layout>
+    <header>
+        <h1>Here might be a page title</h1>
+    </header>
+     <main>
+        <p>A paragraph for the main content</p>
+        <p>And another one</p>
+    </main>
+    <footer>
+        <h1>Here's some contact info</h1>
+    </footer>
+</base-layout>
+```
+
+<br />
+
+### 범위가 있는 슬롯(Scoped Slots)
+
+자식 컴포넌트에서만 접근할 수 있는 데이터에서 슬롯에 필요한 내용을 가져와야 할 수 있습니다.
+
+**current-user template**
+
+```HTML
+<span>
+    <slot>{{user.lastName}}</slot>
+</span>
+```
+
+```HTML
+<current-user>
+    {{ user.firstName }}
+</current-user>
+```
+
+부모 컴포넌트의 슬롯에서 user를 사용하려면 user를 `<slot> 요소`에 속성으로 연결해야 합니다.
+<slot> 요소에 연결된 속성을 `슬롯 속성(slot props)`라고 합니다. 이제 `부모 컴포넌트의 범위(scope)`에서 v-slot에 연결한 ‘슬롯 속성(slotProps)’를 쓸 수 있습니다
+
+```HTML
+<span>
+    <slot v-bind:user="user">
+        {{ user.lastName }}
+    </slot>
+</span>
+```
+
+```HTML
+<current-user>
+    <template v-slot:default="slotProps">
+        {{ slotProps.user.firstName }}
+    </template>
+</current-user>
+```
+
+#### 범위가 있는 슬롯(Scoped Slots), 단톡 디폴트 슬롯을 위한 축약 문법(Abbreviated Syntax for Lone Default Slots)
+
+제공된 내용이 디폴트 슬롯 밖에 없으면 컴포넌트의 태그를 슬롯의 템플릿으로 바로 쓸 수 있습니다. 즉 v-slot을 컴포넌트에다가 쓸 수 있다는 것입니다.
+
+```HTML
+<current-user>
+    <template v-slot:default="slotProps">
+        {{slotProps.user.firstName}}
+    </template>
+</current-user>
+```
+
+```HTML
+<current-user v-slot:default="slotProps">
+    {{slotProps.user.firstName}}
+</current-user>
+```
+
+```HTML
+<current-user v-slot="slotProps">
+    {{slotProps.user.firstName}}
+</current-user>
+```
+
+범위를 모호하게 만들기 떄문에 디폴트 슬롯을 위한 축약 문법은 이름이 있는 슬롯들과 함께 쓸 수 없습니다.
+
+```HTML
+<current-user v-slot="slotProps">
+    {{slotProps.user.firstName}}
+    <template v-slot:other="otherSlotProps">
+        slotProps is NOT available here
+    </template>
+</current-user>
+```
+
+```HTML
+<current-user>
+    <template v-slot:default="slotProps">
+        {{slotProps.user.firstName}}
+    </template>
+    <template v-slot:other="otherSlotProps">
+        slotProps is NOT available here
+    </template>
+</current-user>
+```
+
+<br />
+
+### 범위가 있는 슬롯(Scoped Slots), 슬롯 속성 구조분해(Destructing Slot Props)
+
+프레임워크 내부에서 `범위가 있는 슬롯`은 하나의 인수를 가지는 함수로 슬롯에 들어가는 내용을 감싸는 방식으로 작동합니다.
+
+v-slot의 값은 함수 정의식의 인수 위치에서 가능한 어떤 종류의 자바스크립트 표현식도 다 가능합니다. 그러므로 싱글 파일 컴포넌트나 모던 브라우저처럼 지원되는 모든 환경에서 아래와 같이 특정 슬롯 속성을 추출하는 [ES2015 구조분해](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)를 할 수 있다는 뜻입니다.
+
+```JS
+function(slotProps) {
+    // ... slot content
+}
+```
+
+```HTML
+<!-- 1. 구조분해 -->
+<current-user v-slot="{ user }">
+    {{ user.firstName }}
+</current-user>
+
+<!-- 2. 구조분해 - 속성 이름 -->
+<current-user v-slot="{ user : person }">
+    {{ person.firstName }}
+</current-user>
+
+<!-- 3. 구조분해 - default 값 -->
+<current-user v-slot="{ user : {firstName : 'Guest'} }">
+    {{ user.firstName }}
+</current-user>
+```
+
+### 가변(동적) 슬롯 이름(Dynamic Slot names)
+
+가변 디렉티브 인수는 가변 슬롯 이름을 정의하는 방식으로 v-slot에서도 작동합니다.
+
+```HTML
+<base-layout>
+    <template v-slot:[dynamicSlotName]>
+        ...
+    </template>
+</base-layout>
+```
+
+<br />
+
+### 이름이 있는 슬롯 디렉티브의 단축표기(Named Slots Shorthand)
+
+v-on과 v-bind처럼 v-slot도 단축표기를 가지고 있습니다. 인수 앞에 쓰는 부분(v-slot:)을 `특수 기호인 #`으로 대체하는 것입니다. 예를 들어 v-slot:header는 #header로 쓸 수도 있습니다.
+
+```HTML
+<base-layout>
+    <template #header>
+        <h1>Here might be a page title</h1>
+    </template>
+
+    <p>A paragraph for the main content.</p>
+    <p>And another one.</p>
+
+    <template #footer>
+        <p>Here's some contact info</p>
+    </template>
+</base-layout>
+```
+
+```HTML
+<!-- 1. 다른 디렉티브와 마찬가지로 단축 표기는 오직 인수가 있을 떄만 가능합니다. -->
+<current-user #="{user}">
+    {{user.firstName}}
+</current-user>
+```
+
+```HTML
+<!-- 2. 단축 표기를 쓰려면 반드시 슬롯의 이름을 특정해야 합니다. -->
+<current-user #default="{user}">
+    {{user.firstName}}
+</current-user>
+```
+
+<br />
+
+### 다른 사례들(Other Examples)
+
+슬롯 속성을 통해 입력되는 속성에 따라 슬롯을 다른 내용을 렌더링할 수 있는 재사용가능한 템플릿으로 변환할 수 있습니다. 부모 컴포넌트를 레이아웃 용도로만 사용하고 데이터 로직을 캡슐화한 재사용가능 컴포넌트를 디자인할 때 가장 유용한 방법입니다.
+
+**todo-list template**
+
+```HTML
+<ul>
+    <li
+        v-for="todo in filteredTodos"
+        v-bind:key="todo.id">
+        {{ todo.text }}
+    </li>
+</ul>
+```
+
+```HTML
+<ul>
+    <li
+        v-for="todo in filteredTodos"
+        v-bind:key="todo.id">
+        <!-- 각 할일에 대해 슬롯을 만들고 `todo` 객체를 슬롯 속성으로 전달 -->
+        <slot name="todo" v-bind:todo="todo">
+            <!-- 기본값 -->
+            {{ todo.text }}
+        </slot>
+    </li>
+</ul>
+```
+
+```HTML
+<todo-list v-bind:todos="todos">
+    <template v-slo:todo="{todo}">
+        <span v-if="todo.isComplete">checked</span>
+        {{todo.text}}
+    </template>
+</todo-list>
+```
+
+실제로 범위가 있는 슬롯의 사용 예시를 보려면 [Vue Virtual Scroller](https://github.com/Akryum/vue-virtual-scroller), [Vue Promised](https://github.com/posva/vue-promised), [Portal Vue](https://github.com/LinusBorg/portal-vue) 같은 라이브러리들을 둘러볼 것을 추천합니다.
+
+<br />
+
+### 삭제될 문법(To be deprecated)
+
+#### Slot 인수를 사용하는 이름이 있는 슬롯
+
+v-slot 디렉티브는 slot과 slot-scope 인수들을 대체하는, 더 발전된 API로 Vue 2.6.0에 도입되었습니다. 내용물을 부모 컴포넌트에서 이름이 있는 슬롯에 보내려면 slot 인수를 <template>에서 사용해야 합니다.
+
+```HTML
+<base-layout>
+    <template slot="header">
+        <h1>Here might be a page title</h1>
+    </template>
+
+    <p>A paragraph for the main content.</p>
+    <p>And another one.</p>
+
+    <template slot="footer">
+        <p>Here's some contact info</p>
+    </template>
+</base-layout>
+```
+
+```HTML
+<base-layout>
+    <template v-slot:header>
+        <h1>Here might be a page title</h1>
+    </template>
+
+    <p>A paragraph for the main content.</p>
+    <p>And another one.</p>
+
+    <template v-slot:footer>
+        <p>Here's some contact info</p>
+    </template>
+</base-layout>
+```
+
+슬롯으로 전달된 속성들을 받기 위해서 부모 컴포넌트는 slot-scope 인수와 함께 <template>을 사용할 수 있습니다
+
+```HTML
+<!-- 1 -->
+<slot-example>
+    <template slot="default" slot-scope="slotProps">
+        {{ slotProps.msg }}
+    </template>
+</slot-example>
+
+<!-- 2 -->
+<slot-example>
+    <template slot-scope="slotProps">
+        {{ slotProps.msg }}
+    </template>
+</slot-example>
+
+<!-- 3 -->
+<slot-example>
+    <template slot-scope="{msg}">
+        {{ msg }}
+    </template>
+</slot-example>
+
+<!-- 4 -->
+<slot-example>
+    <span slot-scope="slotProps">
+        {{ slotProps.msg }}
+    </span>
+</slot-example>
+```
+
+**TODO **
+
+```HTML
+<!-- new-1 -->
+<slot-example>
+    <template v-slot:default slot-scope="slotProps">
+        {{ slotProps.msg }}
+    </template>
+</slot-example>
+
+<!-- new-2 -->
+<slot-example>
+    <template slot-scope="slotProps">
+        {{ slotProps.msg }}
+    </template>
+</slot-example>
+
+<!-- new-3 -->
+<slot-example>
+    <template slot-scope="{msg}">
+        {{ msg }}
+    </template>
+</slot-example>
+```
