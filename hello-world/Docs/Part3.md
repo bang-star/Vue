@@ -1498,3 +1498,48 @@ Vue.component('unique-name-of-my-componen', {
 name : 'stack-overflow',
 template: '<div><stack-overflow></stack-overflow></div>'
 ```
+
+<br />
+
+### 순환 참조 - 두 컴포넌트 사이의 순환 참조
+
+Finder나 File Explorer 같은 파일 디렉토리 트리를 만드는 경우를 생각해보자.
+
+#### tree-folder template
+
+```HTML
+<p>
+    <span>{{ folder.name }}</span>
+    <tree-folder-contents :children="folder.children" />
+</p>
+```
+
+#### tree-folder-contents template
+
+```HTML
+<ul>
+    <li v-for="child in children">
+        <tree-folder v-if="child.children" :folder="child" />
+        <span v-else>{{ child.name }}</span>
+    </li>
+</ul>
+```
+
+하지만 만약에 모듈 시스템을 이용해(즉, Webpack 이나 Browserify를 이용해) require 혹은 import를 시도한 경우, 아래와 같은 에러가 발생합니다.
+
+> Failed to mount  component: template or render function not defined.
+
+
+tree-folder-component 컴포넌트가 패러독스를 발생시키는 자식 요소라는 것을 알고 있으므로, `beforeCreate` 라이프사이클 훅이 호출되기를 기다렸다가 컴포넌트를 등록합니다.
+
+```JS
+befoeCreate: function() {
+    this.$options.components.TreeFolderContents = require('./tree-folder-contents.vue').default
+}
+```
+
+```JS
+components: {
+    TreeFolderContents: () => import('./tree-folder-contents.vue')
+}
+```
