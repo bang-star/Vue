@@ -1473,3 +1473,28 @@ methods: {
     }
 }
 ```
+
+<br />
+
+### 순환 참조 - 재귀 컴포넌트
+
+컴포넌트는 재귀적으로 템플릿 안에서 호출될 수 있습니다. 하지만 name 옵션을 이용해서만 호출될 수 있습니다.
+
+```JS
+name: 'unique-name-of-my-component'
+```
+
+Vue.component를 이용해 컴포넌트를 전역으로 등록하는 경우, 전역 ID는 자동으로 컴포넌트의 name 옵션의 값으로 설정됩니다.
+
+```JS
+Vue.component('unique-name-of-my-componen', {
+    // ...
+})
+```
+
+주의하지 않으면 재귀 컴포넌트는 무한루프를 발생시킬 수도 있습니다. "**max stack size exceeded**(최대 스택 사이즈가 초과되었습니다)"에러를 출력하므로, 재귀적 출력하므로, 재귀적 호출에 올바른 조건이 설정되어 있는지 확인하여야 합니다. 결론으로는 추천하지 않습니다.
+
+```JS
+name : 'stack-overflow',
+template: '<div><stack-overflow></stack-overflow></div>'
+```
