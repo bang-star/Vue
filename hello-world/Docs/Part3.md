@@ -1479,6 +1479,37 @@ inject: ['getMap']
 
 <br />
 
+### 엘리먼트 & 컴포넌트 접근 - 자식 컴포넌트 인스턴스 및 요소에 접근하기
+
+물론 props와 events가 존재하지만, 가끔 Javascript에서 자식 요소에 직접 접근해야 하는 경우가 있습니다. 이 경우 **ref 속성**을 이용해 자식 요소에 레퍼런스 ID를 할당하여 해결할 수 있습니다. (**$refs는 반응현이 아닙니다.**)
+
+#### base-input template
+
+```HTML
+<input ref="input" />
+```
+
+```JS
+methods: {
+    // Used to focus the input from the parent.
+    focus: function() {
+        this.$refs.input.focus()
+    }
+}
+```
+
+#### Parent Component usage
+
+```HTML
+<base-input ref="usernameInput"></base-input>
+```
+
+```JS
+this.$refs.usernameInput.focus()
+```
+
+<br />
+
 ### 프로그래밍적 이벤트 리스너
 
 지금까지 본 $emit을 사용하고 v-on으로 듣는 방법 외에도 Vue 인스턴스는 또다른 이벤트 인터페이스 사용 방법을 가지고 있습니다.
