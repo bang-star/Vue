@@ -1382,6 +1382,44 @@ const AsyncComponent = () => ({
 
 ## 예외적인 상황들
 
+### 엘리먼트 & 컴포넌트 접근 - 루트 엘리먼트 접근하기
+
+대부분의 경우, 다른 컴포넌트에 접근하거나 직접 DOM 엘리먼트에 접근하는 것을 피하는 것이 좋습니다. 그럼에도 불구하고, 이러한 접근이 허용되는 경우가 있습니다.
+
+new Vue의 모든 하위 컴포넌트에서는 $root 속성을 이용해 루트 인스턴스에 접근할 수 있지만, 지향하는 방법이다.
+
+```JS
+new Vue({
+    data: {
+        foo: 1
+    },
+    computed: {
+        bar: function() { /* ... */ }
+    },
+    methods: {
+        baz: function() { /* ... */ }
+    }
+})
+```
+
+#### $root 사용법
+
+```JS
+// root의 데이터 가져오기
+this.$root.foo
+
+// root의 데이터 수정하기
+this.$root.foo = 2
+
+// root의 computed 속성 접근하기
+this.$root.bar
+
+// root의 method 사용하기
+this.$root.baz()
+```
+
+<br />
+
 ### 프로그래밍적 이벤트 리스너
 
 지금까지 본 $emit을 사용하고 v-on으로 듣는 방법 외에도 Vue 인스턴스는 또다른 이벤트 인터페이스 사용 방법을 가지고 있습니다.
