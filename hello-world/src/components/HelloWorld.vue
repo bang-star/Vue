@@ -18,8 +18,8 @@ export default {
     },
     name: 'HelloWorld',
     mounted() {
-        const child = this.$refs['my-component']
-        console.log(child)
+        // const child = this.$refs['my-component']
+        console.log(this.$root.test)
     },
     data() {
        return {
