@@ -1671,3 +1671,20 @@ components: {
     TreeFolderContents: () => import('./tree-folder-contents.vue')
 }
 ```
+
+<br />
+
+### 템플릿을 정의하는 다른 방법 - 인라인 템플릿
+
+특수한 속성인 inline-template 가 자식 컴포넌트에 존재하는 경우, 컴포넌트는 이를 분리된 컨텐츠로 보지 않고 현재 템플릿 안에 있는 컨텐츠로 취급합니다. 이는 좀 더 유연한 템플릿 설계가 가능하게 합니다.
+
+인라인 템플릿은 Vue가 연결된 DOM 엘리먼트 내부에 정의되어야 합니다.
+
+```HTML
+<my-component inline-template>
+    <div>
+        <p>이는 컴포넌트 자신의 템플릿으로써 컴파일되었습니다.</p>
+        <p>부모에 인용된 컨텐츠가 아닙니다.</p>
+    </div>
+</my-component>
+```
