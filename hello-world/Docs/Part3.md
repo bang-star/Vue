@@ -1420,6 +1420,26 @@ this.$root.baz()
 
 <br />
 
+### 엘리먼트 & 컴포넌트 접근 - 부모 컴포넌트 인스턴스에 접근하기
+
+$root와 비슷하게, `$parent` 속성을 사용하여 **자식 요소** 에서 **부모 인스턴스**에 접근할 수 있습니다. 이는 prop을 이용해서 데이터를 넘겨주는 것의 (조금 뒤떨어지는) 대안으로써 사용할 수 있습니다. 하지만, 가끔 부분적으로 컴포넌트간의 공유가 이루어져야 하는 라이브러리가 존재합니다.
+
+`<google-map-region>` 컴포넌트를 추가하고 `<google-map-marker>` 컴포넌트가 그 지역 안에서만 마커를 렌더링 할 수도 있도록 구조를 변경한다고 가정합니다.
+
+이 <google-map>` 컴포넌트는 모든 하위 컴포넌트가 접근할 수 있어야 하는 map 속성을 가져야 합니다. 더 나아가 getMap 메서드를 통해서 하위 컴포넌트에서 접근하는 방법이다.
+
+```html
+<google-map>
+    <google-map-region v-bind:shape="cityBoundaries">
+        <google-map-markers v-bind:places="iceCreamShops"></google-map-markers>
+    </google-map-region>
+</google-map>
+```
+
+부모 속성의 데이터를 자식 속성에서 변경하는 경우에 디버깅의 편의성이나 코드 가독성을 떨어뜨린다.
+
+<br />
+
 ### 프로그래밍적 이벤트 리스너
 
 지금까지 본 $emit을 사용하고 v-on으로 듣는 방법 외에도 Vue 인스턴스는 또다른 이벤트 인터페이스 사용 방법을 가지고 있습니다.
