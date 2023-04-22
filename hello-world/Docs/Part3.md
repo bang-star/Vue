@@ -1377,3 +1377,99 @@ const AsyncComponent = () => ({
     timeout: 3000
 })
 ```
+
+<br />
+
+## 예외적인 상황들
+
+### 프로그래밍적 이벤트 리스너
+
+지금까지 본 $emit을 사용하고 v-on으로 듣는 방법 외에도 Vue 인스턴스는 또다른 이벤트 인터페이스 사용 방법을 가지고 있습니다.
+
+ - $on(eventName, eventHandler)을 이용한 **이벤트 청취**
+ - $once(eventName, eventHandler)를 이용한 **단발성 이벤트 청취**
+ - $off(eventName, eventHandler)를 이용한 **이벤트 청취 중단**
+
+<br />
+
+#### Limit
+
+ - 라이프사이클 훅에서만 picker에 접근할 수 있는 경우, picker가 컴포넌트 인스턴스 안에 저장되어야 합니다. 끔찍한 정도는 아니지만, 다소 어색하게 느껴질 수 있습니다.
+
+ - 셋업을 위한 코드와 제거를 위한 코드가 분리되어 있기에 무언가를 제거하거나 설치하는데 있어 (프로그래밍적으로) 어려워집니다.
+
+```JS
+// datepicker를 input에 한 번 연결합니다.
+// DOM에 직접 연결됩니다.
+
+mounted: function() {
+    // Pikaday는 서드파티 라이브러리 입니다.
+
+    this.picker = new Pikaday({
+        field: this.$refs.input,
+        format: 'YYYY-MM-DD',
+    })
+},
+// 컴포넌트를 destory 하기 직전에 
+// datepicker를 destroy합니다.
+beforeDestory: function() {
+    this.picker.destroy()
+}
+```
+
+프로그래밍적 리스너를 이용하면 위 두가지 이슈를 모두 해결할 수 있습니다.
+
+```JS
+// datepicker를 input에 한 번 연결합니다.
+// DOM에 직접 연결됩니다.
+
+mounted: function() {
+    // Pikaday는 서드파티 라이브러리 입니다.
+
+    this.picker = new Pikaday({
+        field: this.$refs.input,
+        format: 'YYYY-MM-DD',
+    })
+},
+// 컴포넌트를 destory 하기 직전에 
+// datepicker를 destroy합니다.
+beforeDestory: function() {
+    this.picker.destroy()
+}
+```
+
+```JS
+mounted: function() {
+
+    var picker = new Pikaday({
+        field: this.$refs.input,
+        format: 'YYYY-MM-DD',
+    })
+
+    this.$once('hook:beforeDestory', function() {
+        picker.destory()
+    })
+},
+```
+
+```JS
+// datepicker를 input에 한 번 연결합니다.
+// DOM에 직접 연결됩니다.
+
+mounted: function() {
+    this.attachDatepicker('startDateInput')
+    this.attachDatepicker('endDateInput')
+},
+methods: {
+    attachDatepicker: function(refName) {
+        var picker = new Pikaday({
+            field: this.$refs[refName],
+            format: 'YYYY-MM-DD',
+        })
+
+        this.$once('hook:beforeDestory', function() {
+            picker.destory()
+        })
+    }
+}
+```
