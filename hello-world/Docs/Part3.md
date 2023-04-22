@@ -1688,3 +1688,21 @@ components: {
     </div>
 </my-component>
 ```
+
+<br />
+
+### 템플릿을 정의하는 다른 방법 - X templates
+
+템플릿을 스크립트 엘리먼트 안에 정의하는 또 다른 방법으로써, text/x-template 타입을 이용해 템플릿을 id로 참조할 수 있습니다. 작성한 x-template는 Vue가 연결된 DOM 엘리먼트의 바깥에서 정의되어야 합니다.
+
+```HTML
+<script type="text/x-template" id="hello-world-template">
+    <p>Hello Hello Hello</p>
+</script>
+```
+
+```JS
+Vue.component('hello-world', {
+    template: '#hello-world-template'
+})
+```
