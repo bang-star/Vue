@@ -603,3 +603,24 @@ new Vue({
 })
 </script>
 ```
+
+<br />
+
+### [컴포넌트를 이용한 트랜지션 구성](https://v2.ko.vuejs.org/v2/guide/transitioning-state.html#%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%ED%8A%B8%EB%9E%9C%EC%A7%80%EC%85%98-%EA%B5%AC%EC%84%B1)
+
+여러 상태 트랜지션을 관리하면 Vue 인스턴스 또는 컴포넌트의 복잡성을 빠르게 높일 수있습니다. 다행히도 많은 애니메이션을 전용 하위 컴포넌트로 추출 할 수 있습니다.
+
+```HTML
+<script src="https://cdn.jsdelivr.net/npm/tween.js@16.3.4"></script>
+
+<div id="example-8">
+  <input v-model.number="firstNumber" type="number" step="20"> +
+  <input v-model.number="secondNumber" type="number" step="20"> =
+  {{ result }}
+  <p>
+    <animated-integer v-bind:value="firstNumber"></animated-integer> +
+    <animated-integer v-bind:value="secondNumber"></animated-integer> =
+    <animated-integer v-bind:value="result"></animated-integer>
+  </p>
+</div>
+```
