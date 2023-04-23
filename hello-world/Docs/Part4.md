@@ -74,3 +74,45 @@ new Vue({
 - `v-leave-to`: (2.1.8 이상 버전에서 지원) 진출 상태의 끝에서 실행됩니다. 진출 트랜지션이 트리거되고 (동시에 v-leave가 제거됨), 트랜지션/애니메이션이 끝나면 제거되는 하나의 프레임을 추가했습니다.
 
 [트랜지션 클래스](https://vuejs.org/assets/transition-classes.f0f7b3c9.png)
+
+<br />
+
+### CSS 트랜지션
+
+가장 일반적인 트랜지션 유형 중 하나는 CSS 트랜지션 입니다.
+
+<div id="example-1">
+    <button @click="show = !show">
+        Toggle
+    </button>
+    <transition name="slide-fade">
+        <p v-if="show">hello</p>
+    </transition>
+</div>
+```
+
+```Javascript
+new Vue({
+    el: '#example-1',
+    data: {
+        show: true
+    }
+})
+
+<style>
+/* 애니메이션 집입 및 진출은 다른 지속 시간 및 타이밍 기능을 사용할 수 있습니다. */
+.slide-fade-enter-active{
+    transition: all .3s ease;
+}
+
+.slide-fade-leave-active {
+    transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to /* .slide-fade-leave-active below version 2.1.8 */ {
+    transform: translateX(10px);
+    opacity: 0;
+}
+</style>
+```
+
+- [참고](https://www.w3schools.com/cssref/func_cubic-bezier.php)
