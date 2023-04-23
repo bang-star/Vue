@@ -116,3 +116,49 @@ new Vue({
 ```
 
 - [참고](https://www.w3schools.com/cssref/func_cubic-bezier.php)
+
+<br />
+
+### CSS 애니메이션
+
+CSS 애니메이션은 CSS 트랜지션과 같은 방식으로 적용됩니다. 차이점은 요소가 삽입 된 직후에 v-enter가 제거되지 않지만 animationend 이벤트에 있습니다.
+
+```HTML
+<div id="example-2">
+    <button @click="show = !show">
+        Toggle
+    </button>
+    <transition name="bounce">
+        <p v-if="show">Lorem ...</p>
+    </transition>
+</div>
+
+<style>
+.bounce-enter-active {
+    animation: bounce-in .5s;
+}
+.bounce-leave-active {
+    animation:  bounce-in .5s reverse;
+}
+@keyframes bounce-in {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.5);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+</style>
+```
+
+```JS
+new Vue({
+    el: '#example-2',
+    data: {
+        show: true
+    }
+})
+```

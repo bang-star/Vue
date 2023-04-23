@@ -2,8 +2,8 @@
 	<div>
 		<div id="zero-demo">
 			<button @click="show = !show">Toggle render</button>
-			<transition name="slide-fade">
-				<p v-if="show">hello</p>
+			<transition name="bounce">
+				<p v-if="show">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestiae, ut odit illo animi tempora explicabo ullam aliquid dicta iste vero qui quisquam cupiditate voluptates asperiores ad expedita ab commodi sint!</p>
 			</transition>
 		</div>
 	</div>
@@ -31,16 +31,21 @@ export default {
 </script>
 
 <style>
-.slide-fade-enter-active{
-    transition: all .3s ease;
+.bounce-enter-active {
+    animation: bounce-in .5s;
 }
-
-.slide-fade-leave-active {
-    transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+.bounce-leave-active {
+    animation:  bounce-in .5s reverse;
 }
-
-.slide-fade-enter, .slide-fade-leave-to /* .slide-fade-leave-active below version 2.1.8 */ {
-    transform: translateX(10px);
-    opacity: 0;
+@keyframes bounce-in {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.5);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 </style>
