@@ -393,3 +393,43 @@ in-out 모드는 자주 사용되지 않지만 떄로는 약간 다른 트랜지
 
 - in-out: 처음에는 새로운 엘리먼트가 트랜지션되고, 완료되면 현재 엘리먼트가 트랜지션됩니다.
 - out-in: 현재 엘리먼트가 먼저 트랜지션되고, 완료되면 새로운 요소가 바뀝니다.
+
+<br />
+
+### 컴포넌트 트랜지션
+
+컴포넌트 사이의 트랜지션은 더욱 간단합니다. 우리는 key 속성이 필요 없습니다. 대신, 우리는 동적 컴포넌트를 래핑합니다.
+
+```HTML
+<transition name="component-fade" mode="out-in">
+    <component v-bind:is="view"></component>
+</transition>
+
+<script>
+new Vue({
+    el: '#transition-components-demo',
+    data: {
+        view: 'v-a'
+    },
+    components: {
+        'v-a': {
+            template: '<div>Component A</div>'
+        },
+        },
+        'v-b': {
+            template: '<div>Component B</div>'
+        }
+    }
+})
+</script>
+
+<style scoped>
+.component-fade-enter-active, .component-fade-leave-active {
+    transition: opacity .3s ease;
+}
+
+.component-fade-enter, .component-fade-leave-to {
+    opacity: 0;
+}
+</style>
+```
