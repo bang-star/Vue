@@ -234,3 +234,78 @@ Vue는 트랜지션이 종료된 시점을 알기 위해 이벤트 리스터를 
 
 </transition>
 ```
+
+```JS
+// ...
+methods: {
+    // ----------
+    // 진입
+    // ----------
+
+    beforeEnter: function(el) {
+        // ...
+    },
+    // done 콜백은 CSS와 함께 사용할 때 선택 사항
+    enter: function(el, done) {
+        // ...
+        done()
+    },
+    afterEnter: function(el) {
+        // ...
+    },
+    enterCancelled: function(el) {
+        // ...
+    },
+
+    // ----------
+    // 진출
+    // ----------
+
+    beforeLeave: function(el) {
+        /// ...
+    },
+    leave: function(el, done) {
+        /// ...
+    }
+    afterLeave: function(el) {
+        /// ...
+    }
+    // leaveCancelled은 v-show와 함께 사용됨.
+    leaveCancelled: function(el) {
+        /// ...
+    }
+}
+```
+
+<br />
+
+### 최초 렌더링 시 트랜지션
+
+노드의 초기 렌더에 트랜지션을 적요하고 싶다면 appear 속성을 추가할 수 있습니다.
+
+```HTML
+<transition appear>
+    <!-- ... -->
+</transition>
+```
+
+```HTML
+<transition 
+    appear
+    appear-class="custom-appear-class"
+    appear-to-class="custom-appear-to-class" (2.1.8+)
+    appear-active-class="custom-appear-active-class">
+    <!-- ... -->
+</transition>
+```
+
+```HTML
+<transition 
+    appear
+    v-on:before-appear="customBeforeAppearHook"
+    v-on:appear="customAppearHook"
+    v-on:after-appear="customAfterApeearHook"
+    v-on:appear-cancelled="customAppearCancelledHook">
+    <!-- ... -->
+</transition>
+```
