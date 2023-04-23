@@ -213,3 +213,24 @@ Vue는 트랜지션이 종료된 시점을 알기 위해 이벤트 리스터를 
 
 <transition :duration="{enter: 500, leave: 1000}">...</transition>
 ```
+
+<br />
+
+### Javascript Hook
+
+속성에서 Javascript 훅을 정의할 수 있습니다.
+
+```HTML
+<transition
+    v-on:before-enter="beforeEnter"
+    v-on:enter="enter"
+    v-on:after-enter="afterEnter"
+    v-on:enter-cancelled="enterCancelled"
+
+    v-on:before-leave="beforeLeave"
+    v-on:leave="leave"
+    v-on:after-leave="afterLeave"
+    v-on:leave-cancelled="leaveCancelled">
+
+</transition>
+```
