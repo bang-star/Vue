@@ -1,43 +1,41 @@
 <template>
-    <div>
-        <my-component :author="authorObj"></my-component>
-        <BaseInput v-model="username" required placeholder="enter your name" label="label"></BaseInput>
-    </div>
+	<div>
+		<div id="zero-demo">
+			<button @click="show = !show">Toggle</button>
+			<transition name="fade">
+				<p v-if="show">hello</p>
+			</transition>
+		</div>
+	</div>
 </template>
 
-<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
-
 <script>
-import MyComponent from './MyComponent.vue';
-import BaseInput from './BaseInput.vue';
 
 export default {
-    components: {
-        'my-component': MyComponent,
-        BaseInput
-    },
-    name: 'HelloWorld',
-    mounted() {
-        // const child = this.$refs['my-component']
-        console.log(this.$root.test)
-    },
-    data() {
-       return {
-            username: '',
-            currentView: 'my-component',
-            authorObj: { 
-                firstName: 'daniel',
-                 lastName: 'Bang'
-            }
-       }
-    },
-    methods: {
-        toggle() {
-            this.currentView = (this.currentView === 'my-component') ? 'your-component' : 'my-component'
-        }
-    },
-    computed: {
-
+  name: 'HelloWorld',
+  mounted() {
+    
+  },
+  data() {
+    return {
+      show: true,
     }
+  },
+  methods: {
+
+  },
+  computed: {
+
+  }
 }
 </script>
+
+<style>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+</style>
