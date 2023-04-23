@@ -433,3 +433,74 @@ new Vue({
 }
 </style>
 ```
+
+<br />
+
+### 리스트 트랜지션
+
+**ASIS**
+  - 개별 노드들
+  - 한번에 하나만 렌더링 되는 여러 노드
+
+<br />
+
+**TOBE**
+
+**<transition-group>**: v-for를 사용하여 동시에 렌더링 하고자 하는 항목의 전체 목록이 있는 경우
+
+ - `<transition>`과 달리, 실제 요소인 <span>을 렌더링합니다. tag 속성으로 렌더링 된 요소를 변경할 수 있습니다.
+ - 여러 노드 사이에서 변경하지 않기 때문에, transition mode는 사용할 수 없습니다.
+ - 엘리먼트의 내부 구현은 항상 필요합니다. 고유한 key 속성을 갖습니다.
+ - CSS 트랜지션 클래스는 그룹 보다는 내부의 엘리먼트에 적용됩니다.
+
+<br />
+
+#### 리스트의 진입/진출 트랜지션
+
+```HTML
+<div id="list-demo">
+    <button v-on:click="add">Add</button>
+    <button v-on:click="remove">Remove</button>
+    <transition-group name="list" tag="p">
+        <span v-for="item in items" v-bind:key="item" class="list-item">
+            {{ item }}
+        </span>
+    </transition-group>
+</div>
+
+<script>
+new Vue({
+    el: '#list-demo',
+    data: {
+        items: [1,2,3,4,5,6,7,8,9],
+        nextNum: 10
+    },
+    methods: {
+        randomIndex: function() {
+            return Math.floor(Math.random() * this.items.length)
+        },
+        add: function() {
+            this.items.splice(this.randomIndex(), 0, this.nextNum++)
+        },
+        remove: function() {
+            this.items.splice(this.randomIndex(), 1)
+        }
+    }
+})
+</script>
+
+<style>
+.list-item {
+    display: inline-block;
+    margin-right: 10px;
+}
+.list-enter-active, .list-leave-active {
+    transition: all 1s;
+}
+
+.list-enter, .list-lave-to /* .list-leave-active below verstion 2.1.8 */ {
+    opacity: 0;
+    transforM; translateY(30px);
+}
+</style>
+```
