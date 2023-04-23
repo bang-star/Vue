@@ -543,3 +543,17 @@ new Vue({
 }
 </style>
 ```
+
+<br />
+
+### 트랜지션 재사용
+
+트랜지션은 Vue의 컴포넌트 시스템을 통해 재사용할 수 있습니다. 재사용할 수 있는 트랜지션을 만들려면 루트에 <transition> 또는 <transition-group> 컴포넌트를 놓은 다음 자식을 트랜지션 컴포넌트에 전달하면 됩니다.
+
+```JS
+Vue.component('my-special-transition', {
+    template: ''
+})
+```
+
+![image](https://user-images.githubusercontent.com/63120360/233833616-20262b8b-a286-473d-95c9-acfa9159bdeb.png)
