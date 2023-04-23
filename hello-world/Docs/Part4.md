@@ -504,3 +504,42 @@ new Vue({
 }
 </style>
 ```
+
+<br />
+
+#### 리스트 이동 트랜지션
+
+`<transition-group>` 컴포넌트는 또 다른 속임수를 가지고 있습니다. 진입과 진출 뿐만 아니라 `위치의 변화`도 생생하게 표현할 수 있습니다. 이 기능을 사용하기 위해 알아야 할 유일한 새로운 개념은 아이템이 위치를 바꿀 때 추가되는 v-mode 클래스를 추가흔 것입니다. 다른 클래스와 마찬가지로 접두어는 제공된 name 속성 값과 일치하며 move-class 속성을 사용하여 클래스를 수동으로 지정할 수 있습니다.
+
+```HTML
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.14.1/lodash.min.js"></script>
+<div id="flip-list-demo" class="demo">
+    <button @click="shuffle">Shuffle</button>
+    <transition-group name="flip-list" tag="ul">
+        <li v-for="item in items" v-bind:key="item">
+            {{ item }}
+        </li>
+    </transition-group>
+</div>
+
+<script>
+new Vue({
+    el: '#flip-list-demo',
+    data: {
+        items: [1,2,3,4,5,6,7,8,9],
+        nextNum: 10
+    },
+    methods: {
+        shuffle: function() {
+            this.items = _.shuffle(this.items)
+        }
+    }
+})
+</script>
+
+<style>
+.flip-list-move {
+    transition: transform 1s;
+}
+</style>
+```
