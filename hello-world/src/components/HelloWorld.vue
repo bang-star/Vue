@@ -2,8 +2,10 @@
 	<div>
 		<div id="zero-demo">
 			<button @click="show = !show">Toggle render</button>
-			<transition name="bounce">
-				<p v-if="show">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestiae, ut odit illo animi tempora explicabo ullam aliquid dicta iste vero qui quisquam cupiditate voluptates asperiores ad expedita ab commodi sint!</p>
+      <br />
+			<transition name="fade" mode="out-in">
+        <button v-if="show" key="on">ON</button>
+        <button v-else key="off">OFF</button>
 			</transition>
 		</div>
 	</div>
@@ -31,21 +33,11 @@ export default {
 </script>
 
 <style>
-.bounce-enter-active {
-    animation: bounce-in .5s;
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
 }
-.bounce-leave-active {
-    animation:  bounce-in .5s reverse;
-}
-@keyframes bounce-in {
-    0% {
-        transform: scale(0);
-    }
-    50% {
-        transform: scale(1.5);
-    }
-    100% {
-        transform: scale(1);
-    }
+
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>
