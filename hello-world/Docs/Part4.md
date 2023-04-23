@@ -162,3 +162,32 @@ new Vue({
     }
 })
 ```
+
+<br />
+
+### 사용자 지정 트랜지션 클래스
+
+다음 속성을 제공하여 사용자 정의 트랜지션 클래스를 지정할 수도 있습니다.
+
+- enter-class
+- enter-active-class
+- enter-to-class (2.1.8+)
+- leave-class
+- leave-active-class
+- leave-to-class (2.1.8+)
+
+```HTML
+<link href="https://cdnjs.jsdeliver.net/npm/animate.css@3.5.1" rel="stylesheet" type="text/css">
+<div id="example-3">
+    <button @click="show = !show">
+        Toggle render
+    </button>
+    <transition 
+        name="custom-classes-transition"
+        enter-active-class="animated tada"
+        leave-active-class="animated bounceOutRight">
+
+        <p v-if="show">Hello</p>
+    </transition>
+</div>
+```
