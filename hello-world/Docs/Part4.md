@@ -309,3 +309,76 @@ methods: {
     <!-- ... -->
 </transition>
 ```
+
+<br />
+
+### 엘리먼트 간 트랜지션
+
+v-if/v-else를 사용하여 원본 엘리먼트 사이를 트랜지션 할 수도 있습니다. 가장 일반적인 두 엘리먼트 트랜지션 중 하나는 목록 컨테이너와 빈 목록을 설명하는 메시지 사이에 사용됩니다.
+
+같은 태그 이름을 가진 엘리먼트 사이를 트랜지션 할때, Vue에 고유한 `key 속성`을 부여함으로써 별개의 엘리먼트임을 명시해주어야 합니다. 그렇지 않으면 Vue의 컴파일러는 효율성을 위해 엘리먼트의 내용만 변경합니다.
+
+```HTML
+<transition>
+    <table v-if="items.length > 0">
+        <!-- ... -->
+    </table>
+    <p v-else>Sorry, no items found.</p>
+</transition>
+```
+
+```HTML
+<transition>
+    <button v-if="isEditing" key="save">
+        Save
+    </button>
+    <button v-else key="edit">
+        Edit
+    </button>
+</transition>
+```
+
+```HTML
+<transition>
+    <button v-bind:key="isEditing">
+        {{ isEditing ? 'Save' : 'Edit'}}
+    </button>
+</transition>
+```
+
+
+실제로 여러 개의 v-if를 사용하거나 하나의 엘리먼트를 동적 속성에 바인딩하여 여러 엘리먼트 사이를 트랜지션 할 수 있습니다.
+
+```HTML
+<transition>
+    <button v-if="docState === 'saved'" key="saved">
+        Edit
+    </button>
+    <button v-if="docState === 'edited'" key="edited">
+        Save
+    </button>
+    <button v-if="docState === 'editing'" key="editing">
+        Cancel
+    </button>
+</transition>
+```
+
+```HTML
+<transition>
+    <button v-bind:key="docSate">
+        {{ buttonMessage }}
+    </button>
+</transition>
+```
+
+```JS
+computed: {
+    buttonMessage: function() {
+        switch(this.docState) {
+            case 'saved': return 'Edit'
+            case 'edited': return 'Save'
+            case 'editing': return 'Cancel'
+        }
+    }
+}
+```
