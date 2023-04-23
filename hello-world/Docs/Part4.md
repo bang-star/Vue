@@ -557,3 +557,49 @@ Vue.component('my-special-transition', {
 ```
 
 ![image](https://user-images.githubusercontent.com/63120360/233833616-20262b8b-a286-473d-95c9-acfa9159bdeb.png)
+
+<br />
+
+## 상태 트랜지션
+
+### Intro
+
+- 숫자와 계산
+- 색 표시
+- SVG 노드의 위치
+- 엘리먼트의 크기 및 기타 속성
+
+<br />
+
+### [감시자를 이용한 상태 애니메이션](https://v2.ko.vuejs.org/v2/guide/transitioning-state.html#%EA%B0%90%EC%8B%9C%EC%9E%90%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EC%83%81%ED%83%9C-%EC%95%A0%EB%8B%88%EB%A9%94%EC%9D%B4%EC%85%98)
+
+감시자를 사용하면 숫자 속성의 변경 사항을 다른 속성으로 애니메이션 할 수 있습니다.
+
+```HTML
+<div id="animated-number-demo">
+    <input v-model.number="number" type="number" step="20">
+    <p>{{ animatedNumber }}</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js"></script>
+
+<script>
+new Vue({
+    el: '#animated-number-demo',
+    data: {
+        number: 0,
+        tweenedNumber: 0
+    },
+    computed: {
+        animatedNumber: function() {
+            return this.tweenedNumber.toFixed(0);
+        }
+    },
+    watch: {
+        number: function(newVal) {
+            TweenLite.to(this.$data, 0.5, {tweenedNumber: newValue})
+        }
+    }
+})
+</script>
+```
