@@ -1,43 +1,66 @@
 <template>
-    <div>
-        <my-component :author="authorObj"></my-component>
-        <BaseInput v-model="username" required placeholder="enter your name" label="label"></BaseInput>
-    </div>
+	<div>
+		<div id="list-demo">
+      <button v-on:click="add">Add</button>
+      <button v-on:click="remove">Remove</button>
+      <button v-on:click="shuffle">Shuffle</button>
+      <transition-group name="list" tag="p">
+        <span v-for="item in items" v-bind:key="item" class="list-item">
+            {{ item }}
+        </span>
+      </transition-group>
+		</div>
+	</div>
 </template>
-
-<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.14.1/lodash.min.js"></script>
 
 <script>
-import MyComponent from './MyComponent.vue';
-import BaseInput from './BaseInput.vue';
 
 export default {
-    components: {
-        'my-component': MyComponent,
-        BaseInput
-    },
-    name: 'HelloWorld',
-    mounted() {
-        // const child = this.$refs['my-component']
-        console.log(this.$root.test)
-    },
-    data() {
-       return {
-            username: '',
-            currentView: 'my-component',
-            authorObj: { 
-                firstName: 'daniel',
-                 lastName: 'Bang'
-            }
-       }
-    },
-    methods: {
-        toggle() {
-            this.currentView = (this.currentView === 'my-component') ? 'your-component' : 'my-component'
-        }
-    },
-    computed: {
+  name: 'HelloWorld',
+  mounted() {
 
+  },
+  data() {
+    return {
+      items: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      nextNum: 10
     }
+  },
+  methods: {
+    shuffle: function() {
+      this.items = _.shuffle(this.items)
+    },
+    randomIndex: function () {
+      return Math.floor(Math.random() * this.items.length)
+    },
+    add: function () {
+      this.items.splice(this.randomIndex(), 0, this.nextNum++)
+    },
+    remove: function () {
+      this.items.splice(this.randomIndex(), 1)
+    }
+  },
+  computed: {
+
+  }
 }
 </script>
+
+<style>
+.list-item {
+    display: inline-block;
+    margin-right: 10px;
+}
+.list-enter-active, .list-leave-active {
+    transition: all 1s;
+}
+
+.list-enter, .list-lave-to /* .list-leave-active below verstion 2.1.8 */ {
+    opacity: 0;
+    transform: translateY(30px);
+}
+.list-move {
+    transition: transform 1s;
+}
+</style>
