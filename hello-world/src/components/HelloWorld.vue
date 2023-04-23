@@ -1,13 +1,13 @@
 <template>
 	<div>
 		<div id="list-demo">
-      <!-- <button v-on:click="add">Add</button> -->
-      <!-- <button v-on:click="remove">Remove</button> -->
+      <button v-on:click="add">Add</button>
+      <button v-on:click="remove">Remove</button>
       <button v-on:click="shuffle">Shuffle</button>
-      <transition-group name="flip-list" tag="ul">
-        <li v-for="item in items" v-bind:key="item">
+      <transition-group name="list" tag="p">
+        <span v-for="item in items" v-bind:key="item" class="list-item">
             {{ item }}
-        </li>
+        </span>
       </transition-group>
 		</div>
 	</div>
@@ -48,8 +48,19 @@ export default {
 </script>
 
 <style>
+.list-item {
+    display: inline-block;
+    margin-right: 10px;
+}
+.list-enter-active, .list-leave-active {
+    transition: all 1s;
+}
 
-.flip-list-move {
+.list-enter, .list-lave-to /* .list-leave-active below verstion 2.1.8 */ {
+    opacity: 0;
+    transform: translateY(30px);
+}
+.list-move {
     transition: transform 1s;
 }
 </style>
