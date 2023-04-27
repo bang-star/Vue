@@ -624,3 +624,106 @@ new Vue({
   </p>
 </div>
 ```
+
+<br />
+
+## 믹스인 
+
+Mixins는 Vue 컴포넌트에 재사용 가능한 기능을 배포하는 유연한 방법입니다. mixin 객체는 모든 구성 요소 옵션을 포함할 수 있습니다. 컴포넌트에 mixin을 사용하면 해당 mixin의 모든 옵션이 컴포넌트의 고유 옵션에 "혼합"됩니다.
+
+```JS
+var myMixin = {
+    created: function() {
+        this.hello()
+    },
+    methods: {
+        hello: function(){
+
+        }
+    }
+}
+
+var Component = Vue.extend({
+    mixins: [myMixin]
+})
+
+var component = new Component()     // => "hello from mixin!"
+```
+
+<br />
+
+### 옵션 병합
+
+mixin과 컴포넌트 자체에 중첩 옵션이 포함되어 있으면 적절한 전략을 사용하여 "병합"됩니다.
+
+```JS
+var mixin = {
+    data: function() {
+        return {
+            message: 'hello',
+            foo: 'abc'
+        }
+    }
+}
+
+new Vue({
+    mixins: [mixin],
+    data: function() {
+        return {
+            message: 'goodbye',
+            bar: 'def'
+        }
+    },
+    created: function() {
+        console.log(this.$data)
+        // => { message: 'goodbye', foo: 'abc', bar: 'def'}
+    }
+})
+```
+
+같은 이름의 훅 함수가 배열에 병합되어 모든 함수가 호출됩니다. 또한 mixin 훅은 컴포넌트 자체의 훅 이전에 호출됩니다.
+
+```JS
+var mixin = {
+    created: function() {
+        console.log('mixin hook called')
+    }
+}
+
+new Vue({
+    mixins: [mixin],
+    created: function() {
+        console.log('component hook called')
+    }
+})
+
+// => 'mixin hook callled'
+// => 'component hook called'
+```
+
+methods, components, directives와 같은 객체 값을 요구하는 옵션은 같은 객체에 병합됩니다. 이러한 객체에 충돌하는 키가 있을 경우 컴포넌트의 옵션이 우선순위를 갖습니다.
+
+```JS
+var mixin = {
+    methods: {
+        foo: function() {
+            console.log('foo')
+        },
+        conflicting: function() {
+            console.log('from mixin')
+        }
+    }
+}
+
+var vm = new Vue({
+    mixins: [mixin],
+    methods: {
+        bar: function() {
+            console.log('bar')
+        },
+        conflicting: function() {
+            console.log('from mixin')
+        }
+    }
+})
+```
