@@ -727,3 +727,27 @@ var vm = new Vue({
     }
 })
 ```
+
+<br />
+
+### 전역 Mixin
+
+mixin은 전역으로 적용할 수 있습니다. 주의하세요! mixin을 전역으로 적용하면 이후에 생성된 모든 Vue 인스턴스에 영향을 미칩니다. 적절히 사용하면 사용자 정의 옵션에 대한 처리 로직을 주입하는 데 사용할 수 있습니다.
+
+```JS
+// 'myOption' 사용자 정의 옵션을 위한 핸들러 주입
+VUe.mixin({
+    created: function() {
+        var myOption = this.$options.myOption
+        if(myOption) {
+            console.log(myOption)
+        }
+    }
+})
+
+new Vue({
+    myOption: 'hello!'.
+})
+
+// => 'hello!'
+```
