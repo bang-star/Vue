@@ -751,3 +751,22 @@ new Vue({
 
 // => 'hello!'
 ```
+
+<br />
+
+### 사용자 정의 옵션 병합 전략
+
+사용자 지정 옵션을 병합할 때 기본 옵션을 사용하면 기존 값을 덮어씁니다. 커스텀 로직을 사용해 커스텀 옵션을 병합하려면, Vue.config.optionMergeStrategies에 함수를 추가할 필요가 있습니다.
+
+```JS
+Vue.config.optionMergeStrategies.myOption = function(toVal, fromVal) {
+    // return 병합된 값2
+}
+```
+
+대부분의 객체 기반 옵션에서 methods에서 사용한 것과 같은 전략을 간단하게 사용할 수 있습니다.
+
+```JS
+var strategies = Vue.config.optionMergeStrategies
+strategies.myOption = strategies.methods
+```
