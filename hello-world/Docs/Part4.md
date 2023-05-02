@@ -770,3 +770,37 @@ Vue.config.optionMergeStrategies.myOption = function(toVal, fromVal) {
 var strategies = Vue.config.optionMergeStrategies
 strategies.myOption = strategies.methods
 ```
+
+<br />
+
+## 사용자 지정 디렉티브
+
+Vue는 코어에 포함된 기본 디렉티브 세트(v-model과 v-show) 외에도 `사용자 정의 디렉티브`를 등록할 수 있습니다. Vue 2.0 에서 코드 재사용 및 추상화의 기본 형식은 컴포넌트입니다. 그러나 일반 엘리먼트에 하위 수준의 DOM 액세스가 필요한 경우가 있을 수 있으며 이 경우 사용자 지정 디렉티브가 여전히 유용할 수 있습니다.
+
+페이지 로드되면 해당 엘리먼트는 포커스를 얻습니다.(참고: autofocus는 모바일 사파리에서 작동하지 않습니다.) 이 페이지를 방문한 이후 다른 것을 클릭하지 않았다면 input 엘리먼트에 포커스가 되어 있어야 합니다.
+
+```JS
+// 전역 사용자 정의 디렉티브 v-focus 등록
+Vue.directive('focus', {
+    // 바인딩 된 엘리먼트가 DOM에 삽입되었을 때
+    inserted: function(el) {
+        /* 엘리먼트에 포커스를 줍니다. */
+        el.focus();
+    }
+})
+```
+
+```JS
+directives: {
+    focus: {
+        // 디렉티브 정의
+        inserted: function(el) {
+            el.focus()
+        }
+    }
+}
+```
+
+```HTML
+<input v-focus>
+```
