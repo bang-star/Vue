@@ -816,3 +816,45 @@ directives: {
 - update: 포함하는 컴포넌트가 업데이트 된 후 호출됩니다. 그러나 자식이 업데이트 되기 전일 가능성이 있습니다. 디렉티브의 값은 변경되었거나 변경되지 않았을 수 있지만 바인딩의 현재 값과 이전 값을 비교하여 불필요한 업데이트를 건너 뛸 수 있습니다.
 - componentUpdated: 포함하고 있는 컴포넌트와 그 자식들이 업데이트된 후에 호출됩니다.
 - unbind: 디렉티브가 엘리먼트로부터 언바이딩된 경우에만 한 번 호출됩니다.
+
+
+<br />
+
+### 디렉티브 훅 전달인자
+
+- el: 디렉티브가 바인딩된 엘리먼트. 이 것을 사용하면 DOM 조작을 할 수 있습니다.
+- binding: 아래의 속성을 가진 객체입니다.
+  - name: 디렉티브 이름, v-프리픽스가 엇습니다.
+  - value: 디렉티브에서 전달받은 값. 예를 들어 v-my-directive="1+1"인 경우 value는 2입니다.
+  - oldValue: 이전 값. update와 componentUpdated에서만 사용할 수 있습니다. 이를 통해 값이 변경되었는지 확인할 수 있습니다.
+  - expression: 표현식 문자열. 예를 들어 v-my-directive="1+1"이면, 표현식은 "1+1"입니다.
+  - arg: 디렉티브의 전달인자, 있는 경우에만 존재합니다.(예를 들어 v-my-driective:foo이면 "foo"입니다.)
+  - modifiers: 포함된 수식어 객체, 있는 경우에만 존재합니다. (예를 들어 v-my-directive.foo.bar)이면, 수식어 객체는 {foo:true, bar: true} 입니다.
+- vnode: Vue 컴포넌트가 만든 버추얼 노드. VNode API에 전체 설명이 있습니다.
+- oldValue: 이전의 버출어 노드. update와 componentUpdated 에서만 사용할 수 있습니다.
+
+```HTML
+<div id="hook-arguments-example" v-demo:foo.a.b="message"></div>
+```
+
+```JS
+Vue.directive('demo', {
+    bind: function(el, binding, vnode) {
+        var s = JSON.stringfy
+        el.innerHTML = 
+        'name: ' + s(binding.name) + '<br>' +
+        'value: ' + s(binding.value) + '<br>' +
+        'expression: ' + s(binding.expression) + '<br>' +
+        'argument: ' + s(binding.argument) + '<br>' +
+        'modifiers: ' + s(binding.modifiers) + '<br>' +
+        'vnode keys: ' + Object.keys(vnode).join(', ')
+    }
+})
+
+new Vue({
+    el: '#hook-argument-example',
+    data: {
+        message: 'hello'
+    }
+})
+```
