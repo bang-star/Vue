@@ -770,3 +770,162 @@ Vue.config.optionMergeStrategies.myOption = function(toVal, fromVal) {
 var strategies = Vue.config.optionMergeStrategies
 strategies.myOption = strategies.methods
 ```
+
+<br />
+
+## 사용자 지정 디렉티브
+
+### 기본 설명
+
+Vue는 코어에 포함된 기본 디렉티브 세트(v-model과 v-show) 외에도 `사용자 정의 디렉티브`를 등록할 수 있습니다. Vue 2.0 에서 코드 재사용 및 추상화의 기본 형식은 컴포넌트입니다. 그러나 일반 엘리먼트에 하위 수준의 DOM 액세스가 필요한 경우가 있을 수 있으며 이 경우 사용자 지정 디렉티브가 여전히 유용할 수 있습니다.
+
+페이지 로드되면 해당 엘리먼트는 포커스를 얻습니다.(참고: autofocus는 모바일 사파리에서 작동하지 않습니다.) 이 페이지를 방문한 이후 다른 것을 클릭하지 않았다면 input 엘리먼트에 포커스가 되어 있어야 합니다.
+
+```JS
+// 전역 사용자 정의 디렉티브 v-focus 등록
+Vue.directive('focus', {
+    // 바인딩 된 엘리먼트가 DOM에 삽입되었을 때
+    inserted: function(el) {
+        /* 엘리먼트에 포커스를 줍니다. */
+        el.focus();
+    }
+})
+```
+
+```JS
+directives: {
+    focus: {
+        // 디렉티브 정의
+        inserted: function(el) {
+            el.focus()
+        }
+    }
+}
+```
+
+```HTML
+<input v-focus>
+```
+
+### hook 함수
+
+디렉티브 정의 객체는 여러가지 훅 함수를 제공할 수 있습니다.
+
+- bind: 디렉티브가 처음 엘리먼트에 바인딩 될 때 한번만 호출됩니다. 이곳에서 일회성 설정을 할 수 있습니다.
+- inserted: 바인딩 된 엘리먼트가 부모 노드에 삽입 되었을 때 호출 됩니다. (이것은 부모 노드 존재를 보장하며 반드시 document 내에 있는 것은 아닙니다.)
+- update: 포함하는 컴포넌트가 업데이트 된 후 호출됩니다. 그러나 자식이 업데이트 되기 전일 가능성이 있습니다. 디렉티브의 값은 변경되었거나 변경되지 않았을 수 있지만 바인딩의 현재 값과 이전 값을 비교하여 불필요한 업데이트를 건너 뛸 수 있습니다.
+- componentUpdated: 포함하고 있는 컴포넌트와 그 자식들이 업데이트된 후에 호출됩니다.
+- unbind: 디렉티브가 엘리먼트로부터 언바이딩된 경우에만 한 번 호출됩니다.
+
+
+<br />
+
+### 디렉티브 훅 전달인자
+
+- el: 디렉티브가 바인딩된 엘리먼트. 이 것을 사용하면 DOM 조작을 할 수 있습니다.
+- binding: 아래의 속성을 가진 객체입니다.
+  - name: 디렉티브 이름, v-프리픽스가 엇습니다.
+  - value: 디렉티브에서 전달받은 값. 예를 들어 v-my-directive="1+1"인 경우 value는 2입니다.
+  - oldValue: 이전 값. update와 componentUpdated에서만 사용할 수 있습니다. 이를 통해 값이 변경되었는지 확인할 수 있습니다.
+  - expression: 표현식 문자열. 예를 들어 v-my-directive="1+1"이면, 표현식은 "1+1"입니다.
+  - arg: 디렉티브의 전달인자, 있는 경우에만 존재합니다.(예를 들어 v-my-driective:foo이면 "foo"입니다.)
+  - modifiers: 포함된 수식어 객체, 있는 경우에만 존재합니다. (예를 들어 v-my-directive.foo.bar)이면, 수식어 객체는 {foo:true, bar: true} 입니다.
+- vnode: Vue 컴포넌트가 만든 버추얼 노드. VNode API에 전체 설명이 있습니다.
+- oldValue: 이전의 버출어 노드. update와 componentUpdated 에서만 사용할 수 있습니다.
+
+```HTML
+<div id="hook-arguments-example" v-demo:foo.a.b="message"></div>
+```
+
+```JS
+Vue.directive('demo', {
+    bind: function(el, binding, vnode) {
+        var s = JSON.stringfy
+        el.innerHTML = 
+        'name: ' + s(binding.name) + '<br>' +
+        'value: ' + s(binding.value) + '<br>' +
+        'expression: ' + s(binding.expression) + '<br>' +
+        'argument: ' + s(binding.argument) + '<br>' +
+        'modifiers: ' + s(binding.modifiers) + '<br>' +
+        'vnode keys: ' + Object.keys(vnode).join(', ')
+    }
+})
+
+new Vue({
+    el: '#hook-argument-example',
+    data: {
+        message: 'hello'
+    }
+})
+```
+
+<br />
+
+### 디렉티브 훅 전달인자, 다이나믹 디렉티브 전달인자
+
+디렉티브는 동적일 수 있습니다. 예를 들어 v-mydirective:[argument]="value"에서 구성요소 인스턴스의 데이터 속성을 기반으로 인수를 업데이트할 수 있습니다. 이것은 우리의 어플리케이션 전체에서 사용할 수 있도록 사용자 지정 디렉티브를 유연하게 만듭니다. 고정 위치를 사용하여 페이지에 요소를 고정할 수 있는 사용자 지정 지시문을 만들고 싶다고 가정하겠습니다. 다음과 같이 픽셀 단위로 세로 위치를 업데이트하는 사용자 지정 지시문을 만들 수 있습니다.
+
+```HTML
+<div id="baseexample">
+    <p>Scroll down the page</p>
+    <p v-pin="200">Stick me 200px from the top of the page</p>
+</div>
+```
+
+```JS
+Vue.directive('pin', {
+    bind: function(el, binding, vnode) {
+        el.style.position = 'fixed'
+        el.style.top = binding.value + 'px'
+    }
+})
+
+new Vue({
+    el: '#baseexample'
+})
+```
+
+이렇게 하면 페이지 상단에서 요소를 200px 고정합니다. 그러나 요소를 위쪽이 아닌 왼쪽에서 고정해야 하는 시나리오가 발생하면 어떻게 될까요? 구성 요소 인스턴스마다 업데이트할 수 있는 동적 인수가 매우 편리한 위치입니다.
+
+```HTML
+<div id="dynamicexample">
+    <h3>Scroll down inside this section </h3>
+    <p v-pin:[directive]="200">I am pinned onto the page at 200px to the left</p>
+</div>
+```
+
+```JS
+Vue.directive('pin', {
+    bind: function(el, binding, vnode) {
+        el.style.position = 'fixed'
+        var s = (binding.arg == 'left' ? 'left' : 'top')
+        el.style[s] = binding.value + 'px'
+    }
+})
+
+new Vue({
+    el: '#dynamicexample',
+    data: function() {
+        return {
+            direction: 'left'
+        }
+    }
+})
+```
+
+<br />
+
+### 객체 리터럴
+
+디렉티브에 여러 값이 필요한 경우, Javascript 객체 리터럴을 전달할 수도 있습니다. 디렉티브는 유효한 JavaScript 표현식을 사용할 수 있습니다.
+
+```HTML
+<div v-demo="{color: 'white', text: 'hello!'}"></div>
+```
+
+```JS
+Vue.directive('demo', function(el, binding) {
+    console.log(binding.value.color)    // "white"
+    console.log(binding.value.text)     // "hello!"
+})
+```
