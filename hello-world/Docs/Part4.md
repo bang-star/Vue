@@ -858,3 +858,57 @@ new Vue({
     }
 })
 ```
+
+<br />
+
+### 디렉티브 훅 전달인자, 다이나믹 디렉티브 전달인자
+
+디렉티브는 동적일 수 있습니다. 예를 들어 v-mydirective:[argument]="value"에서 구성요소 인스턴스의 데이터 속성을 기반으로 인수를 업데이트할 수 있습니다. 이것은 우리의 어플리케이션 전체에서 사용할 수 있도록 사용자 지정 디렉티브를 유연하게 만듭니다. 고정 위치를 사용하여 페이지에 요소를 고정할 수 있는 사용자 지정 지시문을 만들고 싶다고 가정하겠습니다. 다음과 같이 픽셀 단위로 세로 위치를 업데이트하는 사용자 지정 지시문을 만들 수 있습니다.
+
+```HTML
+<div id="baseexample">
+    <p>Scroll down the page</p>
+    <p v-pin="200">Stick me 200px from the top of the page</p>
+</div>
+```
+
+```JS
+Vue.directive('pin', {
+    bind: function(el, binding, vnode) {
+        el.style.position = 'fixed'
+        el.style.top = binding.value + 'px'
+    }
+})
+
+new Vue({
+    el: '#baseexample'
+})
+```
+
+이렇게 하면 페이지 상단에서 요소를 200px 고정합니다. 그러나 요소를 위쪽이 아닌 왼쪽에서 고정해야 하는 시나리오가 발생하면 어떻게 될까요? 구성 요소 인스턴스마다 업데이트할 수 있는 동적 인수가 매우 편리한 위치입니다.
+
+```HTML
+<div id="dynamicexample">
+    <h3>Scroll down inside this section </h3>
+    <p v-pin:[directive]="200">I am pinned onto the page at 200px to the left</p>
+</div>
+```
+
+```JS
+Vue.directive('pin', {
+    bind: function(el, binding, vnode) {
+        el.style.position = 'fixed'
+        var s = (binding.arg == 'left' ? 'left' : 'top')
+        el.style[s] = binding.value + 'px'
+    }
+})
+
+new Vue({
+    el: '#dynamicexample',
+    data: function() {
+        return {
+            direction: 'left'
+        }
+    }
+})
+```
