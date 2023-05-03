@@ -912,3 +912,20 @@ new Vue({
     }
 })
 ```
+
+<br />
+
+### 객체 리터럴
+
+디렉티브에 여러 값이 필요한 경우, Javascript 객체 리터럴을 전달할 수도 있습니다. 디렉티브는 유효한 JavaScript 표현식을 사용할 수 있습니다.
+
+```HTML
+<div v-demo="{color: 'white', text: 'hello!'}"></div>
+```
+
+```JS
+Vue.directive('demo', function(el, binding) {
+    console.log(binding.value.color)    // "white"
+    console.log(binding.value.text)     // "hello!"
+})
+```
