@@ -1,0 +1,44 @@
+# Part5
+
+## 싱글 파일 컴포넌트
+
+### 싱글 파일 컴포넌트
+
+많은 Vue 프로젝트에서, 전역 컴포넌트는 Vue.component를 사용해 정의되고, 다음에 모든 페이지의 container 엘리먼트를 대상으로 하는 new Vue({el: '#container'})가 정의됩니다.
+
+- 전역 정의: 모든 구성 요소에 대해 고유한 이름을 지정하도록 강요됩니다.
+- 문자열 템플릿: 구문 강조가 약해 여러 줄로 된 HTML에 보기 안좋은 슬래시가 많이 필요합니다.
+- CSS 지원 없음: HTML 및 javascript 가 컴포넌트로 모듈화 되어 있으나 CSS가 빠져 있는 것을 말합니다.
+- 빌드 단계 없음: Pug (이전의 Jade) 및 Babel 과 같은 전처리기가 아닌 HTML 및 ES5 JavaScript로 제한됩니다.
+
+<br />
+
+### 관심사의 분리
+
+주목해야 할 중요한 점은 관심사 분리가 파일 타입 분리와 같지 않다는 것입니다. 현대적인 UI 개발에서 코드베이스를 서로 얽혀있는 세 개의 거대한 레이어로 나누는 대신, 느슨하게 결합 된 컴포넌트로 나누고 구성하는 것이 더 중요합니다. 컴포넌트 내부에서 템플릿, 로직 및 스타일이 본질적으로 결합되어 배치되면 컴포넌트의 응집력과 유지 보수성이 향상됩니다.
+
+싱글 파일 컴포넌트에 대한 아이디어가 마음에 들지 않더라도 Javascript와 CSS를 별도의 파일로 분리하여 핫 리로드 및 사전 컴파일 기능을 활용할 수 있습니다.
+
+```HTML
+<template>
+    <div>이곳은 사전에 컴파일 됩니다.</div>
+</template>
+<script src="./my-component.js"></script>
+<script src="./my-component.css"></script>
+```
+
+### 참고
+
+- 예제 : https://codesandbox.io/s/o29j95wx9
+
+JavaScript에서 모듈 빌드 시스템을 처음 사용하는 사용자를 위한 내용
+
+- Node Package Manager (NPM): [시작 안내서](https://docs.npmjs.com/packages-and-modules/getting-packages-from-the-registry)
+- ES2015/16를 사용하는 최신 JavaScript: Babel의 [ES2015 교육 가이드](https://babeljs.io/docs/learn)
+- vue-cli: [가이드 문서](https://cli.vuejs.org/)
+
+고급 사용자를 위한 내용
+- vue-cli는 대부분의 구성을 관리하지만, 자체 구성 옵션을 통한 세밀한 [사용자 정의 구성](https://cli.vuejs.org/config/)도 허용합니다.
+- 빌드 설정을 처음부터 직접 구성하길 원한다면, Webpack과 [vue-loader](https://vue-loader.vuejs.org/)을 수동으로 구성해야 합니다.
+- Webpack에 대한 더 자세한 내용은 [Webpack 공식 문서](https://webpack.js.org/configuration/)와 [Webpack Academy](https://webpack.academy/p/the-core-concepts)를 확인하세요.
+- Webpack에 대해 이미 알고 있고, 빌드 효율화를 고민한다면 [vite](https://vitejs-kr.github.io/)도 고려해보세요.
