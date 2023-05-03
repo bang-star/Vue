@@ -26,3 +26,19 @@
 <script src="./my-component.js"></script>
 <script src="./my-component.css"></script>
 ```
+
+### 참고
+
+- 예제 : https://codesandbox.io/s/o29j95wx9
+
+JavaScript에서 모듈 빌드 시스템을 처음 사용하는 사용자를 위한 내용
+
+- Node Package Manager (NPM): [시작 안내서](https://docs.npmjs.com/packages-and-modules/getting-packages-from-the-registry)
+- ES2015/16를 사용하는 최신 JavaScript: Babel의 [ES2015 교육 가이드](https://babeljs.io/docs/learn)
+- vue-cli: [가이드 문서](https://cli.vuejs.org/)
+
+고급 사용자를 위한 내용
+- vue-cli는 대부분의 구성을 관리하지만, 자체 구성 옵션을 통한 세밀한 [사용자 정의 구성](https://cli.vuejs.org/config/)도 허용합니다.
+- 빌드 설정을 처음부터 직접 구성하길 원한다면, Webpack과 [vue-loader](https://vue-loader.vuejs.org/)을 수동으로 구성해야 합니다.
+- Webpack에 대한 더 자세한 내용은 [Webpack 공식 문서](https://webpack.js.org/configuration/)와 [Webpack Academy](https://webpack.academy/p/the-core-concepts)를 확인하세요.
+- Webpack에 대해 이미 알고 있고, 빌드 효율화를 고민한다면 [vite](https://vitejs-kr.github.io/)도 고려해보세요.
