@@ -176,3 +176,89 @@ it('updates the rendered message when vm.message updates', done => {
     })
 })
 ```
+
+<hr />
+
+## Typescript 지원
+
+### TS 지원, 추천 설정
+
+정적 타입(Type) 시스템은 특히 애플리케이션이 성장함에 따라 많은 잠재적 런타임 오류를 방지하는 데 도움이 될 수 있습니다. 이것이 Vue가 Vue 코어뿐만 아니라 vue-router 및 Vuex 에서도 Typescript에 대한 공식 유형 선언과 함께 제공되는 이유입니다. 이것들은 NPM에 게시되고 최신 TypeScript는 NPM 패키지의 유형 선언을 해결하는 방법을 알고 있기 때문에 NPM을 통해 설치할 때 Vue와 함께 TypeScript를 사용하기 위해 추가 도구가 필요하지 않습니다.
+
+```JS
+// tsconfig.json
+{
+    'compilerOptions': {
+        // Vue의 브라우저 지원과 같습니다.
+        "target": "es5",
+        // 이러면 'this'에 대한 데이터 속성에 대한 더 엄격한 추측이 가능합니다.
+        "strict": true,
+        // webpack 2 이상 또는 rollup을 사용하여 트리세이킹을 하려면,
+        "module": "es2015",
+        "moduleResolution": "node"
+    }
+}
+```
+
+<br />
+
+### TS 지원, 프로젝트 생성
+
+```shell
+# 1. Install Vue CLI, If it's not already installed
+npm install --global @vue/cli
+
+# 2. Create a new Project, then choose the 'Manually select features' option
+vue create my-project-name
+```
+
+<br />
+
+### TS 지원, 에디터 서포트
+
+TypeScript 를 사용해 Vue를 개발하려면 VS Code를 사용하세요. TypeScript에 대한 기본적인 지원이 포함되어 있습니다. 싱글 파일 컴포넌트(SFCs)를 사용하는 경우 훌륭한 Vetur extension를 사용해 TypeScript 유추를 제공합니다. 싱글 파일 컴포넌 트 및 기타 많은 훌륭한 기능을 제공합니다. 또한 WebStorm은 타입스크립와 Vue.js를 모두 지원합니다.
+
+<br />
+
+### TS 지원, 기본 사용법
+
+Vue 컴포넌트 옵션안에서 TypeScript를 사용하려면 `Vue.component` 또는 `Vue.extend`로 컴포넌트를 정의해야 합니다.
+
+```JS
+import Vue from 'vue'
+
+const Component = Vue.extend({
+    // 타입 유추기능 사용
+})
+
+const Component = {
+    // 이 방식은 타입 유추가 되지 않습니다.
+    // TypeScript가 Vue 컴포넌트에 대한 옵션을 알 수 없기 떄문
+}
+```
+
+<br />
+
+### TS 지원, 클래스 스타일 Vue 컴포넌트
+
+컴포넌트를 선언할 때 클래스 기반 API를 선호하는 경우 공식 [vue-class-component](https://class-component.vuejs.org/) 데코레이터(Decorator)를 사용할 수 있습니다.
+
+```JS
+import Vue from 'vue'
+import Component from 'vue-class-component'
+
+@Component({
+    // 모든 컴포넌트 옵션이 이곳에 허용됩니다.
+    template: '<button @click="onClick">Click!</button>'
+})
+
+export default class MyComponent extends Vue {
+    // 초기 데이터는 인스턴스 속성으로 선언할 수 있습니다.
+    message: string = "Hello!"
+
+    // 컴포넌트 메소드는 인스턴스 메소드로 선언할 수 있습니다.
+    onClick (): void {
+        window.alert(this.message)
+    }
+}
+```
