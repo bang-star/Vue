@@ -262,3 +262,93 @@ export default class MyComponent extends Vue {
     }
 }
 ```
+
+<br />
+
+<hr />
+
+## 프로덕션 배포
+
+### 프로덕션 모드
+
+개발 과정에서 Vue는 일반적인 오류 및 함정을 해결하는 데 도움이 되는 많은 경고를 제공합니다. 그러나 이러한 경고 문자열은 프로덕션에서는 쓸모 없으며 앱의 페이로드 크기를 키웁니다. 또한 이러한 경고 검사 중 일부는 프로덕션 모드에서 피할 수 있는 런타임 비용이 적습니다.
+
+- 빌드 도구를 사용하지 않는 경우
+    
+    전체 빌드를 사용하는 경우(즉, 빌드 도구 없이 스크립트 태그를 통해 Vue를 직접 포함하는 경우) 프로덕션 환경을 위해 축소 버전(vue.min.js)을 사용해야 합니다.
+
+<br />
+
+### 프로덕션 모드, 빌드 도구를 사용하는 경우
+
+Webpack이나 Browserify와 같은 빌드 툴을 사용할 때, 프로덕션 모드는 Vue의 소스 코드 안에있는 process.env.NODE_ENV에 의해 결정 될 것이며, 기본적으로 개발 모드가 될 것입니다. 두 빌드 도구 모두 이 변수를 덮어 쓸 수 있는 방법을 제공하여 Vue의 프로덕션 모드를 사용할 수 있게하고 빌드하는 동안 minifier가 경고를 제거합니다. 모든 vue-cli 템플릿에는 다음과 같은 것들이 미리 설정 되어 있습니다. 그러나 그것이 어떻게 처리되는지 아는 것은 유익할 것입니다.
+
+#### Webpack
+
+1. V4
+
+```JS
+module.exports = {
+    mode: 'production'
+}
+```
+
+2. V3
+
+```JS
+var webpack = require('webpack')
+
+module.exports = {
+    // ...
+    plugins: [
+        // ...
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify('production')
+        })
+    ]
+}
+```
+
+<br />
+
+#### Rollup
+
+```JS
+const replace = require('rollup-plugin-replace')
+
+rollup({
+    // ...
+    plugins: [
+        replace({
+            'process.env.NODE_ENV': JSON.stringify('production')
+        })
+    ]
+}).then()
+```
+
+<br />
+
+### 사전 컴파일한 템플릿
+
+DOM 안의 템플릿 또는 JavaScript 안의 템플릿 문자열을 사용하면 템플릿에서 렌더 함수로의 컴파일이 즉시 수행됩니다. 일반적으로 대부분의 경우 속도가 빠르지만 애플리케이션이 성능에 민감한 경우에는 사용하지 않는 것이 가장 좋습니다.
+
+템플릿을 미리 컴파일하는 가장 쉬운 방법은 [싱글 파일 컴포넌트](https://vuejs.org/guide/scaling-up/sfc.html)를 사용하는 것입니다. 관련 빌드 설정은 자동으로 사전 컴파일을 수행하므로 내장 코드에 원시 템플릿 문자열 대신 이미 컴파일 된 렌더링 함수가 포함되어 있습니다.
+
+**Webpack** 을 사용하고 JavaScript 및 템플릿 파일을 분리하는 것을 선호하는 경우에 [vue-template-loader](https://github.com/ktsn/vue-template-loader)를 사용하여 템플릿 파일을 JavaScript로 변환할 수 있습니다. 빌드 단계 중 렌더 함수를 수행합니다.
+
+
+<br />
+
+### 컴포넌트의 CSS 추출하기
+
+싱글 파일 컴포넌트를 사용할 때, 컴포넌트 내부의 CSS는 JavaScript를 통해 `<script>` 태그로 동적으로 삽입됩니다. 런타임 비용이 적고, 서버 측 렌더링을 사용하는 경우 "스타일이 없는 내용의 깜빡임"이 발생합니다. 모든 컴포넌트에서 css를 같은 파일로 추출하는 것은 이러한 문제를 피할 수 있고, css 축소 및 캐싱을 향상시킬 수 있습니다. 이를 적용하려면 해당 빌드 도구 문서를 참조하면 좋습니다.
+
+ - [Webpack + vue-loader](https://vue-loader.vuejs.org/guide/extract-css.html)
+ - [Browerify + vueify](https://github.com/vuejs/vueify)
+ - [Rollup + rollup-plugin-vue](https://rollup-plugin-vue.vuejs.org/)
+
+<br />
+
+### 런타임 에러 추적하기
+
+구성 요소의 렌더링 중에 런타임 오류가 발생하면 전역 Vue.config.errorHandler config 함수로 전달됩니다. 이 훅을 공식적인 통합을 제공하는 Sentry와 같은 오류 추적 서비스와 함께 활용하면 좋습니다.
