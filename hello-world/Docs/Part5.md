@@ -352,3 +352,45 @@ DOM 안의 템플릿 또는 JavaScript 안의 템플릿 문자열을 사용하�
 ### 런타임 에러 추적하기
 
 구성 요소의 렌더링 중에 런타임 오류가 발생하면 전역 Vue.config.errorHandler config 함수로 전달됩니다. 이 훅을 공식적인 통합을 제공하는 Sentry와 같은 오류 추적 서비스와 함께 활용하면 좋습니다.
+
+<br />
+
+## 스케일링업
+
+<hr />
+
+### 라우팅
+
+> 라우팅은 애플리케이션 엔드 포인트(URI)의 정의, 그리고 URI가 클라이언트 요청에 응답하는 방식을 말합니다. [참조 - Express](https://expressjs.com/ko/guide/routing.html)
+
+매우 단순한 라우팅만 필요하고 완전한 기능을 가 ㅈ춘 라우터 라이브러리를 사용하지 않으려면 다음과 같이 페이지 수준 컴포넌트를 동적으로 렌더링하면 됩니다.
+
+ - [HTML5 History API 주소](https://developer.mozilla.org/en-US/docs/Web/API/History_API)
+ - [HTML5 Histroy API를 사용한 간단한 router 프로젝트](https://github.com/chrisvfritz/vue-2.0-simple-routing-example)
+ - [써드파티 라우터인 Page.js를 사용한 router 프로젝트](https://github.com/chrisvfritz/vue-2.0-simple-routing-example/tree/pagejs)
+
+=> 정신건강을 위해 vue-router 사용
+
+```JS
+const NotFound = { template: '<p>Page not found</p>'}
+const Home = { template: '<p>Home page</p>'}
+const About = { template: '<p>About page</p>'}
+
+const routes = {
+    '/': Home,
+    '/about': About
+}
+
+new Vue({
+    el: '#app',
+    data: {
+        currentRoute: window.location.pathname
+    },
+    computed: {
+        ViewComponent () {
+            return routes[this.currentRoute] || NotFound
+        }
+    },
+    render(h) { return h(this.ViewComponent) }
+})
+```
