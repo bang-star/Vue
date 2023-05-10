@@ -394,3 +394,74 @@ new Vue({
     render(h) { return h(this.ViewComponent) }
 })
 ```
+
+<br />
+
+### 상태관리
+
+#### 공식 Flux 유사 구현
+
+대규모 어플리케이션은 여러 컴포넌트에 분산되어있는 여러 상태와 그 상호 작용으로 인해 복잡해집니다. 이 문제를 해결하기 위해 Vue는 [Elm](https://elm-lang.org/)에서 영감을 얻은 상태 관리 라이브러리인 vuex를 제공합니다. 또한 vue-devtools를 사용한다면 설정에 따로 ㅅ ㅣ간을 보내지 않아도 디버깅을 사용할 수 있습니다.
+
+<br />
+
+#### React 개발자를 위한 안내
+
+React 경험이 있는 개발자라면, vuex가 React 생태계에서 가장 인기있는 Flux 구현인 redux와 어떻게 비교되는지 궁금할 것입니다. Vuex가 Redux와 다른 점이라면 Vue app에 대해서 "알고 있다"는 점입니다. 이를 통해 더 직관적인 API와 향상된 개발경험을 Vue에 통합할 수 있습니다.
+
+<br />
+
+#### 간단한 상태 관리 시작하기
+
+Vue 어플리케이션에서 가장 근본이 되는 것은 원시 data 객체라는 것을 종종 간과하게 됩니다. Vue 인스턴스는 단순히 그것에 대한 액세스를 프록시합니다. 따라서 여러 인스턴스에서 공유해야하는 상태가 있으면 ID로 간단히 공유할 수 있습니다.
+
+
+```JS
+const sourceOfTruth = {}
+const vmA = new Vue({
+    data: sourceOfTruth
+})
+
+const vmB = new Vue({
+    data: sourceOfTruth
+})
+```
+
+이 문제를 해결하기 위해 간단한 store 패턴(중앙 집중식 상태 관리)을 사용할 수 있습니다.
+
+```JS
+var  store = {
+    debug: true,
+    state: {
+        message: 'Hello!'
+    },
+    setMessageAction(newVal) {
+        if(this.debug) console.log('setMessageAction triggered with', newVal)
+        this.state.message = newVal
+    },
+    clearMessageAction() {
+        if(this.debug) console.log('clearMessageAction triggered with')
+        this.state.message = ''
+    }
+}
+```
+
+```JS
+const vmA = new Vue({
+    data: {
+        privateState: {},
+        sharedState: store.state
+    }
+})
+
+const vmB = new Vue({
+    data: {
+        privateState: {},
+        sharedState: store.state
+    }
+})
+```
+
+컴포넌트가 store에 속한 상태를 직접 변이 시킬 수 없지만, store에 조작을 수행하도록 알리는 이벤트를 보내야하는 컨벤션을 계속 개발할 때 결국 Flux 아키텍처에 다다르게 됩니다. 이 컨벤션의 이점은 store에서 발생하는 모든 상태 변이를 기록하기 mutation 로그, 스냅 샷 및 히스토리기 되돌리기와 같은 고급 디버깅 도우미를 구현할 수 있다는 것입니다.
+
+![image](https://github.com/bang-star/Vue/assets/63120360/8698bc2f-f8c1-4fee-99bc-46c044b4b98a)
