@@ -481,3 +481,132 @@ const vmB = new Vue({
 - SEO(Search Engine Optimization)
 
     검색 엔진 크롤러는 완전히 렌더링된 페이지를 직접 보게 됩니다. 검색 엔진에 높은 우선 순위로 노출되어야 하는 어플리케이션에 중요합니다.
+
+<br />
+
+<hr />
+
+### 보안
+
+#### Vue가 보안을 위해 힘쓰는 포인트, HTML 컨텐츠
+
+템플릿을 사용하든 렌더 함수를 사용하든, 컨텐츠는 자동으로 이스케이프 됩니다.
+
+```HTML
+<h1>{{ userProvidedString }}</h1>
+```
+
+만약 userProvidedString가 다음 값을 가지고 있다면
+
+```JS
+<script>alert('hi')</script>
+```
+
+```HTML
+&lt;script&gt;alert(&quot;hi &quot;)&lt;/script&gt;
+```
+
+<br />
+
+#### Vue가 보안을 위해 힘쓰는 포인트, 속성 바인딩
+
+동적 속성 바인딩도 자동으로 이스케이프 됩니다.
+
+```HTML
+<h1 v-bind:title="userProvidedString">
+    hello
+</h1>
+```
+
+만약 userProvidedString가 다음 값을 가지고 있다면
+
+```JS
+'" onclick="alert(\'hi\')'
+```
+
+```HTML
+&quot;onclick=&quot;)&lt;alert('hi')
+```
+
+<br />
+
+#### 잠재적 위험, HTML 주입
+
+어떠한 웹 어플리케이션에서도 정제되지 않은 사용자가 제공한 컨텐츠를 HTML, CSS 또는 자바스크립트로 실행하는 것은 잠재적으로 위험하므로 가능한 한 피해야 합니다. 그러나 일부 위험이 허용되는 경우가 있습니다.
+
+ - 템플릿을 사용하는 경우
+    
+    ```HTML
+    <div v-html="userProvidedString"></div>
+    ```
+
+ - JSX 렌더 함수를 사용하는 경우
+  
+    ```HTML
+    <div domPropsInnerHTML={this.userProvidedString}></div>
+    ```
+
+ - 렌더 함수를 사용하는 경우
+
+    ```JS
+    h('div', {
+        domProps: {
+            innerHTML: this.userProvidedString
+        }
+    })
+    ```
+
+<br />
+
+#### 잠재적 위험, URL 주입
+
+URL에 JavaScript를 사용하여 JavaScript 실행을 막기 위한 "정제 작업"을 하지 않으면 잠재적 보안 문제가 있습니다.
+
+```HTML
+<a v-bind:href="userProvidedString">
+    click me
+</a>
+```
+
+ - 참고
+   
+   - https://www.npmjs.com/package/@braintree/sanitize-url
+   - https://ko.wikipedia.org/wiki/클릭재킹
+   - http://www.tcpschool.com/html-tag-attrs/iframe-sandbox
+
+<br />
+
+#### 잠재적 위험, Style 주입
+
+sanitizedURL을 정제된 것으로 간주하여 자바스크립트가 아닌 실제 URL 이라고 가정하겠습니다. 그러나 악의적인 사용자는 여전히 userProvidedStyles에 "click jack" CSS 를 제공할 수 있습니다. (예: "로그인" 버튼 위의 투명한 상자에 링크 스타일 지정)
+
+만약 https://user-controlled-website.com이 어플리케이션의 로그인 페이지와 유사하게 빌드 된 경우 사용자의 실제 로그인 정보를 캡쳐했을 수 있습니다.
+
+`<style>`요소에 사용자 제공 컨텐츠를 허용하는 것은 사용자에게 전체 페이지 스타일 지정을 완전히 제어 가능하도록 하므로 얼마나 더 큰 취약점을 발생시킬지 상상할 수 있습니다.
+
+```HTML
+<a  v-bind:href="sanitizedUrl"
+    v-bind:style="userProvideredStyles"> 
+    Click me
+</a>
+```
+
+```HTML
+<a  v-bind:href="sanitizedUrl"
+    v-bind:style="{
+        color: userProvideredColor,
+        background: userProvideredBackground
+    }"> 
+    Click me
+</a>
+```
+
+- [클릭재킹](https://ko.wikipedia.org/wiki/클릭재킹)
+
+<br />
+
+#### 잠재적 위험, Javascript 주입
+
+템플릿과 렌더 함수에 부작용이 없어야 하므로 `<script>` 요소를 Vue와 함께 렌더링하는 것은 옳지 않습니다. 그러나 이것이 런타임에 JavaScript로 평가되는 문자열을 포함시키는 유일한 방법은 아닙니다. 
+
+모든 HTML 요소는 onclick, onfocus, 그리고 onmouserenter와 같은 속성들의 값으로 자바스크립트 문자열을 받습니다. 사용자에게서 제공된 자바스크립트를 이러한 이벤트 속성에 바인딩하는 것은 잠재적 보안 위험이 있으므로 피해야 합니다.
