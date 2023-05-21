@@ -610,3 +610,158 @@ sanitizedURL을 정제된 것으로 간주하여 자바스크립트가 아닌 �
 템플릿과 렌더 함수에 부작용이 없어야 하므로 `<script>` 요소를 Vue와 함께 렌더링하는 것은 옳지 않습니다. 그러나 이것이 런타임에 JavaScript로 평가되는 문자열을 포함시키는 유일한 방법은 아닙니다. 
 
 모든 HTML 요소는 onclick, onfocus, 그리고 onmouserenter와 같은 속성들의 값으로 자바스크립트 문자열을 받습니다. 사용자에게서 제공된 자바스크립트를 이러한 이벤트 속성에 바인딩하는 것은 잠재적 보안 위험이 있으므로 피해야 합니다.
+
+<br />
+
+### 반응형
+
+#### 변경 내용을 추적하는 방법
+
+Vue 인스턴스에 Javascript 객체를 `data` 옵션으로 전달하면 Vue는 모든 속성에 Object.defineProperty를 사용하여 getter/setter로 변환합니다. 이는 Vue가 ES5를 사용할 수 없는 IE8 이하를 지원하지 않는 이유입니다.
+
+getter/setter는 사용자에게 보이지 않으나 속성에 액세스 하거나 수정할 대 Vue가 종속성 추적 및 변경 알림을 수행할 수 있습니다. 한 가지 주의 사항은 변환된 데이터 객체가 기록될 때 브라우저가 getter/setter 형식을 다르게 처리하므로 친숙한 인터페이스를 사용하기 위해 vue-devtools를 설치하는 것이 좋습니다.
+
+모든 컴포넌트 인스턴스에는 해당 watcher 인스턴스가 있으며, 이 인스턴스는 컴포넌트가 종속적으로 렌더링되는 동안 "수정"된 모든 속성을 기록합니다. 나중에 종속적인 setter가 트리거되면 watcher에 알리고 컴포넌트가 다시 렌더링 됩니다.
+
+[Virtual DOM과 Vue 렌더링 원리](https://blog.kakaocdn.net/dn/VSYVy/btq8bqdHrHo/wlkq94hnNbWDkl3SrDGkU0/img.png)
+
+<br />
+
+#### 변경 감지 경고(Object)
+
+최신 Javascript의 한계로 인해 Vue는 속성의 추가 제거를 감지할 수 없습니다. Vue는 인스턴스 초기화 중에 getter/setter 변환 프로세스를 수행학기 때문에 data 객체 속성이 있어야 vue가 이를 변환하고 응답할 수 있습니다.
+
+```Javascript
+var vm = new Vue({
+    data: {
+        a: 1
+    }
+})
+
+// `vm.a`는 반응형이지만, `vm.b'는 반응적 X
+vm.b = 2
+```
+
+```JS
+Vue.set(vm.someObject, 'b', 2)
+
+this.$set(this.someObject, 'b', 2)
+
+// Object.assign(this.someObject, { a: 1, b:2 }) or Object.extend
+this.someObject = Object.assign({}, this.someObject, {a: 1, b: 2})
+```
+
+객체에 추가된 속성은 변경내용을 트리거하지 않는데 원본 객체와 믹스인 객체를 사용하여 새로운 객체를 생성하게 됩니다. 
+
+<br />
+
+#### 변경 감지 경고(Array)
+
+Vue는 아래 같은 배열의 변경을 감지할 수 없습니다.
+
+1. vm.items[indexOfItem] = newValue
+2. vm.items.length = newLength
+
+```Javascript
+var vm = new Vue({
+    data: {
+        items: ['a', 'b', 'c']
+    }
+})
+
+vm.items[1] = 'x'       // is NOT reactive
+vm.items.length = 2     // is NOT reactive 
+```
+
+```JS
+// Vue.set
+Vue.set(vm.items, indexOfItem, newValue)
+
+// Array.prototype.splice
+vm.items.splice(indexOfItem, 1, newValue)
+
+vm.$set(vm.items, indexOfItem, newValue)
+
+vm.items.splice(newLength)
+```
+
+<br />
+
+#### 반응형 속성 선언하기
+
+Vue는 루트 수준의 반응성 속성을 동적 으로 추가할 수 없으므로 모든 루트 수준의 반응성 데이터 속성을 빈 값으로라도 초기에 선언하여 Vue 인스턴스를 초기화해야 합니다.
+
+```Javascript
+var vm = new Vue({
+    data: {
+        // 빈 값으로 메시지를 선언 합니다.
+        message: ''
+    },
+    template: '<div>{{ message }}</div>'
+})
+
+// 나중에 `message`를 설정합니다.
+vm.message = 'Hello'
+```
+
+<br />
+
+#### 비동기 갱신 큐(Async Update Queue)
+
+Vue는 DOM 업데이트를 비동기로 합니다. 데이터 변경이 발견 될 때마다 큐(Queue)를 열고 같은 이벤트 루프에서 발생하는 모든 데이터 변경을 버퍼에 답습니다. 같은 Watcher가 여러 번 발생하면 대기열에서 한 번만 푸시됩니다. 이 버퍼링된 중복의 제거는 불필요한 계산돠 DOM 조작을 피하는 데 있어 중요합니다. 그 다음, 이벤트 루프 "tick"에서 Vue는 대기열을 비우고 실제 (이미 중복 제거 된) 작업을 수행합니다. 내부적으로 Vue는 비동기 큐를 위해 네이티브 Promise.then와 MessageChannel를 시도하고 setTimeout(fn, 0)으로 돌아갑니다.
+
+vm.someData = 'new Value'
+
+Vue.js는 일반적으로 개발자가 "데이터 중심"방식으로 생각하고 DOM을 직접 만지지 않도록 권장하지만 때로는 건드려야 할 수 도 있습니다. Vue.js가 데이터 변경 후 DOM 업데이트를 마칠 때까지 기다리면 데이터 변경된 직후에 `Vue.nextTick` (콜백)을 사용할 수 잇습니다. 콜백은 DOM이 업데이트 된 후에 호출됩니다.
+
+- Vue.nextTick
+
+    ```JS
+    var vm = new Vue({
+        el: '#example',
+        data: {
+            message: '123'
+        }
+    })
+
+    vm.message = 'new message'                  // 데이터 변경
+    vm.$el.textContext === 'new mesage'         // fase
+    Vue.nextTick(function() {
+        vm.$el.textContext === 'new message'    // false
+    })
+    ````
+
+- this.$nextTick()
+
+    ```JS
+    Vue.component('example', {
+        template: '<span>{{ message }}</span>',
+        data: function() {
+            return {
+                message: '갱신 안됨'
+            }
+        },
+        methods: {
+            updateMessage: function() {
+                this.message = '갱신됨'
+                console.log(this.$el.textContext)       // ==> '갱신 안됨'
+                this.$nextTick(function() {
+                    console.log(this.$el.textContext)   // ==> '갱신됨'
+                })
+            }
+        }
+    })
+    ```
+
+`$nextTick()`은 promise를 반환하므로, ES2017 async/await 문법을 사용하여 똑같은 동작을 수행할 수 있습니다.
+
+```JS
+methods: {
+    updateMessage: async function() {
+        this.message = '갱신됨'
+        console.log(this.$el.textContext)       // ==> '갱신 안됨'
+        await this.$nextTick()
+        console.log(this.$el.textContext)   // ==> '갱신됨'
+    }
+}
+```
