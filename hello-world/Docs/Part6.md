@@ -308,3 +308,70 @@ const router = new VueRouter({
     ]
 })
 ```
+
+<br />
+
+### 리다이렉트와 별칭
+
+#### 리다이렉트
+
+리다이렉션은 routes 설정에서도 할 수 잇습니다.
+
+1. 일반적인 redirect(path)
+
+    ```JS
+    const router = new VueRouter({
+        routes: [
+            { path: '/a', redirect: '/b' }
+        ]
+    })
+    ```
+
+2. route name을 이용한 redirect
+
+    ```JS
+    const router = new VueRouter({
+        routes: [
+            { path: '/a', redirect: {name: 'foo'} }
+        ]
+    })
+    ```
+
+3. Function을 이용한 redirect
+
+    ```JS
+    const router = new VueRouter({
+        routes: [
+            { 
+                path: '/a', redirect: to => {
+                // 함수는 인수로 대상 라우트를 받습니다.
+                // 여기서 path/location 반환
+                }
+            }
+        ]
+    })
+    ```
+
+    <br />
+
+    ```JS
+    const {hash, params, query} = to
+    if(query.to === 'foo') {return {path: '/foo', query: null }}
+    if(hash=== '#baz') {return {name: 'baz', hash: "" }}
+    if(params.id) {return '/with-params/:id'}
+    else {return '/bar'}
+    ```
+
+<br />
+
+#### 별칭
+
+/a의 별칭이 /b는 사용자가 /b를 방문했을 때 URL을 유지하지만 사용자가 /a를 방문한 것처럼 매칭합니다. 위는 라우트 구성에서 다음과 같이 표현할 수 있습니다.
+
+```JS
+const router = new VueRouter({
+    routes: [
+        { path: '/a', component: A, alias: '/b'}
+    ]
+})
+```
