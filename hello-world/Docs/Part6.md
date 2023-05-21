@@ -281,3 +281,30 @@ const router = new VueRouter({
 	```JS
 	router.push({name: 'user', params: {userId: 123}})
 	```
+
+<br />
+
+### 이름을 가지는 뷰
+
+여러 개의 뷰를 중첩하지 않고 동시에 표시해야 하는 경우가 있습니다. sidebar 뷰와 main 뷰로 레이아웃을 생성합니다. 이름이 지정된 뷰가 편리한 경우입니다 뷰에 하나씩 outlet이 있는 대신 여러 개를 사용하여 각 outlet에 이름을 지정할 수 있습니다. 이름이 없는 router-view는 이름으로 default가 주어집니다.
+
+```HTML
+<router-view class="view one"></router-view>
+<router-view class="view two" name="a"></router-view>
+<router-view class="view three" name="b"></router-view>
+```
+
+```JS
+const router = new VueRouter({
+    routes: [
+        {
+            path: '/',
+            components: {
+                default: Foo,
+                a: Bar,
+                b: Bar
+            }
+        }
+    ]
+})
+```
