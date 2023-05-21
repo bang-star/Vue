@@ -20,9 +20,9 @@ export default ({
     methods: {
         move(history) {
             if(history) {
-                this.$router.push('/bar')
+                this.$router.push({name: 'bar'})
             }else {
-                this.$router.replace('/bar')
+                this.$router.replace({name: 'bar'})
             }
         }
     }
