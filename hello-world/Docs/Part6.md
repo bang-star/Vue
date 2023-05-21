@@ -248,3 +248,36 @@ router.push, router.replace 및 router.go는 window.history.pushSate, window.his
 따라서 브라우저 히스토리 API에 이미 익숙하다면, vue-router를 사용하여 히스토리를 손쉽게 조작할 수 있습니다.
 
 vue-router 네비게이션 메소드(push, replace, go)는 모든 라우터 모드(history, bash 및 abstract)에서 일괄되게 동작합니다.
+
+<br />
+
+### 이름을 가지는 라우트
+
+#### 이름을 가지는 라우트
+
+라우트에 연결하거나 탐색을 수행할 때 이름이 있는 라우트를 사용하는 것이 더 편리합니다. Router 인스턴스를 생성하는 동안 routes 옵션에 이름을 명시한 라우트를 지정할 수 있습니다.
+
+```JS
+const router = new VueRouter({
+	routes: [
+		{
+			path: 'user/:userId',
+			name: 'user',
+			component: User
+		}
+	]
+})
+```
+
+ 1. router-link를 통한 name routes 이동
+	
+	```HTML
+	<router-link :to="{name: 'user', params= {userId: 123}}">User</router-link>
+
+	```
+
+2. router.push를 통한 name route 이동
+
+	```JS
+	router.push({name: 'user', params: {userId: 123}})
+	```
