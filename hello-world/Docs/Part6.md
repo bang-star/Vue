@@ -508,3 +508,121 @@ const router = new VueRouter({
     routes: [{ path: '*', component: NotFoundComponent }]
 })
 ```
+
+<br />
+
+## 부가 사용법
+
+### 네이게이션 가드
+
+#### 개념
+
+vue-router가 제공하는 네비게이션 가드는 주로 리다이렉션하거나 취소할 때, 네비게이션을 보호하는 데 사용됩니다. router 탐색 프로세스에 연결하는 방법에는 전역, 라우트별 또는 컴포넌특 ㅏ잇습니다.
+
+Params 또는 쿼리를 변경하면 네비게이션 가드가 실행되지 않습니다. 단순히 $route 객체를 감시하고 그 변화에 따라 로직을 만들면 됩니다 .또는 컴포넌트 가드의 beforeRouteUpdate를 사용하세요.
+
+#### 전역 가드
+
+`router.beforeEach`를 사용하여 보호하기 이전에 전역 등록을 할 수 잇습니다. 
+
+네비게이션이 트리거 될 때마다 작성 순서에 따라 호출되기 전의 모든 경우에 발생합니다. 가드는 비동기식으로 실행될 수 있으며 네비게이션은 모든 Hook이 해결되기 전까지 보류 중으로 간주됩니다.
+
+모든 가드 기능은 세 가지 전달인자(to, from, next())를 받습니다.
+
+ - to 라우트: 대상 Route 객체로 이동
+ - from 라우트: 현재 라우트로 오기 전 라우트
+ - next 함수: 이 함수는 훅을 해결하기 위해 호출 되어야 합니다. 액션은 next에 제공된 전달인자에 달려 있습니다.
+    
+    - next() : 파이프라인의 다음 훅으로 이동하십시오. 훅이 없는 경우 네비게이션은 승인됩니다.
+    - next(false) : 현재 네비게이션을 중단합니다. 브라우저 URL이 변경되면(사용자 또는 뒤로 버튼을 통해 수동으로 변경됨) from 경로의 URL로 재설정됩니다.
+    - next('/') 또는 next({path: '/'}): 다른 위치로 리다이렉션 합니다. 현재 네비게이션이 중단되고, 새 네비게이션이 시작됩니다. 
+    - next(error): (2.4.0 이후 추가) next에 전달된 인자가 Error의 인스턴스이면 탐색이 중단되고 router.onError()를 이용해 등록된 콜백에 에러가 전달됩니다. 
+
+항상 next 함수를 호출해야 합니다. 그렇지 않으면 훅이 절대 호출되지 않습니다.
+
+- **router.beforeResolve** - Global Resolve Guard
+
+    `router.beforeResolve`를 사용하여 글로벌 가드를 등록할 수 있습니다. 이는 router.beforeEach와 유사합니다. 모든 컴포넌트 가드와 비동기 라우트 컴포넌트를 불러온 후 네비게이션 가드를 확인하기 전에 호출된다는 차이가 있습니다.
+
+<br />
+
+#### Gloabl After Hooks
+
+ - router.afterEach
+
+    Hook 이후 전역으로 등록할  수도 있지만 가드와 달리 이러한 Hook은 다음 기능을 가져오지 않으며 탐색에 영향을 줄 수 없ㅅ브니다. 분석, 페이지 제목 변경, 페이지 발표와 같은 접근성 기능 및 기타 여러 작업에 유용합니다.
+
+
+    ```js
+    router.afterEach((to, from) => {
+        sendToAnalytics(to.fullPath)
+    })
+    ```
+
+<br />
+
+#### 라우트별 가드
+
+`beforeEnter` 가드를 라우트의 설정 객체에 직접 정의할 수 있습니다.
+
+```JS
+const routes = [
+    {
+        path: '/user/:id',
+        component: UserDetails,
+        beforeEnter: (to, from) => {
+            // reject the navigation
+            return false
+        }
+    }
+]
+```
+
+<br />
+
+#### 컴포넌트 내부 가드
+
+**beforeRouterEnter**와 **beforeRouteLeave**를 사용하여 라우트 컴포넌트(라우트 설정으로 전달되는 컴포넌트) 안에 라우트 네비게이션 가드를 직접 정의할 수 있습니다.
+
+```JS
+const Foo = {
+    template: '...',
+    beforeRouterEnter (to, from, next) {
+        // 이 컴포넌트를 렌더링하는 라우트 앞에 호출됩니다.
+        // 이 가드가 호출 될 때 아직 생성되지 않았기 때문에
+        // `this` 컴포넌트 인스턴스에 접근할 수 없습니다.
+    },
+    beforeRouteLeave (to, from, next) {
+        // 이 컴포넌트를 렌더링하는 라우트가 이전으로 네비에기션 될 때 호출됩니다.
+        // `this` 컴포넌트 인스턴스에 접근 할 수 있습니다.
+    }
+}
+```
+
+**beforeRouteEnter** 가드는 네비이게이션이 확인되기 전에 가드가 호출되어서 새로운 엔트리 컴포넌트가 아직 생성되지 않았기 때문에 this에 접근하지 못합니다. 그러나 콜백은 next에 전 달하여 인스턴스에 액세스 할 수 있습니다. 네비게이션이 확인되고 컴포넌트 인스턴스가 콜백에 전달인자로 전달 할 때 콜백이 호출됩니다.
+
+```JS
+beforeRouteLeave (to, from, next) {
+    next(vm => {
+        // 'vm'을 통한 컴포넌트 인스턴스 접근
+    })
+}
+```
+
+<br />
+
+#### 전체 네비게이션 시나리오
+
+ 1. 네비게이션이 트기러 됨.
+ 2. 비활성될 컴포넌트에서 가드를 호출.
+ 3. 전역 beforeEach 가드 호출
+ 4. 재사용되는 컴포넌트에서 `beforeRouterUpdate` 가드 호출 (2.2 이상)
+ 5. 라우트 설정에서 `beforeEnter` 호출
+ 6. 비동기 라우트 컴포넌트 해결
+ 7. 활성화된 컴포넌트에서 beforeRouteEnter 호출
+ 8. 전역 `beforeResolve` 가드 호출. (2.5 이상)
+ 9. 네비게이션 완료.
+ 10. 전역 afterEach Hook 호출
+ 11. DOM 갱신 트리거 됨.
+ 12. 인스턴스화 된 인스턴스들의 beforeRouteEnter 가드에서 next에 저달된 콜백으로 호출합니다.
+

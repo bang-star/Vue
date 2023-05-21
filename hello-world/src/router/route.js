@@ -5,7 +5,9 @@ import Product from '../components/Product.vue'
 const Routes = [
     { path: '/foo', name: 'foo', component: Foo, alias: '/foofoo' },
     { path: '/bar', name: 'bar', component: Bar },
-    { path: '/product/:id', name: 'product', props: {news: false}, component: Product },
+    { path: '/product/:id', name: 'product', props: {news: false}, component: Product, beforeEnter: (to, from) => {
+        console.log(to, from)
+    } },
 ]
 
 export default Routes
