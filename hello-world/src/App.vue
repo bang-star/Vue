@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <p>
-            <router-link v-bind:to="{name: 'foo'}">Go to Foo</router-link>
+            <router-link :to="{name: 'foo'}">Go to Foo</router-link>
             <router-link :to="{name: 'bar'}">Go to Bar</router-link>
         </p>
         <router-view></router-view>
