@@ -1,14 +1,18 @@
 <template>
     <div>
-        <h1>Product</h1>
-         <h2>{{ $route.params.id }}</h2>
-         <h3>{{ $route }} </h3>
+        <h1>Product {{ news }}</h1>
     </div>
 </template>
 
 <script>
 export default ({
     name: 'Product',
+    props: {
+        news: {
+            type: Boolean,
+            default: true
+        }
+    },
     data() {
         return {
 
