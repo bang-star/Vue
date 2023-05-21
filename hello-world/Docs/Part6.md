@@ -448,3 +448,63 @@ const router = new VueRouter({
         ]
     })
     ```
+
+<br />
+
+### HTML5 히스토리 모드
+
+#### Concept
+
+vue-router의 기본 모드는 hash mode 입니다. URL 해시를 사용하여 전체 URL을 시뮬레이트하므로 URL이 변경될 때 페이지가 다시 로드 되지 않습니다. 
+
+`i.e) http://oursite.com/#/user/id`
+
+해시(#)를 제거하기 위해 `라우터의 history 모드`를 사용할 수 있습니다. `history.pushState API`를 활용하여 페이지를 다시 로드하지 않고도 URL 탐색을 할 수 있습니다.
+
+```JS
+const router = new VueRouter({
+    mode: 'history',
+    routes: [...]
+})
+```
+
+그러나 문제는 다음과 같습니다.
+웹이 적절한 서버 설정이 없는 단일 페이지 클라이언트(SPA) 앱이기 때문에 사용자가 직접 `http://oursite.con.user/id`에 접속하면 404 오류가 발생합니다. 문제를 해결하려면 서버에 간단하게 포괄적인 대체 경로를 추가하기만 하면 됩니다. URL이 정책 에셋(static asset)과 일치하지 않으면 앱이 있는 동일한 index.html 페이지를 제공해야 합니다.
+
+<br />
+
+#### 서버 설정 에제
+
+- Apache
+
+    ```XML
+    <IfMoudle mod_rewrite.c>
+        RewriteEngine On
+        RewirteBase /
+        RewirteRule ^index\.html$ - [L]
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteCond %{REQUEST_FILENAME} !-d
+        RewriteRule . /index.html [L]
+    </IfModule>
+    ```
+
+- nginx.conf
+
+    ```JS
+    location / {
+        try_files $uri $uri /index.html
+    }
+    ```
+
+<br />
+
+#### 주의 사항
+
+주의 사항이 있습니다. 위에서 세팅한 서버는 404 에러(not found error)를 보고하지 않을 것입니다. 왜냐하면 모든 발견되지 않은 경로가 이제 index.html파일을 제공하기 때문입니다. 이 문제를 해결하려면 Vue 앱에서 catch-all 라우트를 구현하여 404 페이지를 표시해야 합니다.
+
+```JS
+const router = new VueRouter({
+    mode: 'history',
+    routes: [{ path: '*', component: NotFoundComponent }]
+})
+```
