@@ -103,3 +103,83 @@ const User = {
 #### 매칭 우선순위
 
 동일한 URL이 여러 라우트와 일치하는 경우가 있습니다. 이 경우 일치하는 우선 순위는 라우트 정의의 순서에 따라 결정됩니다. 즉, 경로가 더 먼저 정의될수록 우선 순위가 높아집니다.
+
+<br />
+
+### 중첩된 라우팅
+
+#### 중첩된 매칭
+
+실제 앱 URL은 일반적으로 여러 단계로 중첩된 컴포넌트로 이루어져 있습니다. URL의 세그먼트가 중첩된 컴포넌트의 특정 구조와 일치하다는 것은 매우 일반적입니다.
+
+```HTML
+<div>
+    <router-view></router-view>
+</div>
+```
+
+```JS
+const User = {
+    templates: '<div>User {{$route.params.id }} </div>'
+}
+
+const router = new VueRouter({
+    routes: [
+        {path: 'user/:id', component: User }
+    ]
+})
+```
+
+/로 시작하는 중첩된 라우트는 루트 경로로 취급됩니다. 이렇게 하면 중첩된 URL을 사용하지 않고도 컴포넌트 중첩을 활용할 수 있습니다.
+
+```JS
+const User = {
+    template: `
+    <div class="user">
+        <h2>User {{ $route.params.id }} </h2>
+        <router-view></router-view>
+    </div>`
+}
+```
+
+```JS
+const router = new VueRouter({
+    routes: [
+        {   path: 'user/:id', 
+            component: User,
+            children: [
+                {
+                    // /user/:id/profile 과 일치할 때
+                    // UserProfile은 User의 <router-view> 내에 렌더링 됩니다.
+                    path: 'profile',
+                    component: UserProfile
+                },{
+                    // /user/:id/post 과 일치할 때
+                    // UserPost가 User의 <router-view> 내에 렌더링 됩니다.
+                    path: 'post',
+                    component: UserPost
+                }
+            ] 
+        }
+
+    ]
+})
+```
+
+빈 서브 루트 경로를 제공할 수 있습니다.
+
+```JS
+const router = new VueRouter({
+    routes: [
+        {
+            path: 'user/:id', component: User,
+            children: [
+                // UserHome은 /user/:id가 일치할 때
+                // User의 <router-view> 내에 렌더링 됩니다.
+                path: '',
+                component: UserHome
+            ]
+        }
+    ]
+})
+```
