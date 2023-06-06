@@ -848,3 +848,58 @@ export default {
     }
 }
 ```
+
+<br />
+
+## 스크롤 동작
+
+### 개념
+
+클라이언트 측 라우팅을 사용할 때 새로운 경로로 이동할 때 맨 위로 스크롤하거나 실제 페이지로 다시 로드하는 것처럼 컨텐츠 항목의 스크롤 위치를 유지할 수 있습니다. `vue-router`는 이런 기능을 지원하며, **라우트 탐색에서 스크롤 동작**은 완전히 사용자 정의할 수 있게 합니다. (참고. 이기능은 HTML5 히스토리 모드에서만 작동합니다.)
+
+라우트 인스턴스를 생성할 때 **scrollBehavior** 함수를 제공할 수 있습니다. **savedPosition은** 브라우저의 뒤로/앞으로 버튼으로 트리거되는 postion 네비게이션인 경우에만 사용할 수 있습니다.
+
+ - { x: number, y: number }
+ - { selector: string, offest? : { x: number, y: number }}
+
+> 참고: 잘못된 값이나 빈 객체가 반환되면 스크롤이 발생하지 않습니다.
+
+```JS
+const router = new VueRouter({
+    routes: [...],
+    scrollBehavior(to, from, savedPostion) {
+        // 원하는 위치로 돌아가기
+    }
+})
+```
+
+<br />
+
+### 예제
+
+```JS
+// 1. 모든 라우트 네비게이션에 대해 페이지가 맨 위로 스크롤
+scrollBehavior(to, from, savedPosition) {
+    return { x: 0, y: 0}
+}
+
+// 2. savedPostion을 반환하면 뒤로/앞으로 버튼으로 탐색할 때 네이티브와 같은 동작이 발생
+scrollBehavior(to, from, savedPosition) {
+    if(savedPostion) {
+        return savedPostion
+    } else {
+        return { x: 0, y: 0}
+    }
+}
+
+// 3. `anchor로 스크롤` 동작을 시뮬레이트
+scrollBehavior(to, from, savedPosition) {
+    if(to.hash) {
+        return {
+            selector: to.hash
+            // , offset: { x: 0, y: 0}
+        }
+    }
+}
+
+```
