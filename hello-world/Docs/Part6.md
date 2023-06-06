@@ -677,3 +677,59 @@ router.beforeEach((to, from, next) => {
 ```
 
 라우트와 일치하는 모든 라우트 레코드는 $route 객체(네비게이션 가드의 라우트 객체)에 $route.matched 배열로 노출됩니다. 그러므로 우리는 $route.matched를 반복하며 라우트 레코드의 메타 필드를 검사할 필요가 있습니다.
+
+<br />
+
+## 트랜지션
+
+### 개념
+
+`<router-view>`는 본질적으로 동적인 컴포넌트이기 때문에 `<transition>` 컴포넌트를 사용하는 것과 같은 방식으로 트랜지션 효과를 적용할 수 있습니다.
+
+```HTML
+<transition>
+    <router-view></router-view>
+</transition>
+```
+
+### 라우트 별 트랜지션
+
+각 라우트의 컴포넌트가 서로 다른 트랜지션을 갖도록 하려면 각 라우트 컴포넌트 내에서 다른 이름으로 `<transtion>`을 사용할 수 있습니다.
+
+```JS
+const Foo = {
+    template: `
+    <template name="slide">
+        <div class="foo">...</div>
+    </template>`
+}
+
+const Bar = {
+    template: `
+    <template name="fade">
+        <div class="bar">...</div>
+    </template>`
+}
+```
+
+### 라우트 기반 동적 트랜지션
+
+대상 라우트와 현재 라우트 간의 관게를 기반으로 동적으로 사용할 트랜지션을 결정할 수 있습니다.
+
+```HTML
+<!-- 동적 트랜지션을 위한 name을 지정 -->
+<transition :name="transitionName">
+    <router-view></router-view>
+</transition>
+```
+
+```JS
+//그런 다음 부모 구성 요소에서 `$route`를 보고 사용할 트랜지션을 결정합니다.
+watch: {
+    '$route'(to, from) {
+        const toDepth = to.path.split('/').length
+        const fromDepth = from.path.split('/').length
+        this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
+    }
+}
+```
