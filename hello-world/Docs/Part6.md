@@ -851,55 +851,43 @@ export default {
 
 <br />
 
-## 스크롤 동작
+## 지연된 로딩
 
-### 개념
+### 개념(성능)
 
-클라이언트 측 라우팅을 사용할 때 새로운 경로로 이동할 때 맨 위로 스크롤하거나 실제 페이지로 다시 로드하는 것처럼 컨텐츠 항목의 스크롤 위치를 유지할 수 있습니다. `vue-router`는 이런 기능을 지원하며, **라우트 탐색에서 스크롤 동작**은 완전히 사용자 정의할 수 있게 합니다. (참고. 이기능은 HTML5 히스토리 모드에서만 작동합니다.)
+번들러를 이용하여 앱을 제작할 때 JavaScript 번들이 상당히 커져 페이지로드 시간에 영향을 줄 수 있습니다. 각 라우트의 컴포넌트를 별도의 단위로 분할하고 경로를 방문할 때 로드하는 것이 효율적일 것입니다.
 
-라우트 인스턴스를 생성할 때 **scrollBehavior** 함수를 제공할 수 있습니다. **savedPosition은** 브라우저의 뒤로/앞으로 버튼으로 트리거되는 postion 네비게이션인 경우에만 사용할 수 있습니다.
+Vue의 비동기 컴포넌트와 Webpack의 코드 분할을 결합합니다. 라우트 컴포넌트를 쉽게 불러올 수 있습니다.
 
- - { x: number, y: number }
- - { selector: string, offest? : { x: number, y: number }}
+ - 첫째, 비동기 컴포넌트는 Promise를 반환하는 팩토리 함수로 정의할수 있습니다.(컴포넌트가 resolve 되어야함)
 
-> 참고: 잘못된 값이나 빈 객체가 반환되면 스크롤이 발생하지 않습니다.
+    ```JS
+    const Foo = () => Promise.resolve({
+        /* 컴포넌트 정의 */
+    })
+    ```
 
-```JS
+ - 둘째, WebPack 2에서 dynamic import를 사용하여 코드 분할 포인트를 지정할 수 있습니다.
+
+    ```JS
+    import('./Foo.vue')
+    ```
+
+이 두가지를 결합하여 Webpack에 의해 자동으로 코드 분할된 비동기 컴포넌트를 정의하는 방법입니다.
+
+```Js
+const Foo = () => import('./Foo.vue')
+
 const router = new VueRouter({
-    routes: [...],
-    scrollBehavior(to, from, savedPostion) {
-        // 원하는 위치로 돌아가기
-    }
+    routes: [{ path: '/foo', component: Foo }]
 })
 ```
 
-<br />
 
-### 예제
+때로는 동일한 라우트 아래에 중첩된 모든 컴포넌트를 동일한 비동기 묶음으로 그룹화 할 수 있습니다. 이를 위해 특수 주석 문법을 사용하여 이름(Webpack 2.4 이상 지원)을 제공하여 이름을 가진 묶음(opens new window)을 사용해야 합니다.
 
 ```JS
-// 1. 모든 라우트 네비게이션에 대해 페이지가 맨 위로 스크롤
-scrollBehavior(to, from, savedPosition) {
-    return { x: 0, y: 0}
-}
-
-// 2. savedPostion을 반환하면 뒤로/앞으로 버튼으로 탐색할 때 네이티브와 같은 동작이 발생
-scrollBehavior(to, from, savedPosition) {
-    if(savedPostion) {
-        return savedPostion
-    } else {
-        return { x: 0, y: 0}
-    }
-}
-
-// 3. `anchor로 스크롤` 동작을 시뮬레이트
-scrollBehavior(to, from, savedPosition) {
-    if(to.hash) {
-        return {
-            selector: to.hash
-            // , offset: { x: 0, y: 0}
-        }
-    }
-}
-
+const Foo = () => import(/* webpackChunkName: 'group-foo' */ './Foo.vue')
+const Bar = () => import(/* webpackChunkName: 'group-foo' */ './Bar.vue')
+const Baz = () => import(/* webpackChunkName: 'group-foo' */ './Baz.vue')
 ```
