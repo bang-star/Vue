@@ -733,3 +733,118 @@ watch: {
     }
 }
 ```
+
+<br />
+
+## 데이터 가져오기
+
+### 개념
+
+때로는 라우트가 활성화될 때 서버에서 데이터를 가져와야 합니다.
+
+예를 들어, 사용자 프로필을 렌더링하기 전에 서버에서 사용자의 데이터를 가져와야 합니다.
+
+ - 탐색 후 가져오기: 먼저 탐색하고 컴포넌트의 라이프 사이클 훅에서 데이터를 가져옵니다. 데이터를 가져오는 동안 로드 상태를 표시
+ - 탐색 전 가져오기: 라우트 가드에서 경로를 탐색하기 전에 데이터를 가져오고 그 후에 탐색을 수행
+
+<br />
+
+### 탐색 후 가져오기
+
+이 방법을 사용하면 들어오는 컴포넌트를 즉시 탐색하고 렌더링하며 컴포넌트의 created 훅에서 데이터를 가져옵니다. 네트워크를 통해 데이터를 가져오는 동안 로드 상태를 표시할 수 있는 기회를 제공하며 각 뷰 마다 로드를 다르게 처리할 수 도 있습니다.
+
+```HTML
+<template>
+    <div class="post">
+        <div class="loading" v-if="loading">
+            Loading...
+        </div>
+
+        <div v-if="error" class="error">
+            {{ error }}
+        </div>
+
+        <div v-if="content" class="post">
+            <h2> {{ post.title }}</h2>
+            <h2> {{ post.content }}</h2>
+        </div>
+    </div>
+</template>
+```
+
+```JS
+export default {
+    data() {
+        return {
+            loading: false,
+            post: null,
+            error: null
+        }
+    },
+    created() {
+        // 뷰가 생성되고 데이터가 이미 감시되고 있을 때 데이터를 가져온다.
+        this.fetchData()
+    },
+    watch() {
+        // 라우트가 변경되면 메소드를 다시 호출됩니다.
+        '$route': 'fecthData'
+    },
+    methods: {
+        fetchData() {
+            this.error = this.post = null
+            this.loading = true
+            // `getPost`를 데이터 가져오기 위한 유틸리티/API 래퍼로 변경
+            getPost(this.$route.params.id, (err, post) => {
+                this.loading = false
+                if(err) {
+                    this.error = err.toString()
+                } else {
+                    this.post = post
+                }
+            })
+        }
+    }
+}
+```
+
+<br />
+
+### 탐색하기 전에 가져오기
+
+이 접근 방식을 사용하면 실제로 새 경로로 이동하기 전에 데이터를 가져옵니다. 들어오는 컴포넌트에서 `beforeRouteEnter` 가드에서 데이터를 가져올 수 있으며 fetch(데이터 가져오기)가 완료되면 next만 호출할 수 있습니다.
+
+
+```JS
+export default {
+    data() {
+        return {
+            post: null,
+            error: null
+        }
+    },
+    beforeRouteEnter(to, from, next) {
+        getPost(to.params.id, (err, post) => {
+            next(vm => vm.setData(err, post))
+        })
+    },
+    watch() {
+        // 라우트가 변경되면 메소드를 다시 호출됩니다.
+        '$route': 'fecthData'
+    },
+    methods: {
+        fetchData() {
+            this.error = this.post = null
+            this.loading = true
+            // `getPost`를 데이터 가져오기 위한 유틸리티/API 래퍼로 변경
+            getPost(this.$route.params.id, (err, post) => {
+                this.loading = false
+                if(err) {
+                    this.error = err.toString()
+                } else {
+                    this.post = post
+                }
+            })
+        }
+    }
+}
+```
