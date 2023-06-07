@@ -1,26 +1,33 @@
 <template>
   <div>
     <h1>Hello Vue World</h1>
+    {{ counterState }}
+    <button @click="increment"></button>
   </div>
 </template>
 
 <script>
-import testMixin from "../mixins/common.js"
 
 export default {
-  mixins: [testMixin],
+  components: {},
   name: 'HelloWorld',
   mounted() {
-    console.log('world')
+    console.log(this.$store)
   },
   data() {
     return {
+      // counterState: this.$store.count
     }
   },
   computed: {
-
+    counterState() {
+      return this.$store.state.count
+    }
   },
-  watch: {
+  methods: {
+    increment() {
+      this.$store.commit('increment')
+    }
   }
 }
 </script>
