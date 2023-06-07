@@ -12,17 +12,21 @@ export default {
   components: {},
   name: 'HelloWorld',
   mounted() {
-    console.log(this.$store)
+    // console.log(this.$store)
   },
   data() {
     return {
+      test: '123',
       // counterState: this.$store.count
     }
   },
   computed: {
-    counterState() {
-      return this.$store.state.count
-    }
+    testComputed() {
+      return this.test
+    },
+    ...mapState({
+      counterState: 'count'
+    })
   },
   methods: {
     increment() {
