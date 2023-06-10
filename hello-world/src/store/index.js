@@ -1,5 +1,5 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
 
 Vue.set(Vuex)
 
@@ -16,6 +16,11 @@ export const store = new Vuex.Store({
     mutations: {
         increment(state) {
             state.count++;
+        }
+    },
+    getters: {
+        countGetters: (state) => {
+            return state.count + 100;
         }
     }
 })

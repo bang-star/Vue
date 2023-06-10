@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Hello Vue World</h1>
-    {{ counterState }}
+    {{ countGetters }}
     <button @click="increment"></button>
   </div>
 </template>
@@ -21,12 +21,15 @@ export default {
     }
   },
   computed: {
-    testComputed() {
-      return this.test
-    },
-    ...mapState({
-      counterState: 'count'
-    })
+    // testComputed() {
+    //   return this.test
+    // },
+    // ...mapState({
+    //   counterState: 'count'
+    // })
+    countGetters() {
+      return this.$store.getters.countGetters;
+    }
   },
   methods: {
     increment() {
