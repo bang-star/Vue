@@ -28,7 +28,7 @@ export default {
     //   counterState: 'count'
     // })
     countGetters() {
-      return this.$store.getters.countGetters;
+      return this.$store.getters.countGetters(2);
     }
   },
   methods: {
