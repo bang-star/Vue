@@ -243,3 +243,99 @@ computed: {
 ```
 
 > 주의: Vuex를 사용한다고해서 Vuex에 모든 상태를 넣어야하는 것은 아닙니다. Vuex에 더 많은 상태를 넣으면 상태 변이가 더 명확하고 디버그 가능하지만, 때로는 코드를 보다 장황하고 간접적으로 만들 수 있습니다. 상태 조각이 단일 컴포넌트에 엄격하게 속한 경우 로컬 상태로 남겨둘 수 있습니다. 기회 비용을 판단하고 앱의 개발 요구에 맞는 결정을 내려야 합니다.
+
+<br />
+
+### Getters
+
+저장소 상태를 기반하는 상태를 계산해야 할 수도 있습니다.
+
+```JS
+computed: {
+    doneTodosCount() {
+        return this.$store.state.todos.filter(todo => todo.done).length
+    }
+}
+```
+
+둘 이상의 컴포넌트가 이를 사용해야 하는 경우 함수를 복제하거나 공유된 헬퍼를 추출하여 여러 위치에서 가져와야 합니다. 둘 다 이상적이지 않습니다.
+
+Vuex를 사용하면 저장소에서 `getters`를 정의할 수 있습니다. 저장소(store)의 계산된 속성(computed)으로 생각할 수 있습니다. 계산된 속성처럼 getter의 결과는 종속성에 따라 캐쉬(cache)되고, 일부 종속성이 변경된 경우에만 다시 재계산 됩니다. Getters는 첫 번째 전달인자로 상태를 받습니다.
+
+```JS
+const store = new Vuex.Store({
+    state: {
+        todos: [
+            { id: 1, text: '...', done: true },
+            { id: 2, text: '...', done: false },
+        ]
+    },
+    getters: {
+        doneTodos: state => {
+            return state.todos.filter(todo => todo.done)
+        }
+    }
+})
+```
+
+<br />
+
+**속성 유형 접근**
+
+`getters`는 store.getters 객체에 노출되고, 속성으로 값에 접근할 수 있습니다. 그리고 Getters는 두 번쨰 전달인자로 다른 getter도 받게 됩니다.
+
+```JS
+getters: {
+    // ...
+    doneTodosCount: (state, getters) => {
+        return getters.doneTodos.length
+    }
+}
+
+store.getters.doneTodosCount // -> 1
+
+computed: {
+    doneTodosCount() {
+        return this.$store.getters.doneTodosCount
+    }
+}
+```
+
+<br />
+
+**메소드 유형 접근**
+
+함수를 반환하여 getter에 전달인자로 전달할 수도 있습니다. 이것은 저장소의 배열을 검색할 때 특히 유용합니다.
+
+메서드를 통해 접근하는 gettter는 호출 할 때마다 실행되며 결과가 캐시되지 않는다는 것을 유의해야 합니다.
+
+```JS
+getters: {
+    // ...
+    getTodoById: (state) => (id) => {
+        return state.todos.find(todo => todo.id === id)
+    }
+}
+```
+
+<br />
+
+**mapGetters 헬퍼**
+
+mapGetters 헬퍼는 저장소 getter를 로컬 계산된 속성에 매핑합니다.
+
+```JS
+import { mapGetters } from 'vuex'
+
+export default {
+    // ...
+    computed: {
+        // getter를 객체 전개 연산자(Object Spread Operator)로 계산하여 추가합니다.
+        ...mapGetters({
+            'doneTodosCount',
+            'anotherGetter',
+            // ...
+        })
+    }
+}
+```

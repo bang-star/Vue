@@ -1,12 +1,13 @@
 <template>
   <div>
     <h1>Hello Vue World</h1>
-    {{ counterState }}
+    {{ countGetters }}
     <button @click="increment"></button>
   </div>
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex';
 
 export default {
   components: {},
@@ -21,11 +22,20 @@ export default {
     }
   },
   computed: {
-    testComputed() {
-      return this.test
-    },
+    // testComputed() {
+    //   return this.test
+    // },
+    // ...mapState({
+    //   counterState: 'count'
+    // })
+    // countGetters() {
+    //   return this.$store.getters.countGetters(2);
+    // },
     ...mapState({
       counterState: 'count'
+    }),
+    ...mapGetters({
+      countGetters: 'countGetters'
     })
   },
   methods: {
