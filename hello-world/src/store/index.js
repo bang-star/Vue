@@ -19,8 +19,8 @@ export const store = new Vuex.Store({
         }
     },
     getters: {
-        countGetters: (state) => (id) => {
-            return state.count * id + 100;
+        countGetters: (state) => {
+            return state.count + 100;
         }
     }
 })

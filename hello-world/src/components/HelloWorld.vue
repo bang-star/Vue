@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex';
 
 export default {
   components: {},
@@ -27,9 +28,15 @@ export default {
     // ...mapState({
     //   counterState: 'count'
     // })
-    countGetters() {
-      return this.$store.getters.countGetters(2);
-    }
+    // countGetters() {
+    //   return this.$store.getters.countGetters(2);
+    // },
+    ...mapState({
+      counterState: 'count'
+    }),
+    ...mapGetters({
+      countGetters: 'countGetters'
+    })
   },
   methods: {
     increment() {

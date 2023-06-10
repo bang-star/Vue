@@ -317,3 +317,25 @@ getters: {
     }
 }
 ```
+
+<br />
+
+**mapGetters 헬퍼**
+
+mapGetters 헬퍼는 저장소 getter를 로컬 계산된 속성에 매핑합니다.
+
+```JS
+import { mapGetters } from 'vuex'
+
+export default {
+    // ...
+    computed: {
+        // getter를 객체 전개 연산자(Object Spread Operator)로 계산하여 추가합니다.
+        ...mapGetters({
+            'doneTodosCount',
+            'anotherGetter',
+            // ...
+        })
+    }
+}
+```
