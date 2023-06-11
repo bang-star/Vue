@@ -497,3 +497,173 @@ export default {
 // 'increment' 변이가 일으킬 수 있는 모든 상태 변화는 이 수간에 이루어져야 합니다.
 store.commit('increment')
 ```
+
+<br />
+
+## Action
+
+### Action
+
+액션은 mutation과 유사합니다.
+
+다른 점은 다음과 같습니다.
+
+1. 상태를 mutation 시키는 대신 액션으로 mutation에 대한 커밋을 합니다.
+2. 작업에는 임의의 비동기 작업이 포함될 수 있습니다.
+
+`액션 핸들러`는 저장소(store) 인스턴스의 같은 메소드들/프로퍼티 세트를 드러내는 컨텍스트 객체를 받습니다. 그래서 context.commit을 호출하여 mutation을 커밋하거나 context.state와 context.getters를 통해 상태(state)와 getters에 접근할 수 있습니다.
+
+```js
+const store = new Vuex.Store({
+    state: {
+        count: 0
+    },
+    mutations: {
+        increment(state) {
+            state.count++;
+        }
+    },actions: {
+        increment(context) {
+            context.commit('increment')
+        }
+    }
+})
+```
+
+실제로(특히 commit를 여러 번 호출해야 하는 경우) 코드를 단순화 하기 위해 ES 2015 전달인자 분해를 사용합니다.
+
+```js
+actions: {
+    increment({commit}) {
+        commit('increment')
+    }
+}
+```
+
+<br />
+
+### 디스패치 액션
+
+액션은 store.dispatch 메소드로 시작됩니다.
+
+상태 mutation은 동기적이어야 한다는 것을 기억하시나요?
+
+액션은 액션 내에서 비동기 작업을 수행할 수 있습니다.
+
+```js
+store.dispatch('increment')
+
+actions: {
+    incrementAsync ({commit}) {
+        setTimeout(() => {
+            commit('increment')
+        }, 1000)
+    }
+}
+```
+
+```JS
+// 페이로드와 함께 디스패치
+store.dispatch('incrementAysnc', {
+    amount: 10
+})
+
+// 객체와 함께 디스패치
+store.dispatch({
+    type: 'incrementAsync',
+    amount: 10
+})
+```
+
+```js
+actions: {
+    checkout ({ commit, state}, products) {
+        // 장바구니에 현재있는 항목을 저장
+        const savedCartItems = [...state.cart.added]
+        
+        // 결제 요청을 보낸 후 장바구니를 비웁니다.
+        commit(types.CHECKOUT_REQUEST)
+        
+        // 상점 API는 성공 콜백 및 실패 콜백을 받습니다.
+        shop.buyProducts(
+            products,
+            // 요청 성공 핸들러
+            () => commit(types.CHECKOUT_SUCCESS),
+            // 요청 실패 핸들러
+            () => commit(types.CHECKOUT_FAILURE, savedCartItems)
+        )
+    }
+}
+```
+
+<br />
+
+### 컴포넌트 내부에서 디스패치(dispatch) 액션 사용하기
+
+`this.$store.dispatch('xxx')`를 사용하여 컴포넌트에서 액션을 디스패치하거나 컴포넌트 메소드를 store.dispatch 호출에 매핑하는 mapActions 헬퍼를 사용할 수 있습니다.(루트 store 주입 필요)
+
+```js
+import { mapActions } from 'vuex'
+
+export default {
+    // ...
+    methods: {
+        ...mapActions([
+            'increment', // this.increment()을 this.$store.dispatch('increment')에 매핑
+            // mapActions는 페이로드를 지원
+            'incrementBy' // this.incrementBy(amount)를 this.$store.dispatch('incrementBy', amount)에 매핑
+        ]),
+        ...mapActions({
+            add: 'incrment' // this.add()을 this.$store.dispatch('incrment')에 매핑
+        })
+    }
+}
+```
+
+<br />
+
+### 액션 구성하기
+
+액션은 종종 비동기적입니다.
+
+ - Q) 액션이 언제 완료되는지 어떻게 알 수 있을까요? 복잡한 비동기 흐름을 처리하기 위해 어떻게 여러 작업을 함께 구성할 수 있을까요?
+ - A) 가장 먼저 알아야 할 점은 store.dispatch가 트리거 된 액션 해들러에 의해 반환된 Promise를 처리할 수 있으며 Promise를 반환한다는 것입니다.
+
+```js
+actions: {
+    actionA ({ commit }) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                commit('someMutation')
+                resolve()
+            }, 1000)
+        }) 
+    }
+}
+
+store.dispatch('actionA').then(() => {
+    // ...
+})
+```
+
+```js
+actions: {
+    // ...
+    actionB ({dispatch, commit}) {
+        return dispatch('actionA').then(() => {
+            commit('someOtherMutation')
+        })
+    }
+}
+
+// getData() 및 getOtherData()가 Promise를 반환한다고 가정
+actions: {
+    async actionA({commit}) {
+        commit('gotData', await getData())
+    },
+    async actionB({dispatch, commit}) {
+        await dispatch('actionA') // ActionA가 끝나길 기다립니다.
+        commit('gotOtherData', await getOtherData())
+    }
+}
+```
