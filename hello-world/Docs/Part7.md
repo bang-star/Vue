@@ -867,3 +867,66 @@ modules: {
     }
 }
 ```
+
+<br />
+
+### 헬퍼에서 네임스페이스 바인딩
+
+mapState, mapGetters, mapActions 그리고 mapMutations 헬퍼에서 네임스페이스 모듈을 컴포넌트에 바인딩할 때 조금 장황하게 됩니다.
+
+이러한 경우에는 모듈의 네임스페이스 문자열을 헬퍼의 첫 번째 인수로 전달하여 해당 모듈을 컨텍스트로 사용하여 모든 바인딩을 할 수 있습니다.
+
+```js
+computed: {
+    ...mapState({
+        a: state => state.some.nested.module.a,
+        b: state => state.some.nested.module.b
+    })
+},
+
+methods: {
+    ...mapActions([
+        'some/nested/module/foo',      // this['some/nested/module/foo']
+        'some/nested/module/bar'      // this['some/nested/module/bar']
+    ])
+}
+
+computed: {
+    ...mapState('some/nested/module', {
+        a: state => state.a,
+        b: state => state.b
+    })
+},
+
+methods: {
+...mapActions([
+        'foo',      // this.foo()
+        'bar'      // this.bar()
+    ])
+}
+```
+
+또한 createNamespacedHelpers를 사용하여 네임스페이스 헬퍼를 생성할 수 있습니다. 전달된 네임스페이스 값으로 바인딩된 새로우 넠ㅁ포넌트 바인딩 헬퍼를 가진 객체를 반환합니다.
+
+```JS
+import { createNamespacedHelpers } from 'vuex'
+
+const { mapState, mapActions } = createNamespacedHelpers('some/nested/module')
+
+export default {
+    computed: {
+        // `some/nested/module`에서 찾음
+        ...mapState({
+            a: state => state.a,
+            b: state => state.b
+        })
+    },
+    methods: {
+        // `some/nested/module`에서 찾음
+        ...mapActions([
+            'foo',
+            'bar'
+        ])
+    }
+}
+```
