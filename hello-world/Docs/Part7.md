@@ -667,3 +667,38 @@ actions: {
     }
 }
 ```
+
+<br />
+
+## 모듈
+
+### 모듈
+
+단일 상태 트리를 사용하기 떄문에 애플리케이션의 모든 상태가 하나의 큰 객체 안에 포함됩니다. 그러나 규모가 커짐에 따라 저장소는 매우 비대해질 수 있습니다.
+
+이를 위해 Vuex는 저장소(store)는 모듈로 나눌 수 있습니다. 각 모듈은 자체 state, mutation, action, getter 및 심지어 중첩된 모듈을 포함할 수 있습니다.
+
+```js
+const moduleA = {
+    state: () => ({ ... }),
+    mutations: { ... },
+    actions: { ... },
+    getters: { ... }
+}
+
+const moduleB = {
+    state: () => ({ ... }),
+    mutations: { ... },
+    actions: { ... },
+}
+
+const store = new Vuex.Store({
+    modules: {
+        a: moduleA,
+        b: moduleB
+    }
+})
+
+store.state.a   // -> moduleA의 상태
+store.state.b   // -> moduleB의 상태
+```
