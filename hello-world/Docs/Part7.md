@@ -667,3 +667,289 @@ actions: {
     }
 }
 ```
+
+<br />
+
+## 모듈
+
+### 모듈
+
+단일 상태 트리를 사용하기 떄문에 애플리케이션의 모든 상태가 하나의 큰 객체 안에 포함됩니다. 그러나 규모가 커짐에 따라 저장소는 매우 비대해질 수 있습니다.
+
+이를 위해 Vuex는 저장소(store)는 모듈로 나눌 수 있습니다. 각 모듈은 자체 state, mutation, action, getter 및 심지어 중첩된 모듈을 포함할 수 있습니다.
+
+```js
+const moduleA = {
+    state: () => ({ ... }),
+    mutations: { ... },
+    actions: { ... },
+    getters: { ... }
+}
+
+const moduleB = {
+    state: () => ({ ... }),
+    mutations: { ... },
+    actions: { ... },
+}
+
+const store = new Vuex.Store({
+    modules: {
+        a: moduleA,
+        b: moduleB
+    }
+})
+
+store.state.a   // -> moduleA의 상태
+store.state.b   // -> moduleB의 상태
+```
+
+<br />
+
+### 지역 상태 모듈
+
+모듈의 변이와 getter 내부에서 첫 번째 전달인자는 모듈의 지역 상태가 됩니다.
+
+```JS
+const moduleA = {
+    state: () => ({ count: 0 }),
+    mutations: {
+        increment (state) {
+            // state는 지역 모듈 상태
+            state.count++;
+        }
+    },
+    getters: { 
+        doubleCount(state) {
+            return state.count * 2;
+        }
+    },
+}
+
+const moduleA = {
+    // ...
+    actions: {
+        incrementIfOddOnRootSum ({ state, commit, rootState }) {
+            if((state.count + rootState.count) % 2 === 1) {
+                commit('increment')
+            }
+        }
+    }
+}
+
+const moduleA = {
+    // ...
+    actions: {
+        sumWithRootCount ({ state, commit, rootState }) {
+            return state.count + rootState.count
+        }
+    }
+}
+```
+
+<br />
+
+### 네임스페이스
+
+기본적으로 모듈 내의 action, mutation 및 getter는 여전히 전역 네임스페이스 아래에 등록됩니다. 여러 모듈이 동일한 mutation/action 유형에 반응할 수 있습니다.
+
+만약 모듈이 독립적이거나 재사용되기를 원한다면, namespace: true라고 네임스페이스에 명시하면 됩니다. 모듈이 등록될 때, 해당 모듈의 모든 getter, action/mutation는 자동으로 모듈의 경로를 기반으로 네임스페이스가 지정됩니다.
+
+```JS
+const store = new Vuex.Store({
+    modules: {
+        account: {
+            namespace: true,
+            
+            // 모듈 자산
+            state: () => ({ ... }), // 모듈 상태는 이미 중첩되어 있고, 네임스페이스 옵션의 영향을 받지 않음
+            getters: {
+                isAdmin() { ... },  //  getters['account/isAdmin']
+            },
+            actions: {
+                login() { ... }     // dispatch('account/login')
+            },
+            mutations: {
+                login() { ... }     // commit('account/login')
+            },
+            
+            // 중첩 모듈
+            modules: {
+                // 부모 모듈부터 네임스페이스를 상속받음
+                myPage: {
+                    state: () => ({ ... }),
+                   getters: {
+                        profile() { ... }       // getters['account/profile']
+                   }
+                },
+                
+                // 네임스페이스 중첩
+                posts: {
+                    namespaced: true,
+                    
+                    state: () => ({ ... }),
+                    getters: {
+                        popular() { ... }       // getters['account/posts/popular']
+                    }
+                }
+            }
+        }
+    }
+})
+```
+
+<br />
+
+### 네임스페이스 모듈 내부에서 전역 자산 접근
+
+전역 상태나 getter를 사용하고자 한다면, rootState와 rootGetters가 getter 함수의 3번째와 4번째 인자로 전달되고, 또한 action 함수에 전달된 'context' 객체의 속성으로도 노출됩니다.
+
+전역 네임스페이스의 액션을 디스패치(dispatch)하거나 mutation으로 커밋하려면 dispatch와 commit에 3번째 인자로 { root: ture }를 전달하며 ㄴ됩니다.
+
+```JS
+modules: {
+    foo: {
+        namespace: true,
+            
+        getters: {
+            // `getters`는 해당 모듈의 지역화된 getters
+            // getters의 4번째 인자를 통해서 rootGetters 사용 가능
+            
+            someGetter(state, getters, rootState, rootGetters) {
+                getters.someOtherGetter // -> 'foo/someOtherGetter'
+                rootGetters.someOtherGetter // 'someOtherGetter'
+            },
+            someOtherGetter: state => { ... }
+        },
+        
+        actions: {
+            // 디스패치와 커밋도 해당 모듈의 지역화된 것
+            // 전역 디스패치/커밋을 위한 `root`옵션 설정 가능
+            
+            someAction({ dispatch, commit, getters, rootGetters }) { 
+                getters.someOtherGetter // -> 'foo/someGetter'
+                rootGetters.someOtherGetter // 'someGetter'
+                
+                dispatch('someOtherAction') // 'foo/someOtherAction'
+                dispatch('someOtherAction', null, { root: true }) // 'someOtherAction'
+                
+                commit('someMutation')  // 'foo/someMutation'
+                commit('someMutation', null, {root: true})  // 'someMutation'
+            },
+            someOtherAction(ctx, payload) { ... }
+        }
+    }
+}
+```
+
+<br />
+
+### 네임스페이스 모듈 내부에서 전역 액션 접근
+
+네임스페이스 모듈에서 전역 액션을 등록하려면, root:true를 표시하고 handler 함수에 액션을 정의하면 됩니다.
+
+```JS
+{
+    actions: {
+        someOtherAction ({dispatch}) {
+            dispatch('someAction')
+        }
+    },
+    modules: {
+        foo: {
+            namespace: true,
+            actions: {
+                someAction: {
+                    root: true,
+                    hanlder (namespaceContext, payload) { ... }     // someAction
+                }
+            }
+        }
+    }
+}
+```
+
+<br />
+
+### 헬퍼에서 네임스페이스 바인딩
+
+mapState, mapGetters, mapActions 그리고 mapMutations 헬퍼에서 네임스페이스 모듈을 컴포넌트에 바인딩할 때 조금 장황하게 됩니다.
+
+이러한 경우에는 모듈의 네임스페이스 문자열을 헬퍼의 첫 번째 인수로 전달하여 해당 모듈을 컨텍스트로 사용하여 모든 바인딩을 할 수 있습니다.
+
+```js
+computed: {
+    ...mapState({
+        a: state => state.some.nested.module.a,
+        b: state => state.some.nested.module.b
+    })
+},
+
+methods: {
+    ...mapActions([
+        'some/nested/module/foo',      // this['some/nested/module/foo']
+        'some/nested/module/bar'      // this['some/nested/module/bar']
+    ])
+}
+
+computed: {
+    ...mapState('some/nested/module', {
+        a: state => state.a,
+        b: state => state.b
+    })
+},
+
+methods: {
+...mapActions([
+        'foo',      // this.foo()
+        'bar'      // this.bar()
+    ])
+}
+```
+
+또한 createNamespacedHelpers를 사용하여 네임스페이스 헬퍼를 생성할 수 있습니다. 전달된 네임스페이스 값으로 바인딩된 새로우 넠ㅁ포넌트 바인딩 헬퍼를 가진 객체를 반환합니다.
+
+```JS
+import { createNamespacedHelpers } from 'vuex'
+
+const { mapState, mapActions } = createNamespacedHelpers('some/nested/module')
+
+export default {
+    computed: {
+        // `some/nested/module`에서 찾음
+        ...mapState({
+            a: state => state.a,
+            b: state => state.b
+        })
+    },
+    methods: {
+        // `some/nested/module`에서 찾음
+        ...mapActions([
+            'foo',
+            'bar'
+        ])
+    }
+}
+```
+
+<br />
+
+### 동적 모듈 등록
+
+store.registerModuble 메소드로 저장소가 생성 된 후에 모듈을 등록할 수 있습니다.
+
+모듈의 상태는 sotre.state.myModule와 store.state.nested.myModule로 노출됩니다.
+
+동적 모듈 등록을 사용하면 다른 Vue 플러그인도 애플리케이션의 저장소에 모듈을 연결하여 상태 관리에 Vuex를 활용할 수 있습니다.
+
+store.unregisterModule(moduleName)을 사용하여 동적으로 등록된 모듈을 제거할 수도 있습니다. 이 방법으로는 정적 모듈(저장소 생성시 선언됨)을 제거할 수 없습니다.
+
+```JS
+store.registerModule('myModule', {
+    // ...
+})
+
+// `nested/myModuble` 중첩 모듈 등록
+store.registerModule(['nested', 'myModule'], {
+    // ...
+})
+```
