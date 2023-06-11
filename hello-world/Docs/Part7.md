@@ -539,3 +539,59 @@ actions: {
     }
 }
 ```
+
+<br />
+
+### 디스패치 액션
+
+액션은 store.dispatch 메소드로 시작됩니다.
+
+상태 mutation은 동기적이어야 한다는 것을 기억하시나요?
+
+액션은 액션 내에서 비동기 작업을 수행할 수 있습니다.
+
+```js
+store.dispatch('increment')
+
+actions: {
+    incrementAsync ({commit}) {
+        setTimeout(() => {
+            commit('increment')
+        }, 1000)
+    }
+}
+```
+
+```JS
+// 페이로드와 함께 디스패치
+store.dispatch('incrementAysnc', {
+    amount: 10
+})
+
+// 객체와 함께 디스패치
+store.dispatch({
+    type: 'incrementAsync',
+    amount: 10
+})
+```
+
+```js
+actions: {
+    checkout ({ commit, state}, products) {
+        // 장바구니에 현재있는 항목을 저장
+        const savedCartItems = [...state.cart.added]
+        
+        // 결제 요청을 보낸 후 장바구니를 비웁니다.
+        commit(types.CHECKOUT_REQUEST)
+        
+        // 상점 API는 성공 콜백 및 실패 콜백을 받습니다.
+        shop.buyProducts(
+            products,
+            // 요청 성공 핸들러
+            () => commit(types.CHECKOUT_SUCCESS),
+            // 요청 실패 핸들러
+            () => commit(types.CHECKOUT_FAILURE, savedCartItems)
+        )
+    }
+}
+```
