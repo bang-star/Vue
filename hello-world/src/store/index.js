@@ -14,8 +14,8 @@ export const store = new Vuex.Store({
     },
     // Data를 변경시키는 도구
     mutations: {
-        increment(state) {
-            state.count++;
+        increment(state, payload) {
+            state.count += payload;
         }
     },
     getters: {

@@ -339,3 +339,55 @@ export default {
     }
 }
 ```
+
+<br />
+
+## 변이(Mutation)
+
+### 변이
+
+Vuex 저장소에서 실제로 상태를 변경하는 유일한 방법은 mutation 하는 것입니다. Vuex Mutation은 이벤트와 매우 유사합니다. 각 mutation에는 타입 문자열 핸들러가 있습니다. 핸들러 함수는 실제 상태 수정을 하는 곳이며, 첫 번째 전달인자로 상태를 받습니다.
+
+```JS
+const store = new Vuex.Store({
+    state: {
+        count: 1
+    },
+    mutations: {
+        increment(state) {
+            // 상태 변이
+            state.count++;
+        }
+    }
+})
+```
+
+Mutation 핸들러를 직접 호출 할 수 없습니다. 타입이 increment인 mutation이 발생하면 이 핸들러를 호출합니다. mutation 핸들러를 호출하려면 해당 타입과 함께 store.commit을 호출해야 합니다.
+
+```JS
+store.commit('increment')
+```
+
+### 페이로드를 가진 Commit
+
+Mutation에 대해 payload를 store.commit에 추가 전달인자로 사용할 수 있습니다.
+
+```JS
+mutations: {
+    increment (state, n) {
+        state.count += n
+    }
+}
+
+store.commit('increment', 10)
+
+mutations: {
+    increment (state, payload) {
+        state.count += payload.amount
+    }
+}
+
+store.commit('increment', {
+    amount: 10
+})
+```
