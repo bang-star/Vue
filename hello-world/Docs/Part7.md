@@ -745,3 +745,54 @@ const moduleA = {
     }
 }
 ```
+
+<br />
+
+### 네임스페이스
+
+기본적으로 모듈 내의 action, mutation 및 getter는 여전히 전역 네임스페이스 아래에 등록됩니다. 여러 모듈이 동일한 mutation/action 유형에 반응할 수 있습니다.
+
+만약 모듈이 독립적이거나 재사용되기를 원한다면, namespace: true라고 네임스페이스에 명시하면 됩니다. 모듈이 등록될 때, 해당 모듈의 모든 getter, action/mutation는 자동으로 모듈의 경로를 기반으로 네임스페이스가 지정됩니다.
+
+```JS
+const store = new Vuex.Store({
+    modules: {
+        account: {
+            namespace: true,
+            
+            // 모듈 자산
+            state: () => ({ ... }), // 모듈 상태는 이미 중첩되어 있고, 네임스페이스 옵션의 영향을 받지 않음
+            getters: {
+                isAdmin() { ... },  //  getters['account/isAdmin']
+            },
+            actions: {
+                login() { ... }     // dispatch('account/login')
+            },
+            mutations: {
+                login() { ... }     // commit('account/login')
+            },
+            
+            // 중첩 모듈
+            modules: {
+                // 부모 모듈부터 네임스페이스를 상속받음
+                myPage: {
+                    state: () => ({ ... }),
+                   getters: {
+                        profile() { ... }       // getters['account/profile']
+                   }
+                },
+                
+                // 네임스페이스 중첩
+                posts: {
+                    namespaced: true,
+                    
+                    state: () => ({ ... }),
+                    getters: {
+                        popular() { ... }       // getters['account/posts/popular']
+                    }
+                }
+            }
+        }
+    }
+})
+```
