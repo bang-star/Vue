@@ -595,3 +595,27 @@ actions: {
     }
 }
 ```
+
+<br />
+
+### 컴포넌트 내부에서 디스패치(dispatch) 액션 사용하기
+
+`this.$store.dispatch('xxx')`를 사용하여 컴포넌트에서 액션을 디스패치하거나 컴포넌트 메소드를 store.dispatch 호출에 매핑하는 mapActions 헬퍼를 사용할 수 있습니다.(루트 store 주입 필요)
+
+```js
+import { mapActions } from 'vuex'
+
+export default {
+    // ...
+    methods: {
+        ...mapActions([
+            'increment', // this.increment()을 this.$store.dispatch('increment')에 매핑
+            // mapActions는 페이로드를 지원
+            'incrementBy' // this.incrementBy(amount)를 this.$store.dispatch('incrementBy', amount)에 매핑
+        ]),
+        ...mapActions({
+            add: 'incrment' // this.add()을 this.$store.dispatch('incrment')에 매핑
+        })
+    }
+}
+```
