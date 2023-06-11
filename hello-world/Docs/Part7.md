@@ -497,3 +497,45 @@ export default {
 // 'increment' 변이가 일으킬 수 있는 모든 상태 변화는 이 수간에 이루어져야 합니다.
 store.commit('increment')
 ```
+
+<br />
+
+## Action
+
+### Action
+
+액션은 mutation과 유사합니다.
+
+다른 점은 다음과 같습니다.
+
+1. 상태를 mutation 시키는 대신 액션으로 mutation에 대한 커밋을 합니다.
+2. 작업에는 임의의 비동기 작업이 포함될 수 있습니다.
+
+`액션 핸들러`는 저장소(store) 인스턴스의 같은 메소드들/프로퍼티 세트를 드러내는 컨텍스트 객체를 받습니다. 그래서 context.commit을 호출하여 mutation을 커밋하거나 context.state와 context.getters를 통해 상태(state)와 getters에 접근할 수 있습니다.
+
+```js
+const store = new Vuex.Store({
+    state: {
+        count: 0
+    },
+    mutations: {
+        increment(state) {
+            state.count++;
+        }
+    },actions: {
+        increment(context) {
+            context.commit('increment')
+        }
+    }
+})
+```
+
+실제로(특히 commit를 여러 번 호출해야 하는 경우) 코드를 단순화 하기 위해 ES 2015 전달인자 분해를 사용합니다.
+
+```js
+actions: {
+    increment({commit}) {
+        commit('increment')
+    }
+}
+```
