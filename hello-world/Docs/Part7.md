@@ -702,3 +702,46 @@ const store = new Vuex.Store({
 store.state.a   // -> moduleA의 상태
 store.state.b   // -> moduleB의 상태
 ```
+
+<br />
+
+### 지역 상태 모듈
+
+모듈의 변이와 getter 내부에서 첫 번째 전달인자는 모듈의 지역 상태가 됩니다.
+
+```JS
+const moduleA = {
+    state: () => ({ count: 0 }),
+    mutations: {
+        increment (state) {
+            // state는 지역 모듈 상태
+            state.count++;
+        }
+    },
+    getters: { 
+        doubleCount(state) {
+            return state.count * 2;
+        }
+    },
+}
+
+const moduleA = {
+    // ...
+    actions: {
+        incrementIfOddOnRootSum ({ state, commit, rootState }) {
+            if((state.count + rootState.count) % 2 === 1) {
+                commit('increment')
+            }
+        }
+    }
+}
+
+const moduleA = {
+    // ...
+    actions: {
+        sumWithRootCount ({ state, commit, rootState }) {
+            return state.count + rootState.count
+        }
+    }
+}
+```
