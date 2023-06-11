@@ -422,3 +422,27 @@ Vuex 저장소의 상태는 Vue에 의해 반응하므로, 상태를 변경하�
 ```JS
 state.obj = { ...state.obj, newPorp: 123 }
 ```
+
+### Mutation 타입에 상수 사용
+
+상수를 사용할지 여부는 대부분 환경 설정입니다. 개발자가 많은 대규모 프로젝트에서 유용할 수 있지만, 이는 완전히 선택 사항입니다.
+
+```JS
+// mutation-types.js
+export const SOME_MUTATION = 'SOME_MUTATION'
+
+// store.js
+import Vuex form 'vuex'
+import { SOME_MUTATION } from './mutation-types'
+
+const store = new Vuex.Store({
+    state: { ... },
+    mutations: {
+        // 2015에서 계산된 프로퍼티 이름 기능을 사용하여
+        // 상수를 함수 이름으로 사용할 수 있습니다.
+        [SOME_MUTATION] (state) {
+            // 변이 상태
+        }
+    }
+})
+```
