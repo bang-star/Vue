@@ -840,3 +840,30 @@ modules: {
     }
 }
 ```
+
+<br />
+
+### 네임스페이스 모듈 내부에서 전역 액션 접근
+
+네임스페이스 모듈에서 전역 액션을 등록하려면, root:true를 표시하고 handler 함수에 액션을 정의하면 됩니다.
+
+```JS
+{
+    actions: {
+        someOtherAction ({dispatch}) {
+            dispatch('someAction')
+        }
+    },
+    modules: {
+        foo: {
+            namespace: true,
+            actions: {
+                someAction: {
+                    root: true,
+                    hanlder (namespaceContext, payload) { ... }     // someAction
+                }
+            }
+        }
+    }
+}
+```
