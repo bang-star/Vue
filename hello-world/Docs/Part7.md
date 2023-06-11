@@ -339,3 +339,161 @@ export default {
     }
 }
 ```
+
+<br />
+
+## 변이(Mutation)
+
+### 변이
+
+Vuex 저장소에서 실제로 상태를 변경하는 유일한 방법은 mutation 하는 것입니다. Vuex Mutation은 이벤트와 매우 유사합니다. 각 mutation에는 타입 문자열 핸들러가 있습니다. 핸들러 함수는 실제 상태 수정을 하는 곳이며, 첫 번째 전달인자로 상태를 받습니다.
+
+```JS
+const store = new Vuex.Store({
+    state: {
+        count: 1
+    },
+    mutations: {
+        increment(state) {
+            // 상태 변이
+            state.count++;
+        }
+    }
+})
+```
+
+Mutation 핸들러를 직접 호출 할 수 없습니다. 타입이 increment인 mutation이 발생하면 이 핸들러를 호출합니다. mutation 핸들러를 호출하려면 해당 타입과 함께 store.commit을 호출해야 합니다.
+
+```JS
+store.commit('increment')
+```
+
+### 페이로드를 가진 Commit
+
+Mutation에 대해 payload를 store.commit에 추가 전달인자로 사용할 수 있습니다.
+
+```JS
+mutations: {
+    increment (state, n) {
+        state.count += n
+    }
+}
+
+store.commit('increment', 10)
+
+mutations: {
+    increment (state, payload) {
+        state.count += payload.amount
+    }
+}
+
+store.commit('increment', {
+    amount: 10
+})
+```
+
+<br />
+
+### 객체 스타일 Commit
+
+Mutation을 Commit하는 또 다른 방법은 type 속성을 가진 객체를 직접 사용하는 것입니다.
+객체 스타일 commit을 사용할 때 전체 객체는 mutation 핸들러에 페이로드로 전달되므로 핸들러는 동일하게 유지됩니다.
+
+```JS
+store.commit({
+    type: 'increment',
+    amount: 10
+})
+
+mutations: {
+    increment: (state, payload) {
+        state.count += payload.amount
+    }
+}
+```
+
+### Vue의 반응성 규칙을 따르는 변이
+
+Vuex 저장소의 상태는 Vue에 의해 반응하므로, 상태를 변경하면 상태를 관찰하는 Vue 컴포넌트가 자동으로 업데이트됩니다. 이것은 또한 Vuex mutation가 일반 Vue로 작업할 때 동일한 반응성에 대한 경로를 받을 수 있음을 의미합니다.
+
+1. 원하는 모든 필드에 앞서 저장소를 초기화 하는 것이 좋습니다.
+2. 객체에 새 속성을 추가할 때 다음 중 하나를 수행해야 합니다.
+
+```JS
+state.obj = { ...state.obj, newPorp: 123 }
+```
+
+### Mutation 타입에 상수 사용
+
+상수를 사용할지 여부는 대부분 환경 설정입니다. 개발자가 많은 대규모 프로젝트에서 유용할 수 있지만, 이는 완전히 선택 사항입니다.
+
+```JS
+// mutation-types.js
+export const SOME_MUTATION = 'SOME_MUTATION'
+
+// store.js
+import Vuex form 'vuex'
+import { SOME_MUTATION } from './mutation-types'
+
+const store = new Vuex.Store({
+    state: { ... },
+    mutations: {
+        // 2015에서 계산된 프로퍼티 이름 기능을 사용하여
+        // 상수를 함수 이름으로 사용할 수 있습니다.
+        [SOME_MUTATION] (state) {
+            // 변이 상태
+        }
+    }
+})
+```
+
+<br />
+
+### Mutation은 무조건 동기적이어야 합니다.
+
+기억해야할 한 가지 중요한 규칙은 변이 핸들러 함수는 동기적이어야 한다는 것입니다.
+
+```JS
+mutations: {
+    someMutation(state) {
+        api.callAsyncMethod(() => {
+            state.count++
+        })
+    }
+}
+```
+
+### 컴포넌트 안에서 mutation commit하기
+
+this.$store.commit('xxx')를 사용하여 컴포넌트에서 mutation을 수행하거나 컴포넌트 메소드를 store.commit 호출에 매핑하는 mapMutations 헬퍼를 사용할 수 있습니다.
+
+```js
+import { mapMutations } from 'vuex'
+
+export default {
+    // ...
+    
+    methods: {
+        ...mapMutations({
+            'increment' // this.increment()를 this.$store.commit('increment')에 매핑
+        }),
+        ...mapMutations({
+            add: 'increment'    // this.add()를 this.$store.commit('increment')에 매핑
+        })
+    }
+}
+```
+
+기록된 모든 mutation에 대해 devtool은 상태의 '이전' 및 '이후' 스냅 샷을 캡처 해야합니다 .그러나 왼쪽의 예제 변이 내의 비동기 콜백은 불가능합니다. Mutation이 commit 되었을 대 콜백은 아직 호출되지 않으며 콜백이 실제로 호출될 시기를 devtool이 알수 있는 방법이 없습니다. 콜백에서 수행 된 모든 상태 mutation은 본질적으로 추적할 수 없습니다.
+
+### Action에서 사용
+
+비동기성이 상태(state)의 mutation과 결합하면 프로그램을 파악하기가 매우 어려워 질 수 있습니다.
+
+- Q) 상태를 변경하는 두 가지 비동기 콜백 메소드를 호출할 때 호출되는 시점과 먼저 호출된 콜백을 어떻게 알 수 있을까요?
+- A) Vuex에서 변이는 동기적으로 트랜잭션 합니다.
+
+```js
+// 'increment' 변이가 일으킬 수 있는 모든 상태 변화는 이 수간에 이루어져야 합니다.
+store.commit('increment')
+```
