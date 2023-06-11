@@ -446,3 +446,19 @@ const store = new Vuex.Store({
     }
 })
 ```
+
+<br />
+
+### Mutation은 무조건 동기적이어야 합니다.
+
+기억해야할 한 가지 중요한 규칙은 변이 핸들러 함수는 동기적이어야 한다는 것입니다.
+
+```JS
+mutations: {
+    someMutation(state) {
+        api.callAsyncMethod(() => {
+            state.count++
+        })
+    }
+}
+```
