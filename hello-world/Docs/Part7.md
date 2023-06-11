@@ -391,3 +391,34 @@ store.commit('increment', {
     amount: 10
 })
 ```
+
+<br />
+
+### 객체 스타일 Commit
+
+Mutation을 Commit하는 또 다른 방법은 type 속성을 가진 객체를 직접 사용하는 것입니다.
+객체 스타일 commit을 사용할 때 전체 객체는 mutation 핸들러에 페이로드로 전달되므로 핸들러는 동일하게 유지됩니다.
+
+```JS
+store.commit({
+    type: 'increment',
+    amount: 10
+})
+
+mutations: {
+    increment: (state, payload) {
+        state.count += payload.amount
+    }
+}
+```
+
+### Vue의 반응성 규칙을 따르는 변이
+
+Vuex 저장소의 상태는 Vue에 의해 반응하므로, 상태를 변경하면 상태를 관찰하는 Vue 컴포넌트가 자동으로 업데이트됩니다. 이것은 또한 Vuex mutation가 일반 Vue로 작업할 때 동일한 반응성에 대한 경로를 받을 수 있음을 의미합니다.
+
+1. 원하는 모든 필드에 앞서 저장소를 초기화 하는 것이 좋습니다.
+2. 객체에 새 속성을 추가할 때 다음 중 하나를 수행해야 합니다.
+
+```JS
+state.obj = { ...state.obj, newPorp: 123 }
+```
