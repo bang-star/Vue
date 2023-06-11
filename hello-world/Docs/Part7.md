@@ -619,3 +619,51 @@ export default {
     }
 }
 ```
+
+<br />
+
+### 액션 구성하기
+
+액션은 종종 비동기적입니다.
+
+ - Q) 액션이 언제 완료되는지 어떻게 알 수 있을까요? 복잡한 비동기 흐름을 처리하기 위해 어떻게 여러 작업을 함께 구성할 수 있을까요?
+ - A) 가장 먼저 알아야 할 점은 store.dispatch가 트리거 된 액션 해들러에 의해 반환된 Promise를 처리할 수 있으며 Promise를 반환한다는 것입니다.
+
+```js
+actions: {
+    actionA ({ commit }) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                commit('someMutation')
+                resolve()
+            }, 1000)
+        }) 
+    }
+}
+
+store.dispatch('actionA').then(() => {
+    // ...
+})
+```
+
+```js
+actions: {
+    // ...
+    actionB ({dispatch, commit}) {
+        return dispatch('actionA').then(() => {
+            commit('someOtherMutation')
+        })
+    }
+}
+
+// getData() 및 getOtherData()가 Promise를 반환한다고 가정
+actions: {
+    async actionA({commit}) {
+        commit('gotData', await getData())
+    },
+    async actionB({dispatch, commit}) {
+        await dispatch('actionA') // ActionA가 끝나길 기다립니다.
+        commit('gotOtherData', await getOtherData())
+    }
+}
+```
