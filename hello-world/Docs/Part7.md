@@ -930,3 +930,26 @@ export default {
     }
 }
 ```
+
+<br />
+
+### 동적 모듈 등록
+
+store.registerModuble 메소드로 저장소가 생성 된 후에 모듈을 등록할 수 있습니다.
+
+모듈의 상태는 sotre.state.myModule와 store.state.nested.myModule로 노출됩니다.
+
+동적 모듈 등록을 사용하면 다른 Vue 플러그인도 애플리케이션의 저장소에 모듈을 연결하여 상태 관리에 Vuex를 활용할 수 있습니다.
+
+store.unregisterModule(moduleName)을 사용하여 동적으로 등록된 모듈을 제거할 수도 있습니다. 이 방법으로는 정적 모듈(저장소 생성시 선언됨)을 제거할 수 없습니다.
+
+```JS
+store.registerModule('myModule', {
+    // ...
+})
+
+// `nested/myModuble` 중첩 모듈 등록
+store.registerModule(['nested', 'myModule'], {
+    // ...
+})
+```
