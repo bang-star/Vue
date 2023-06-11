@@ -462,3 +462,27 @@ mutations: {
     }
 }
 ```
+
+### 컴포넌트 안에서 mutation commit하기
+
+this.$store.commit('xxx')를 사용하여 컴포넌트에서 mutation을 수행하거나 컴포넌트 메소드를 store.commit 호출에 매핑하는 mapMutations 헬퍼를 사용할 수 있습니다.
+
+```js
+import { mapMutations } from 'vuex'
+
+export default {
+    // ...
+    
+    methods: {
+        ...mapMutations({
+            'increment' // this.increment()를 this.$store.commit('increment')에 매핑
+        }),
+        ...mapMutations({
+            add: 'increment'    // this.add()를 this.$store.commit('increment')에 매핑
+        })
+    }
+}
+```
+
+기록된 모든 mutation에 대해 devtool은 상태의 '이전' 및 '이후' 스냅 샷을 캡처 해야합니다 .그러나 왼쪽의 예제 변이 내의 비동기 콜백은 불가능합니다. Mutation이 commit 되었을 대 콜백은 아직 호출되지 않으며 콜백이 실제로 호출될 시기를 devtool이 알수 있는 방법이 없습니다. 콜백에서 수행 된 모든 상태 mutation은 본질적으로 추적할 수 없습니다.
+
