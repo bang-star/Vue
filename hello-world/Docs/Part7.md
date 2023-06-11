@@ -796,3 +796,47 @@ const store = new Vuex.Store({
     }
 })
 ```
+
+<br />
+
+### 네임스페이스 모듈 내부에서 전역 자산 접근
+
+전역 상태나 getter를 사용하고자 한다면, rootState와 rootGetters가 getter 함수의 3번째와 4번째 인자로 전달되고, 또한 action 함수에 전달된 'context' 객체의 속성으로도 노출됩니다.
+
+전역 네임스페이스의 액션을 디스패치(dispatch)하거나 mutation으로 커밋하려면 dispatch와 commit에 3번째 인자로 { root: ture }를 전달하며 ㄴ됩니다.
+
+```JS
+modules: {
+    foo: {
+        namespace: true,
+            
+        getters: {
+            // `getters`는 해당 모듈의 지역화된 getters
+            // getters의 4번째 인자를 통해서 rootGetters 사용 가능
+            
+            someGetter(state, getters, rootState, rootGetters) {
+                getters.someOtherGetter // -> 'foo/someOtherGetter'
+                rootGetters.someOtherGetter // 'someOtherGetter'
+            },
+            someOtherGetter: state => { ... }
+        },
+        
+        actions: {
+            // 디스패치와 커밋도 해당 모듈의 지역화된 것
+            // 전역 디스패치/커밋을 위한 `root`옵션 설정 가능
+            
+            someAction({ dispatch, commit, getters, rootGetters }) { 
+                getters.someOtherGetter // -> 'foo/someGetter'
+                rootGetters.someOtherGetter // 'someGetter'
+                
+                dispatch('someOtherAction') // 'foo/someOtherAction'
+                dispatch('someOtherAction', null, { root: true }) // 'someOtherAction'
+                
+                commit('someMutation')  // 'foo/someMutation'
+                commit('someMutation', null, {root: true})  // 'someMutation'
+            },
+            someOtherAction(ctx, payload) { ... }
+        }
+    }
+}
+```
