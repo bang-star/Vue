@@ -1179,3 +1179,211 @@ computed: {
   }
 }
 ```
+
+<br />
+
+## Testing Mutations
+
+변이는 인수에 완전히 의존하는 함수일 뿐이므로 테스트하기가 매우 간단합니다. 한 가지 요령은 ES2015 모듈을 사용하고 store.js파일 내부에 변형을 넣는 경우 기본 내보내기 외에도 변형을 명명된 내보내기로 내보내야 한다는 것입니다.
+
+```js
+const state = { ... }
+
+// export `mutations` as a named export
+export const mutations = { ... }
+
+export default createStore({
+  state,
+  mutations
+})
+```
+
+Mocha + Chai를 사용하여 돌연변이를 테스트하는 예(원하는 프레임워크/어설션 라이브러리를 사용할 수 있음):
+
+```js
+// mutations.js
+export const mutations = {
+  increment: state => state.count++
+}
+```
+
+```js
+// mutations.spec.js
+import { expect } from 'chai'
+import { mutations } from './store'
+
+// destructure assign `mutations`
+const { increment } = mutations
+
+describe('mutations', () => {
+  it('INCREMENT', () => {
+    // mock state
+    const state = { count: 0 }
+    // apply mutation
+    increment(state)
+    // assert result
+    expect(state.count).to.equal(1)
+  })
+})
+```
+
+### 테스트 작업
+
+작업은 외부 API를 호출할 수 있기 때문에 좀 더 까다로울 수 있습니다. 작업을 테스트할 때 일반적으로 일정 수준의 모킹을 수행해야 합니다. 예를 들어 API 호출을 서비스로 추상화하고 테스트 내에서 해당 서비스를 모의할 수 있습니다. 종속성을 쉽게 모방하기 위해 webpack 및 inject-loader를 사용하여 테스트 파일을 묶을 수 있습니다.
+
+비동기 작업을 테스트하는 예:
+
+```js
+// actions.js
+import shop from '../api/shop'
+
+export const getAllProducts = ({ commit }) => {
+  commit('REQUEST_PRODUCTS')
+  shop.getProducts(products => {
+    commit('RECEIVE_PRODUCTS', products)
+  })
+}
+```
+
+```js
+// actions.spec.js
+
+// use require syntax for inline loaders.
+// with inject-loader, this returns a module factory
+// that allows us to inject mocked dependencies.
+import { expect } from 'chai'
+const actionsInjector = require('inject-loader!./actions')
+
+// create the module with our mocks
+const actions = actionsInjector({
+  '../api/shop': {
+    getProducts (cb) {
+      setTimeout(() => {
+        cb([ /* mocked response */ ])
+      }, 100)
+    }
+  }
+})
+
+// helper for testing action with expected mutations
+const testAction = (action, payload, state, expectedMutations, done) => {
+  let count = 0
+
+  // mock commit
+  const commit = (type, payload) => {
+    const mutation = expectedMutations[count]
+
+    try {
+      expect(type).to.equal(mutation.type)
+      expect(payload).to.deep.equal(mutation.payload)
+    } catch (error) {
+      done(error)
+    }
+
+    count++
+    if (count >= expectedMutations.length) {
+      done()
+    }
+  }
+
+  // call the action with mocked store and arguments
+  action({ commit, state }, payload)
+
+  // check if no mutations should have been dispatched
+  if (expectedMutations.length === 0) {
+    expect(count).to.equal(0)
+    done()
+  }
+}
+
+describe('actions', () => {
+  it('getAllProducts', done => {
+    testAction(actions.getAllProducts, null, {}, [
+      { type: 'REQUEST_PRODUCTS' },
+      { type: 'RECEIVE_PRODUCTS', payload: { /* mocked response */ } }
+    ], done)
+  })
+})
+```
+
+테스트 환경에서 사용 가능한 스파이가 있는 경우(예: Sinon.JS 를 통해 ) 헬퍼 대신 스파이를 사용할 수 있습니다 `testAction`.
+
+<br />
+
+### Getter 테스트
+
+getter에 복잡한 계산이 있는 경우 테스트할 가치가 있습니다. 게터는 또한 돌연변이와 같은 이유로 테스트하기가 매우 간단합니다.
+
+getter 테스트 예:
+
+```js
+// getters.spec.js
+import { expect } from 'chai'
+import { getters } from './getters'
+
+describe('getters', () => {
+  it('filteredProducts', () => {
+    // mock state
+    const state = {
+      products: [
+        { id: 1, title: 'Apple', category: 'fruit' },
+        { id: 2, title: 'Orange', category: 'fruit' },
+        { id: 3, title: 'Carrot', category: 'vegetable' }
+      ]
+    }
+    // mock getter
+    const filterCategory = 'fruit'
+
+    // get the result from the getter
+    const result = getters.filteredProducts(state, { filterCategory })
+
+    // assert the result
+    expect(result).to.deep.equal([
+      { id: 1, title: 'Apple', category: 'fruit' },
+      { id: 2, title: 'Orange', category: 'fruit' }
+    ])
+  })
+})
+```
+
+### 테스트 실행
+
+변이와 작업이 제대로 작성되었다면 테스트는 적절한 모킹 후 브라우저 API에 직접적인 종속성이 없어야 합니다. 따라서 webpack으로 테스트를 묶고 Node.js에서 직접 실행할 수 있습니다. 또는 mocha-loader또는 Karma +를 사용하여 karma-webpack실제 브라우저에서 테스트를 실행할 수 있습니다.
+
+#### 노드에서 실행
+
+다음 웹팩 구성을 만듭니다.
+
+```js
+// webpack.config.js
+module.exports = {
+  entry: './test.js',
+  output: {
+    path: __dirname,
+    filename: 'test-bundle.js'
+  },
+  module: {
+    loaders: [
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        exclude: /node_modules/
+      }
+    ]
+  }
+}
+```
+
+그 다음 명령어를 실행해줍니다.
+
+```shell
+webpack
+mocha test-bundle.js
+```
+
+#### 브라우저에서 실행
+
+1. mocha-loader 설치.
+2. 'mocha-loader!babel-loader!./test.js' 위에 webpack 구성에서 entry를 변경해라.
+3. webpack-dev-server구성 사용을 시작하십시오 .
+4. localhost:8080/webpack-dev-server/test-bundle 로 이동해라
