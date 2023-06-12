@@ -8,6 +8,7 @@ export const store = new Vuex.Store({
     /* modules: {
 
     } ,*/
+    // plugins: [],
     // Data 저장소
     state: {
         count: 0,
